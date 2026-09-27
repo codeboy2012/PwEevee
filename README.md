@@ -47,36 +47,42 @@ PwEevee does **not** claim authorship of SpoTi.pw, EeveeSpotify, Spotify, Apple,
 
 ## Current Release
 
-### PwEevee v0.22.0-alpha — Read Disc
+### PwEevee v0.22.0-alpha.2 — Read Disc
 
-> ⚠️ **ALPHA RELEASE — KNOWN ISSUES**
+> ⚠️ **BETA RELEASE — KNOWN ISSUES**
 >
-> This is an experimental release containing known bugs and unfinished features.
-> It is not considered production-ready.
+> This release is working and has been tested, but there are still some bugs and rough edges we're working out.
 
-**Base:** SpoTi.pw v0.22.0  
-**Integrated component:** EeveeSpotify v6.6.8  
-**PwEevee release:** v0.22.0-alpha  
-**Codename:** Read Disc  
-**Status:** Alpha / Known Issues
+**Base:** SpoTi.pw v0.22.0\
+**Integrated component:** EeveeSpotify v6.6.8\
+**PwEevee release:** v0.22.0-alpha.2\
+**Codename:** Read Disc\
+**Status:** Beta / Known Issues
 
-This is the first unified PwEevee release combining **SpoTi.pw v0.22.0** with **EeveeSpotify v6.6.8**.
+This is the second alpha build of PwEevee, continuing the unified integration of **SpoTi.pw v0.22.0** with **EeveeSpotify v6.6.8**.
 
-The resulting IPA has been tested and is working, but the project still contains known bugs and unfinished functionality.
+The resulting IPA has been tested and is working. This build includes improvements over the previous alpha release, including **working custom app icon support**.
 
 ### Known issues
 
-Known issues include:
+There are still some bugs and unfinished areas being worked out. These may include:
 
 - Bugs in certain features
 - Possible unexpected behavior
 - Installation or signing issues depending on the signing method
+- Compatibility issues with different Spotify versions
 - Integration issues that may still be discovered
-- **Custom app icons are currently not working**
+- Other bugs that have not yet been identified
 
-Custom app icon support is planned for investigation in a future release.
+### Spotify version
 
-There is currently **no guaranteed release schedule**.
+This build has been tested with **Spotify v9.1.76**.
+
+**Spotify v9.1.84** is newer and has not yet been fully tested with this build.
+
+For the most reliable experience, use the Spotify version this release was tested against.
+
+There is currently **no guaranteed release schedule**. Future releases will be published when they're ready.
 
 ---
 
