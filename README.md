@@ -49,44 +49,63 @@ PwEevee does **not** claim authorship of SpoTi.pw, EeveeSpotify, Spotify, Apple,
 
 ### PwEevee v1.0.2 — SpoTi.pw v0.23.0-beta Integration
 
-> ⚠️ **PRE-RELEASE — BUGS MAY OCCUR**
+> ⚠️ **PRE-RELEASE — BUGS AND COMPATIBILITY ISSUES MAY OCCUR**
 >
-> PwEevee v1.0.2 is an early release combining SpoTi.pw v0.23.0-beta with EeveeSpotify v6.6.8. This release is available for users to try, report bugs, and provide feedback as the project continues to improve.
+> PwEevee v1.0.2 combines SpoTi.pw v0.23.0-beta with EeveeSpotify v6.6.8. The combined build has reported compatibility warnings, so do not assume that every integrated component is working correctly on every Spotify version.
 
 **Base:** SpoTi.pw v0.23.0-beta  
 **Upstream commit:** `49e02e2`  
 **Integrated component:** EeveeSpotify v6.6.8  
-**Spotify target:** v9.1.76  
 **PwEevee release:** v1.0.2  
 **Status:** Pre-release
 
-PwEevee combines **SpoTi.pw** and **EeveeSpotify** into a unified Spotify modification experience. This release incorporates the SpoTi.pw v0.23.0-beta baseline while integrating PwEevee's custom settings organization, app icon support, and feature configuration.
-
-### Known issues
-
-As a pre-release, PwEevee v1.0.2 may contain bugs, incomplete functionality, or unexpected behavior. Possible issues include:
-
-- Individual features not behaving as expected
-- Settings or integrations behaving inconsistently
-- App signing or installation problems depending on the signing method
-- Compatibility differences between Spotify versions
-- Unexpected interactions between SpoTi.pw and EeveeSpotify features
-
-These are potential areas to watch for, not a claim that every listed issue has been reproduced. Please report any bugs with steps to reproduce them and relevant logs.
-
-### Spotify compatibility
-
-The intended Spotify target is **v9.1.76**.
-
-Other Spotify versions, including v9.1.84, are not guaranteed to work unless tested with this release.
+PwEevee combines **SpoTi.pw** and **EeveeSpotify** into a unified Spotify modification experience, with custom settings organization and app icon support.
 
 ### Downloads
 
-Download **PwEevee v1.0.2** from the GitHub Releases page.
+#### Combined PwEevee build
 
-As this is a pre-release, expect changes and possible bugs in future updates. Feedback and bug reports are welcome.
+**`PwEevee.v1.0.2.ipa`**
 
----
+This is the combined IPA intended to include both SpoTi.pw and EeveeSpotify. The current build has shown compatibility warnings; review the warnings in the app and use it as an experimental pre-release.
+
+#### SpoTi.pw-only build (without EeveeSpotify)
+
+**`Spotpw v0.23.0 PRE.ipa`**
+
+A separate SpoTi.pw-only IPA for users who do not want the EeveeSpotify integration. This build does **not** include EeveeSpotify. Its compatibility notice identifies Spotify **v9.1.78** as the intended version; use a matching Spotify version and do not assume compatibility with v9.1.76.
+
+#### Individual tweak packages
+
+For users customizing their own IPA, the release also provides the individual tweak packages:
+
+- **SpoTi.pw v0.23.0-beta:** `com.spotipw_0.23.0-beta_iphoneos-arm.deb`
+- **EeveeSpotify v6.6.8:** `com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb`
+
+These packages are intended for use with an appropriate IPA customization or tweak-injection workflow. Bundling a package in the release does not guarantee compatibility with every IPA or Spotify version.
+
+### Known issues
+
+As a pre-release, PwEevee v1.0.2 may contain bugs, incomplete functionality, or unexpected behavior. Reported concerns include:
+
+- The combined build may report Spotify v9.1.76 as unsupported by SpoTi.pw.
+- EeveeSpotify may report itself as unsupported even when it is injected alongside SpoTi.pw.
+- App signing or installation problems may vary by signing method.
+- Compatibility may differ between Spotify versions.
+
+These are issues to investigate, not a claim that every possible failure has been reproduced. Please report bugs with steps to reproduce them and relevant logs.
+
+### Spotify compatibility
+
+- **Combined PwEevee IPA:** targets Spotify **v9.1.76**, but compatibility warnings have been observed and functionality is not guaranteed.
+- **SpoTi.pw-only IPA:** its compatibility notice identifies Spotify **v9.1.78** as the intended target.
+- Other Spotify versions are not guaranteed to work.
+
+### Feedback
+
+Please report reproducible bugs and compatibility problems through the repository's Issues page.
+
+**Important:** These are pre-release builds and are not a guarantee of production stability.
 
 ## Why EeveeSpotify Is Integrated
 
