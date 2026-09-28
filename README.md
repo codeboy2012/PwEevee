@@ -47,42 +47,44 @@ PwEevee does **not** claim authorship of SpoTi.pw, EeveeSpotify, Spotify, Apple,
 
 ## Current Release
 
-### PwEevee v0.22.0-alpha.2 — Read Disc
+### PwEevee v1.0.2 — SpoTi.pw v0.23.0-beta Integration
 
-> ⚠️ **BETA RELEASE — KNOWN ISSUES**
+> ⚠️ **PRE-RELEASE — BUGS MAY OCCUR**
 >
-> This release is working and has been tested, but there are still some bugs and rough edges we're working out.
+> PwEevee v1.0.2 is an early release combining SpoTi.pw v0.23.0-beta with EeveeSpotify v6.6.8. This release is available for users to try, report bugs, and provide feedback as the project continues to improve.
 
-**Base:** SpoTi.pw v0.22.0\
-**Integrated component:** EeveeSpotify v6.6.8\
-**PwEevee release:** v0.22.0-alpha.2\
-**Codename:** Read Disc\
-**Status:** Beta / Known Issues
+**Base:** SpoTi.pw v0.23.0-beta  
+**Upstream commit:** `49e02e2`  
+**Integrated component:** EeveeSpotify v6.6.8  
+**Spotify target:** v9.1.76  
+**PwEevee release:** v1.0.2  
+**Status:** Pre-release
 
-This is the second alpha build of PwEevee, continuing the unified integration of **SpoTi.pw v0.22.0** with **EeveeSpotify v6.6.8**.
-
-The resulting IPA has been tested and is working. This build includes improvements over the previous alpha release, including **working custom app icon support**.
+PwEevee combines **SpoTi.pw** and **EeveeSpotify** into a unified Spotify modification experience. This release incorporates the SpoTi.pw v0.23.0-beta baseline while integrating PwEevee's custom settings organization, app icon support, and feature configuration.
 
 ### Known issues
 
-There are still some bugs and unfinished areas being worked out. These may include:
+As a pre-release, PwEevee v1.0.2 may contain bugs, incomplete functionality, or unexpected behavior. Possible issues include:
 
-- Bugs in certain features
-- Possible unexpected behavior
-- Installation or signing issues depending on the signing method
-- Compatibility issues with different Spotify versions
-- Integration issues that may still be discovered
-- Other bugs that have not yet been identified
+- Individual features not behaving as expected
+- Settings or integrations behaving inconsistently
+- App signing or installation problems depending on the signing method
+- Compatibility differences between Spotify versions
+- Unexpected interactions between SpoTi.pw and EeveeSpotify features
 
-### Spotify version
+These are potential areas to watch for, not a claim that every listed issue has been reproduced. Please report any bugs with steps to reproduce them and relevant logs.
 
-This build has been tested with **Spotify v9.1.76**.
+### Spotify compatibility
 
-**Spotify v9.1.84** is newer and has not yet been fully tested with this build.
+The intended Spotify target is **v9.1.76**.
 
-For the most reliable experience, use the Spotify version this release was tested against.
+Other Spotify versions, including v9.1.84, are not guaranteed to work unless tested with this release.
 
-There is currently **no guaranteed release schedule**. Future releases will be published when they're ready.
+### Downloads
+
+Download **PwEevee v1.0.2** from the GitHub Releases page.
+
+As this is a pre-release, expect changes and possible bugs in future updates. Feedback and bug reports are welcome.
 
 ---
 
