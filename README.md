@@ -12,132 +12,616 @@
 
 <p align="center">
   <a href="#about">About</a> ·
-  <a href="#current-release">Current Release</a> ·
-  <a href="#what-pweevee-does">What PwEevee Does</a> ·
-  <a href="#repository">Repository</a> ·
+  <a href="#v200">v2.0.0</a> ·
+  <a href="#recommended-build">Recommended Build</a> ·
+  <a href="#combined-build">Combined Build</a> ·
+  <a href="#base-ipa">Base IPA</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#compatibility">Compatibility</a> ·
   <a href="#building">Building</a> ·
-  <a href="#website">Website</a> ·
   <a href="#credits">Credits</a> ·
   <a href="#ai-disclosure">AI Disclosure</a> ·
-  <a href="#legal--rights">Legal</a>
+  <a href="#legal">Legal</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/codeboy2012/PwEevee/releases/latest">
+    <img src="https://img.shields.io/github/v/release/codeboy2012/PwEevee?style=for-the-badge&label=Latest%20Release" alt="Latest Release">
+  </a>
+  <a href="https://github.com/codeboy2012/PwEevee/releases">
+    <img src="https://img.shields.io/github/downloads/codeboy2012/PwEevee/total?style=for-the-badge&label=Downloads" alt="Downloads">
+  </a>
+  <a href="https://github.com/codeboy2012/PwEevee">
+    <img src="https://img.shields.io/github/stars/codeboy2012/PwEevee?style=for-the-badge" alt="GitHub Stars">
+  </a>
 </p>
 
 ---
 
 ## About
 
-**PwEevee** is an independent integration and distribution project for modified Spotify iOS builds.
+**PwEevee** is an independent project focused on integrating, packaging, testing, and distributing modified Spotify iOS builds.
 
-PwEevee brings together upstream projects and their components into a unified build workflow rather than creating those projects from scratch.
+PwEevee does not attempt to recreate the upstream projects it uses. Instead, it combines upstream components with PwEevee's own integration, build, packaging, documentation, and distribution work.
 
-The project currently combines:
+The project currently works with:
 
-- **SpoTi.pw**
 - **EeveeSpotify**
-- Their required supporting components and dependencies
-- A unified integration and packaging pipeline
-- Automated validation and build testing
-- A public release and distribution website
+- **SpoTi.pw**
+- Spotify iOS builds
+- Supporting dependencies and components
+- IPA integration and packaging
+- Compatibility and validation workflows
+- Release and distribution infrastructure
 
-The goal is to provide a clear, reproducible, and transparent way to build and distribute a unified Spotify iOS IPA while preserving attribution to the projects and people whose work makes the functionality possible.
+The goal is to make the resulting builds easier to understand, install, and distribute while maintaining clear attribution to the original projects.
 
-PwEevee does **not** claim authorship of SpoTi.pw, EeveeSpotify, Spotify, Apple, or any other upstream software.
+> **PwEevee is an independent project and is not affiliated with Spotify or Apple.**
 
 ---
 
-## Current Release
+# v2.0.0
 
-### PwEevee v1.0.2 — SpoTi.pw v0.23.0-beta Integration
+## PwEevee v2.0.0
 
-> ⚠️ **PRE-RELEASE — BUGS AND COMPATIBILITY ISSUES MAY OCCUR**
->
-> PwEevee v1.0.2 combines SpoTi.pw v0.23.0-beta with EeveeSpotify v6.6.8. The combined build has reported compatibility warnings, so do not assume that every integrated component is working correctly on every Spotify version.
+**PwEevee v2.0.0** is a major overhaul of the project centered around **EeveeSpotify 7.0.0**.
 
-**Base:** SpoTi.pw v0.23.0-beta  
-**Upstream commit:** `49e02e2`  
-**Integrated component:** EeveeSpotify v6.6.8  
-**PwEevee release:** v1.0.2  
-**Status:** Pre-release
+This release moves PwEevee significantly forward from the v1.x generation and introduces a much newer customization experience, including:
 
-PwEevee combines **SpoTi.pw** and **EeveeSpotify** into a unified Spotify modification experience, with custom settings organization and app icon support.
+-  Liquid Glass
+-  Redesigned settings
+-  Tab customization
+-  Appearance customization
+-  Player customization
+-  Custom lyrics
+-  App flag tools
+-  Privacy improvements
+-  Stability improvements
+-  Updated iOS 26/27 experience
+-  Major EeveeSpotify 7.0.0 updates
 
-### Downloads
+### Release information
 
-#### Combined PwEevee build
+| Component | Version |
+|---|---|
+| **PwEevee** | **v2.0.0** |
+| **EeveeSpotify** | **v7.0.0** |
+| **SpoTi.pw** | **v0.50.0** |
+| **Primary build** | EeveeSpotify 7.0.0 |
+| **Spotify base** | Spotify 9.1.78 |
 
-**`PwEevee.v1.0.2.ipa`**
+---
 
-This is the combined IPA intended to include both SpoTi.pw and EeveeSpotify. The current build has shown compatibility warnings; review the warnings in the app and use it as an experimental pre-release.
+#  Recommended Build
 
-#### SpoTi.pw-only build (without EeveeSpotify)
+## EeveeSpotify 7.0.0
 
-**`Spotpw v0.23.0 PRE.ipa`**
+### `EeveeSpotifyv7.0.0.ipa`
 
-A separate SpoTi.pw-only IPA for users who do not want the EeveeSpotify integration. This build does **not** include EeveeSpotify. Its compatibility notice identifies Spotify **v9.1.78** as the intended version; use a matching Spotify version and do not assume compatibility with v9.1.76.
+**154 MB**
 
-#### Individual tweak packages
-
-For users customizing their own IPA, the release also provides the individual tweak packages:
-
-- **SpoTi.pw v0.23.0-beta:** `com.spotipw_0.23.0-beta_iphoneos-arm.deb`
-- **EeveeSpotify v6.6.8:** `com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb`
-
-These packages are intended for use with an appropriate IPA customization or tweak-injection workflow. Bundling a package in the release does not guarantee compatibility with every IPA or Spotify version.
-
-### Known issues
-
-As a pre-release, PwEevee v1.0.2 may contain bugs, incomplete functionality, or unexpected behavior. Reported concerns include:
-
-- The combined build may report Spotify v9.1.76 as unsupported by SpoTi.pw.
-- EeveeSpotify may report itself as unsupported even when it is injected alongside SpoTi.pw.
-- App signing or installation problems may vary by signing method.
-- Compatibility may differ between Spotify versions.
-
-These are issues to investigate, not a claim that every possible failure has been reproduced. Please report bugs with steps to reproduce them and relevant logs.
-
-### Spotify compatibility
-
-- **Combined PwEevee IPA:** targets Spotify **v9.1.76**, but compatibility warnings have been observed and functionality is not guaranteed.
-- **SpoTi.pw-only IPA:** its compatibility notice identifies Spotify **v9.1.78** as the intended target.
-- Other Spotify versions are not guaranteed to work.
-
-### Feedback
-
-Please report reproducible bugs and compatibility problems through the repository's Issues page.
-
-**Important:** These are pre-release builds and are not a guarantee of production stability.
-
-## Why EeveeSpotify Is Integrated
-
-SpoTi.pw has historically provided Spotify modifications including functionality such as **Hide Ads** and **Spoof Premium**.
-
-Those capabilities are not expected to remain available as options in future SpoTi.pw releases.
-
-PwEevee therefore integrates EeveeSpotify into the SpoTi.pw-based build so that the project can continue providing a unified build containing functionality from both upstream projects.
-
-This does not make PwEevee the author of either project.
-
-Instead:
+**SHA-256**
 
 ```text
-SpoTi.pw
-    │
-    ├── upstream project
-    │
-    ▼
-PwEevee integration
-    │
-    ├── build
-    ├── dependency resolution
-    ├── integration
-    ├── validation
-    ├── packaging
-    └── distribution
-    │
-    ▼
-Unified Spotify iOS IPA
-    ▲
-    │
-EeveeSpotify
-    │
-    └── upstream project
+1fff261d89e085e11dbf234ae1205c82c42ee144f31b23b92f24631a6cfe688f
+```
+
+This is the **recommended PwEevee v2.0.0 build**.
+
+It focuses on the new EeveeSpotify 7.0.0 experience without requiring the optional SpoTi.pw integration.
+
+### Why this is recommended
+
+Recent SpoTi.pw releases contain functionality that may be restricted behind paid/premium features.
+
+PwEevee therefore recommends the standalone EeveeSpotify build for users who want the most complete free experience available through this project.
+
+The standalone build provides a large feature set without requiring the newer SpoTi.pw component.
+
+### Highlights
+
+-  Liquid Glass
+-  Redesigned settings
+-  Tab customization
+-  Appearance customization
+-  Player customization
+-  Custom lyrics
+-  App flag tools
+-  Privacy improvements
+-  Stability improvements
+-  Updated iOS 26/27 experience
+-  Major EeveeSpotify 7.0.0 updates
+
+> **Recommendation:** If you are unsure which IPA to use, use `EeveeSpotifyv7.0.0.ipa`.
+
+---
+
+# Combined Build
+
+## SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0
+
+### `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`
+
+**133 MB**
+
+**SHA-256**
+
+```text
+8f29fae6681e99a90f69f6e6f7165d87f192bc761388867eb08e0ad0e4d115d6
+```
+
+This is the optional **combined PwEevee build**.
+
+It contains:
+
+- **SpoTi.pw 0.50.0**
+- **EeveeSpotify 7.0.0**
+
+The combined build provides additional functionality from the SpoTi.pw integration alongside EeveeSpotify.
+
+However, it is **not the primary recommended build**.
+
+### Important
+
+The combined build does **not** contain every feature available in SpoTi.pw 0.50.0.
+
+Some SpoTi.pw functionality may also be subject to upstream availability or premium restrictions.
+
+For the best free experience, **use the standalone EeveeSpotify 7.0.0 build instead.**
+
+---
+
+# Base IPA
+
+## Spotify 9.1.78 — No Watch
+
+### `com.spotify.client_9.1.78_No_Watch.ipa`
+
+**169 MB**
+
+**SHA-256**
+
+```text
+b03c869e0811634d94f90fd66fa57d0d4ec0c839324381c5f89ee67e5a0b4db4
+```
+
+This is the **Spotify 9.1.78 base IPA** used as a foundation for compatible builds.
+
+The `No_Watch` variant is provided separately from the modified PwEevee builds.
+
+### This is NOT the recommended end-user build.
+
+It is primarily useful as a base for users who understand IPA customization, signing, and tweak injection workflows.
+
+---
+
+# Features
+
+PwEevee v2.0.0 is built around the updated EeveeSpotify 7.0.0 generation.
+
+##  Customization
+
+Customize the Spotify experience with features such as:
+
+- Appearance controls
+- Tab customization
+- Player customization
+- Settings customization
+- Alternate app icon support
+- Updated visual styling
+- Liquid Glass integration
+
+##  Lyrics
+
+EeveeSpotify 7.0.0 includes significant lyrics-related functionality, including:
+
+- Custom lyrics
+- Enhanced lyrics behavior
+- Word-synced lyrics support
+- Improved lyrics customization
+
+##  App Flags
+
+PwEevee v2.0.0 includes access to updated app flag functionality.
+
+This can expose additional configuration and experimental options provided by the underlying implementation.
+
+## Liquid Glass
+
+EeveeSpotify 7.0.0 introduces an updated Liquid Glass experience designed around newer iOS versions.
+
+PwEevee v2.0.0 carries this updated experience into the recommended build.
+
+---
+
+# Build Overview
+
+```text
+                    PwEevee v2.0.0
+                           │
+             ┌─────────────┴─────────────┐
+             │                           │
+             ▼                           ▼
+      EeveeSpotify 7.0.0          SpoTi.pw 0.50.0
+             │                           │
+             │                    Optional integration
+             │                           │
+             └─────────────┬─────────────┘
+                           │
+                           ▼
+                    PwEevee Packaging
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+              ▼                         ▼
+       Recommended IPA            Combined IPA
+       EeveeSpotify 7.0.0       SpoTi.pw + Eevee
+```
+
+---
+
+# Compatibility
+
+Compatibility depends on several factors:
+
+- Spotify version
+- iOS version
+- Device architecture
+- Signing method
+- Sideloading environment
+- Other installed modifications
+- Selected PwEevee build
+
+## EeveeSpotify 7.0.0
+
+EeveeSpotify 7.0.0 targets modern Spotify **9.1.x** releases and requires:
+
+**iOS 16.1 or newer**
+
+The exact supported Spotify version may vary as Spotify releases new builds.
+
+## Spotify 9.1.78
+
+The included base IPA is:
+
+**Spotify 9.1.78**
+
+This version is the primary base associated with the v2.0.0 release.
+
+> ⚠️ Compatibility with Spotify versions outside the intended range is not guaranteed.
+
+---
+
+# Installation
+
+PwEevee distributes IPA files.
+
+You will need a compatible iOS signing/sideloading method to install an IPA.
+
+The exact installation process depends on your environment and signing method.
+
+PwEevee does not require a specific sideloading application.
+
+Before installing:
+
+1. Verify your iOS version.
+2. Verify the Spotify version associated with the IPA.
+3. Make sure your signing method supports the application.
+4. Remove conflicting Spotify modifications if necessary.
+5. Keep a backup of anything important.
+
+> **Do not assume that multiple Spotify modifications can safely be installed together.**
+
+---
+
+# Troubleshooting
+
+If PwEevee does not work correctly, first verify:
+
+### 1. Spotify version
+
+Make sure the Spotify version matches the intended build.
+
+### 2. iOS version
+
+Check that your device meets the requirements of the underlying EeveeSpotify release.
+
+### 3. Signing
+
+Some installation failures are caused by the signing environment rather than PwEevee itself.
+
+### 4. Conflicting tweaks
+
+Other Spotify modifications may conflict with PwEevee.
+
+### 5. Combined build
+
+If you are using:
+
+`SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`
+
+try the recommended:
+
+`EeveeSpotifyv7.0.0.ipa`
+
+This helps determine whether the issue originates from the optional SpoTi.pw integration.
+
+---
+
+# Reporting Issues
+
+Found a bug?
+
+Please open an issue on GitHub and include as much information as possible.
+
+### Please provide:
+
+- PwEevee version
+- IPA filename
+- Spotify version
+- iOS version
+- Device model
+- Signing/sideloading method
+- Whether you used the standalone or combined build
+- Steps to reproduce the problem
+- Crash logs, if available
+- Screenshots or recordings when useful
+
+### Example
+
+```text
+PwEevee: v2.0.0
+Build: EeveeSpotifyv7.0.0.ipa
+Spotify: 9.1.78
+iOS: 26.x
+Device: iPhone ...
+Sideloading: ...
+Issue: ...
+Steps:
+1. ...
+2. ...
+3. ...
+```
+
+Good bug reports make problems dramatically easier to reproduce and fix.
+
+---
+
+# Repository
+
+The PwEevee repository contains the project's:
+
+- Integration code
+- Build configuration
+- Packaging configuration
+- Documentation
+- Website
+- Release tooling
+- Supporting project infrastructure
+
+PwEevee also incorporates work from upstream projects.
+
+Upstream source code remains subject to its original licenses and ownership.
+
+---
+
+# Building
+
+PwEevee is intended to be built using an appropriate iOS development environment.
+
+Depending on the component, building may require tools such as:
+
+- Theos
+- Xcode / Apple SDKs
+- iOS SDKs
+- Objective-C / Objective-C++ tooling
+- `ldid`
+- Debian packaging tools
+- IPA extraction/repackaging tools
+- Required upstream dependencies
+
+The build process can change when upstream projects change.
+
+PwEevee attempts to keep integration and packaging changes understandable and reproducible.
+
+---
+
+# Project Structure
+
+The project may contain several major areas:
+
+```text
+PwEevee/
+├── website/
+│   └── Project website assets
+│
+├── integration/
+│   └── PwEevee integration work
+│
+├── packaging/
+│   └── IPA/deb packaging
+│
+├── scripts/
+│   └── Build and validation tooling
+│
+└── README.md
+```
+
+> The exact repository structure may change as the project evolves.
+
+---
+
+# Credits
+
+PwEevee would not exist without the upstream projects and developers whose work provides the underlying functionality.
+
+## EeveeSpotify
+
+**EeveeSpotify** is the primary upstream project behind the recommended PwEevee v2.0.0 build.
+
+PwEevee does not claim ownership of EeveeSpotify or its source code.
+
+Please support the original EeveeSpotify project and its developers.
+
+## SpoTi.pw
+
+**SpoTi.pw** is integrated into the optional combined build.
+
+PwEevee does not claim ownership of SpoTi.pw or its source code.
+
+The combined build uses **SpoTi.pw 0.50.0**.
+
+## Spotify
+
+Spotify, the Spotify name, logos, trademarks, and related intellectual property belong to their respective owners.
+
+PwEevee is not affiliated with, sponsored by, or endorsed by Spotify.
+
+## Apple
+
+Apple, iOS, and related trademarks belong to Apple Inc.
+
+PwEevee is not affiliated with, sponsored by, or endorsed by Apple.
+
+---
+
+# AI Disclosure
+
+PwEevee may use AI-assisted development tools during development.
+
+AI assistance may be used for:
+
+- Code analysis
+- Debugging
+- Refactoring
+- Documentation
+- Testing assistance
+- Build troubleshooting
+- UI development
+- Release preparation
+- General development assistance
+
+AI assistance does not change the ownership or attribution of upstream software.
+
+All upstream projects remain credited to their respective developers and contributors.
+
+---
+
+# Legal
+
+PwEevee is an independent project.
+
+**PwEevee is not affiliated with Spotify or Apple.**
+
+The project does not claim ownership of third-party:
+
+- Source code
+- Trademarks
+- Logos
+- Assets
+- Libraries
+- Applications
+- Intellectual property
+
+Third-party software remains subject to its respective licenses and the rights of its original authors.
+
+Users are responsible for complying with applicable laws, software licenses, platform rules, and terms when using or distributing modified software.
+
+If an upstream project has specific attribution or redistribution requirements, those requirements apply to the relevant component.
+
+---
+
+# Downloads
+
+##  Recommended
+
+**EeveeSpotify 7.0.0**
+
+`EeveeSpotifyv7.0.0.ipa`
+
+**154 MB**
+
+SHA-256:
+
+```text
+1fff261d89e085e11dbf234ae1205c82c42ee144f31b23b92f24631a6cfe688f
+```
+
+---
+
+## Optional Combined
+
+**SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0**
+
+`SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`
+
+**133 MB**
+
+SHA-256:
+
+```text
+8f29fae6681e99a90f69f6e6f7165d87f192bc761388867eb08e0ad0e4d115d6
+```
+
+---
+
+## Base IPA
+
+**Spotify 9.1.78 — No Watch**
+
+`com.spotify.client_9.1.78_No_Watch.ipa`
+
+**169 MB**
+
+SHA-256:
+
+```text
+b03c869e0811634d94f90fd66fa57d0d4ec0c839324381c5f89ee67e5a0b4db4
+```
+
+---
+
+# What's New in v2.0.0
+
+### Major update
+
+PwEevee v2.0.0 moves the project to the **EeveeSpotify 7.0.0** generation.
+
+### New
+
+- EeveeSpotify 7.0.0
+- Liquid Glass
+- Spotify version spoofing
+- Updated settings
+- Tab customization
+- Appearance customization
+- Player customization
+- Custom lyrics
+- Karaoke improvements
+- App flag tools
+- Remote flag browser
+- Privacy improvements
+- Stability improvements
+- Updated iOS 26 experience
+
+### Changed
+
+- EeveeSpotify is now the recommended PwEevee build.
+- SpoTi.pw integration is now optional.
+- The project has moved away from relying on SpoTi.pw as the primary experience.
+- Updated Spotify 9.1.78 base IPA.
+- Major packaging and integration updates.
+
+---
+
+# PwEevee
+
+**v2.0.0**
+
+> **Built around EeveeSpotify 7.0.0.**
+>
+> **Liquid Glass. Spoofing. Customization. Lyrics. More.**
+
+ **Recommended:** `EeveeSpotifyv7.0.0.ipa`
+
+ **Optional:** `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`
