@@ -147,7 +147,11 @@ for my $p (@{ $model->{projects} }) {
         $err = 'The repository has no published releases.' unless @published;
 
         unless ($err) {
-            my @stable = grep { !$_->{prerelease} } @published;
+            # Some authors ship pre-releases without the API flag (observed:
+            # v2.1.0-pre counts prerelease: false on the wire). Treat the
+            # usual suffixes as prerelease so they never present as stable.
+            my ($tagname) = ($_);   # keep map bodies below self-contained
+            my @stable = grep { !$_->{prerelease} && ($_->{tag_name} // '') !~ /-(pre|beta|alpha|rc)([.-]|$)/i } @published;
             my @pool   = @stable ? @stable : @published;
 
             @pool      = sort { date_epoch($b->{published_at}) <=> date_epoch($a->{published_at}) } @pool;

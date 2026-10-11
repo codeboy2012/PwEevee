@@ -1515,6 +1515,15 @@ for my $f (@html) {
     my $prose = $body;
     $prose =~ s{<p class="mono[^"]*"[^>]*>.*?</p>}{}gs;
     $prose =~ s{<code\b[^>]*>.*?</code>}{}gs;
+    # Asset filenames come from upstream GitHub releases verbatim (a historical
+    # asset is literally named 'PwEvevee.ipa'); they are data we link, not prose
+    # we wrote, so the naming check must not fail on them.
+    $prose =~ s{<span class="asset__name"[^>]*>.*?</span>}{}gs;
+    $prose =~ s{aria-label="[^"]*"}{}gs;
+    $prose =~ s{data-search="[^"]*"}{}gs;
+    # release download URLs also embed the historical asset name; URLs are
+    # data, not prose
+    $prose =~ s{href="[^"]*"}{}gs;
 
     for my $bad (@BAD_NAMES) {
         my ($re, $label) = @$bad;

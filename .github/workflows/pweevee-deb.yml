@@ -1,0 +1,59 @@
+# Builds the unified PwEevee Debian package.
+#
+# The deb itself is written by PwEvevee/build-system/package/make-deb.pl (pure perl, no Apple
+# tooling), but the tweak inside it is Theos + iPhoneOS SDK, so this workflow runs on macos-15 —
+# the same requirement every other PwEevee/spoti.pw build has (see release.yml).
+#
+# Needs the SG_FLAG_LIST secret (the flag table is read out of Spotify's binary):
+#   gzip -9c tweak/Sources/Shared/Flags/SGFlagList.m | base64 | gh secret set SG_FLAG_LIST
+#
+# Output: PwEevee_0.22.0-alpha.2_iphoneos-arm.deb + .build-report.txt as workflow artifacts.
+name: PwEevee deb
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Spotipw/tweak/**'
+      - 'Spotipw/scripts/build-deb.sh'
+      - '.github/workflows/pweevee-deb.yml'
+
+jobs:
+  deb:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v5
+        with:
+          repository: theos/theos
+          path: theos
+          submodules: recursive
+
+      - name: Install tools
+        run: brew install make dpkg ldid
+
+      - name: Flag table
+        env:
+          SG_FLAG_LIST: ${{ secrets.SG_FLAG_LIST }}
+        run: |
+          [ -n "$SG_FLAG_LIST" ] || { echo "::error::the SG_FLAG_LIST secret is not set"; exit 1; }
+          echo "$SG_FLAG_LIST" | base64 -d | gunzip > Spotipw/tweak/Sources/Shared/Flags/SGFlagList.m
+
+      - name: Build the deb
+        run: |
+          cd Spotipw
+          PATH="/usr/local/opt/make/libexec/gnubin:$PATH" ./scripts/build-deb.sh
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: PwEevee-deb
+          path: |
+            Spotipw/dist/PwEevee_*.deb
+            Spotipw/dist/*.build-report.txt

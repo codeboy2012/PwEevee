@@ -1,0 +1,51 @@
+# Updates the delimited release block in README.md whenever a stable release
+# is published. Only code and prose outside the markers is ever touched.
+#
+# Requirements (one toggle in repo settings):
+#   Settings → Actions → General → Workflow permissions →
+#   "Read and write permissions" (or set at the job level via `permissions:`,
+#   which this workflow does; the token still needs write-content granted by
+#   the repo default unless restricted).
+permissions:
+  contents: write        # only repo content: README commit. Nothing else.
+
+name: README release block
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:      # manual recovery / re-run
+
+concurrency:
+  group: readme-release-block
+  cancel-in-progress: false
+
+jobs:
+  update-readme:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Update delimited release section in README.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          perl PwEvevee/build-system/release/update-readme.pl \
+            --repo "${GITHUB_REPOSITORY}"
+
+      - name: Commit the refreshed README (if it changed)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet README.md; then
+            echo "README unchanged — skipping commit"
+            exit 0
+          fi
+          git config user.name  "pweevee-readme-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs(readme): refresh release block from ${GITHUB_REPOSITORY} release ${GITHUB_REF_NAME}"
+          git push origin main

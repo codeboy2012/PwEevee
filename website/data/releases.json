@@ -1,5 +1,5 @@
 {
-   "generated_at": "2026-09-26T05:21:46Z",
+   "generated_at": "2026-10-11T05:32:41Z",
    "generator": "PwEvevee/build-system/release/update-releases.pl",
    "projects": [
       {
@@ -10,7 +10,247 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.22.0/com.spotipw_0.22.0-fixed-bundle-id.ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/com.spotify.client_9.1.88_und3fined.ipa",
+                     "kind": "ipa",
+                     "name": "com.spotify.client_9.1.88_und3fined.ipa",
+                     "sha256": "6f2864c0c9879409f374cacad0baf15a0daeab44c2d29daca6da11f58452b27b",
+                     "size": 156251402,
+                     "size_label": "149 MB",
+                     "updated_at": "2026-10-10T20:01:45Z"
+                  },
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/skywatch-spotify-9.1.88-watchfix.ipa",
+                     "kind": "ipa",
+                     "name": "skywatch-spotify-9.1.88-watchfix.ipa",
+                     "sha256": "e6f73ab9ca78e00a07c27996a4fada4aa5cc3f0b8bf0dea65604eaf8d28c5b6b",
+                     "size": 156262456,
+                     "size_label": "149 MB",
+                     "updated_at": "2026-10-10T20:02:03Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/com.eevee.spotify_7.0.0_iphoneos-arm64.1.deb",
+                     "kind": "deb",
+                     "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.1.deb",
+                     "sha256": "513a50b197aa558c34b02b87bff9f46e6cad3b2e462ee8622fc72fd939e83a9b",
+                     "size": 2535140,
+                     "size_label": "2.4 MB",
+                     "updated_at": "2026-10-10T20:01:46Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v2.1.0-pre",
+               "notes": "# PwEevee v2.1.0-pre\r\n### EeveeSpotify 7.0.0 Integration — Experimental Pre-release\r\n\r\n**Release channel:** Pre-release  \r\n**Project:** PwEevee  \r\n**Version:** v2.1.0-pre  \r\n**Integrated tweak:** EeveeSpotify 7.0.0  \r\n**Base Spotify version:** 9.1.88  \r\n**Build identifier:** `com.skywatch.spotify`  \r\n**Status:** Testing and compatibility verification pending\r\n\r\n---\r\n\r\n## Overview\r\n\r\nPwEevee v2.1.0-pre is an experimental release focused on integrating EeveeSpotify 7.0.0 into a customized Spotify iOS build, with additional work aimed at improving Apple Watch compatibility.\r\n\r\nThis release uses Spotify 9.1.88 as its base and includes the EeveeSpotify 7.0.0 tweak package. It introduces a custom bundle identifier to accommodate the signing limitations encountered during development.\r\n\r\nThis build is being published as a pre-release to support testing, identify compatibility issues, and gather useful feedback before a verified release is made available.\r\n\r\n**Important:** Successful installation, launch behavior, playback, EeveeSpotify functionality, free-account compatibility, and Apple Watch integration have not yet been fully verified. Do not assume these features are working until testing has been completed.\r\n\r\n## What's Included\r\n\r\n- Spotify 9.1.88 base IPA\r\n- EeveeSpotify 7.0.0 integration\r\n- Custom bundle identifier: `com.skywatch.spotify`\r\n- Experimental Apple Watch compatibility work\r\n- Updated build intended for further installation and compatibility testing\r\n\r\nThe final feature set and compatibility will be documented as testing progresses.\r\n\r\n---\r\n\r\n## ⚠️ Important Notice — Apple App ID Registration Limit\r\n\r\nDuring development, the available App ID registrations on the signing account were exhausted.\r\n\r\nThe developer's reported account limit and usage are:\r\n\r\n- **Reported App ID limit:** 10\r\n- **Previously used registrations:** 3\r\n- **Initially available registrations:** 7\r\n- **Current status:** Available registrations exhausted during development\r\n\r\nThe previously used registrations were associated with SideStore, Spotify, and LiveContainer.\r\n\r\nBecause Apple signing could not register the original Spotify bundle identifier, `com.spotify.client`, this build uses the alternative identifier:\r\n\r\n`com.skywatch.spotify`\r\n\r\n### What This Means\r\n\r\nChanging the bundle identifier can affect how iOS treats the app and how it interacts with other components.\r\n\r\n- The modified app may install separately from the official Spotify app rather than replace it.\r\n- Existing Spotify app data, settings, and Keychain items may not carry over.\r\n- Features that depend on Spotify's original bundle identifier may behave differently.\r\n- Apple Watch integration may require additional configuration and compatibility testing.\r\n- Installation and launch behavior remain unverified.\r\n\r\nThe custom bundle identifier is a development workaround for the current signing limitation. It does not guarantee compatibility or successful operation.\r\n\r\n---\r\n\r\n## Build Information\r\n\r\n| Component | Version / Details |\r\n|---|---|\r\n| PwEevee | v2.1.0-pre |\r\n| EeveeSpotify | v7.0.0 |\r\n| Base Spotify | v9.1.88 |\r\n| Bundle identifier | `com.skywatch.spotify` |\r\n| Release type | Experimental pre-release |\r\n\r\n---\r\n\r\n## Downloadable Assets\r\n\r\n### 1. Original Spotify IPA\r\n\r\n**Filename:** `com.spotify.client_9.1.88_und3fined.ipa`  \r\n**Size:** 149.01 MB\r\n\r\nThe original decrypted Spotify 9.1.88 IPA used as the base for this build. This asset is provided as the unmodified base according to the development notes.\r\n\r\n### 2. EeveeSpotify Tweak Package\r\n\r\n**Filename:** `com.eevee.spotify_7.0.0_iphoneos-arm64.deb`  \r\n**Size:** 2.42 MB\r\n\r\nThe EeveeSpotify 7.0.0 package used for the integration.\r\n\r\n### 3. PwEevee / SkyWatch Build\r\n\r\n**Filename:** `skywatch-spotify-9.1.88-watchfix.ipa`  \r\n**Size:** 149.02 MB\r\n\r\nThe resulting custom IPA, built from the Spotify 9.1.88 base with EeveeSpotify 7.0.0.\r\n\r\nThe `watchfix` filename reflects the intended Apple Watch compatibility work. It should not be interpreted as confirmation that Apple Watch functionality has been successfully verified.\r\n\r\n---\r\n\r\n## Testing Status\r\n\r\nAll testing items below remain pending verification.\r\n\r\n- [ ] IPA installation\r\n- [ ] Successful app launch\r\n- [ ] Playback functionality\r\n- [ ] EeveeSpotify settings and features\r\n- [ ] Apple Watch compatibility\r\n- [ ] Stability and crash testing\r\n- [ ] Compatibility with the custom bundle identifier\r\n\r\nNo feature should be considered verified until the corresponding test has been completed.\r\n\r\n---\r\n\r\n## Planned Verification\r\n\r\nThe next phase will focus on structured testing using Apple's development tools.\r\n\r\nPlanned testing includes:\r\n\r\n- **Xcode iOS Simulator:** Initial compatibility investigation using an iPhone 18 Pro simulator configuration, where supported.\r\n- **Apple Watch testing:** Investigation using an Apple Watch SE (3rd generation), 44 mm, with a compatible watchOS environment.\r\n- **Installation and launch:** Confirming whether the build installs, opens, and remains stable.\r\n- **Playback:** Checking basic playback and player behavior.\r\n- **EeveeSpotify integration:** Testing settings and available customization features.\r\n- **Free-account behavior:** Determining which features function with a free Spotify account.\r\n- **Apple Watch integration:** Checking pairing, playback controls, and communication between the iPhone and Watch.\r\n\r\nSimulator testing may not reproduce all behavior of a physical device. Features involving signing, provisioning, audio playback, Spotify services, or real Apple Watch connectivity may require additional testing on supported hardware.\r\n\r\nA verified release will be published when sufficient testing has been completed and the results support the compatibility claims made in its release notes.\r\n\r\n---\r\n\r\n## Compatibility\r\n\r\nCompatibility may vary depending on:\r\n\r\n- iOS version\r\n- Spotify base version\r\n- Device and operating system configuration\r\n- Signing and provisioning method\r\n- Bundle identifier and entitlements\r\n- Installed tweaks or other modifications\r\n- Apple Watch and watchOS configuration\r\n\r\nAt this stage, compatibility with specific devices and software versions should be considered unconfirmed.\r\n\r\n---\r\n\r\n## Reporting Issues\r\n\r\nBug reports are welcome and can help identify issues before the verified release.\r\n\r\nWhen submitting an issue, please include:\r\n\r\n1. Device model\r\n2. iOS version\r\n3. Spotify base version\r\n4. PwEevee release version\r\n5. Signing or sideloading method\r\n6. Whether the app installs and launches\r\n7. Steps to reproduce the issue\r\n8. Relevant crash logs, diagnostic output, or screenshots\r\n\r\nPlease avoid including personal information, account credentials, signing certificates, or provisioning profile secrets in public reports.\r\n\r\n---\r\n\r\n## Roadmap\r\n\r\nPlanned development priorities include:\r\n\r\n- Completing initial installation and launch testing\r\n- Investigating playback and feature compatibility\r\n- Evaluating free-account behavior\r\n- Testing Apple Watch compatibility\r\n- Addressing reproducible bugs\r\n- Improving compatibility documentation\r\n- Publishing a verified release when testing is sufficient\r\n- Continuing development and adding further improvements in future versions\r\n\r\nAdditional updates and builds may follow as development and testing progress.\r\n\r\n---\r\n\r\n## Disclaimer\r\n\r\nPwEevee is an unofficial community project and is not affiliated with, endorsed by, or supported by Spotify or Apple.\r\n\r\nThis is an experimental pre-release provided for testing and development purposes. Compatibility and functionality are not guaranteed.\r\n\r\nUse only software and accounts you are authorized to use, and review the relevant project licenses and service terms before distributing or installing modified builds.\r\n\r\n**Current recommendation:** Treat v2.1.0-pre as an unverified testing build. A verified release will be announced separately after the planned testing has been completed.",
+               "prerelease": false,
+               "published_at": "2026-10-10T20:11:58Z",
+               "published_epoch": 1791663118,
+               "published_label": "10 October 2026",
+               "summary": "Release channel: Pre-release Project: PwEevee Version: v2.1.0-pre Integrated tweak: EeveeSpotify 7.0.0 Base Spotify version: 9.1.88 Build identifier: com.skywatch.spotify Status: Testing…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v2.1.0-pre",
+               "version": "v2.1.0-pre",
+               "version_label": "v2.1.0-pre"
+            },
+            {
+               "asset_count": 3,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
+                     "kind": "ipa",
+                     "name": "com.spotify.client_9.1.78_No_Watch.ipa",
+                     "sha256": "b03c869e0811634d94f90fd66fa57d0d4ec0c839324381c5f89ee67e5a0b4db4",
+                     "size": 176784338,
+                     "size_label": "169 MB",
+                     "updated_at": "2026-10-06T01:48:48Z"
+                  },
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
+                     "kind": "ipa",
+                     "name": "EeveeSpotifyv7.0.0.ipa",
+                     "sha256": "1fff261d89e085e11dbf234ae1205c82c42ee144f31b23b92f24631a6cfe688f",
+                     "size": 139507438,
+                     "size_label": "133 MB",
+                     "updated_at": "2026-10-06T01:47:02Z"
+                  },
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
+                     "kind": "ipa",
+                     "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
+                     "sha256": "8f29fae6681e99a90f69f6e6f7165d87f192bc761388867eb08e0ad0e4d115d6",
+                     "size": 161793103,
+                     "size_label": "154 MB",
+                     "updated_at": "2026-10-06T01:46:57Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v2.0.0 | SpoTi.pw v50.0 Integration",
+               "notes": "# PwEevee v2.0.0\r\n\r\n> **Major Release — EeveeSpotify 7.0.0**\r\n\r\nPwEevee **v2.0.0** is a major update that brings the project to the new **EeveeSpotify 7.0.0** generation, with a large number of new features, a redesigned experience, Liquid Glass support, Spotify version spoofing, and many stability and UI improvements.\r\n\r\nThis release is a **major overhaul** from the previous v1.x builds.\r\n\r\n## ⭐ Recommended Build\r\n\r\n### `EeveeSpotifyv7.0.0.ipa`\r\n\r\n**154 MB — 161,793,103 bytes**\r\n\r\nThis is the **recommended PwEevee build**.\r\n\r\nIt provides the new EeveeSpotify 7.0.0 experience while avoiding the additional restrictions introduced by the newer SpoTi.pw releases.\r\n\r\n### Highlights\r\n\r\n-  EeveeSpotify **7.0.0**\r\n-  **Liquid Glass** support\r\n-  Redesigned settings experience\r\n-  Updated customization system\r\n-  Enhanced lyrics and karaoke features\r\n-  Custom lyrics improvements\r\n-  Tab customization\r\n-  Appearance customization\r\n-  Player customization\r\n-  App flag tool\r\n-  Privacy and stability improvements\r\n-  Updated iOS 26/27 experience\r\n-  Major underlying updates from previous versions\r\n\r\n**This is the build we recommend for most users.**\r\n\r\n---\r\n\r\n## Optional Combined Build\r\n\r\n### `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`\r\n\r\n**133 MB — 139,507,438 bytes**\r\n\r\nThis build combines:\r\n\r\n- **SpoTi.pw 0.50.0**\r\n- **EeveeSpotify 7.0.0**\r\n\r\nIt provides a larger portion of the functionality available through the SpoTi.pw + EeveeSpotify combination.\r\n\r\nHowever, **this build is optional and is not our primary recommendation**.\r\n\r\nThe newer SpoTi.pw releases have introduced paid/premium functionality, so users looking for the best free experience should generally use the **EeveeSpotify 7.0.0 build** instead.\r\n\r\n> **Important:** The combined build does **not** contain every feature from SpoTi.pw 0.50.0.\r\n\r\n---\r\n\r\n## Why EeveeSpotify Is Recommended\r\n\r\nPwEevee's goal is to provide a powerful Spotify customization experience without requiring users to rely on paid functionality.\r\n\r\nThe standalone EeveeSpotify 7.0.0 build already provides a substantial feature set, including:\r\n\r\n- Liquid Glass\r\n- Spotify version spoofing\r\n- Advanced appearance customization\r\n- Tab customization\r\n- Custom lyrics\r\n- Karaoke / lyrics enhancements\r\n- Player customization\r\n- Remote feature flags\r\n- Extensive settings customization\r\n- Privacy and stability improvements\r\n\r\nFor most users, **EeveeSpotify 7.0.0 is the build to install.**\r\n\r\n---\r\n\r\n## Version Information\r\n\r\n| Component | Version |\r\n|---|---|\r\n| **PwEevee** | **v2.0.0** |\r\n| **EeveeSpotify** | **v7.0.0** |\r\n| **SpoTi.pw** | **v0.50.0** *(combined build only)* |\r\n| **Primary build** | EeveeSpotify 7.0.0 |\r\n| **Combined build** | SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0 |\r\n\r\n---\r\n\r\n##  Important\r\n\r\nPwEevee v2.0.0 is a major release and has undergone significant changes from v1.x.\r\n\r\nCompatibility can vary depending on:\r\n\r\n- Spotify version\r\n- iOS version\r\n- Device\r\n- Sideloading method\r\n- Signing environment\r\n- Installed tweaks\r\n- Whether the combined build is being used\r\n\r\nIf you encounter an issue, please include:\r\n\r\n1. Your iOS version\r\n2. Your Spotify version\r\n3. Which PwEevee IPA you installed\r\n4. Your signing/sideloading method\r\n5. What happened\r\n6. Any relevant crash or installation logs\r\n\r\n---\r\n\r\n## Downloads\r\n\r\n###  Recommended\r\n\r\n**`EeveeSpotifyv7.0.0.ipa`**\r\n\r\nEeveeSpotify 7.0.0 standalone build with Liquid Glass, Spotify version spoofing, customization features, lyrics enhancements, and the updated EeveeSpotify experience.\r\n\r\n### Optional\r\n\r\n**`SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`**\r\n\r\nCombined SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0 build.\r\n\r\n> **Recommendation:** Start with the standalone EeveeSpotify 7.0.0 build.\r\n\r\n---\r\n\r\n## What's New in v2.0.0\r\n\r\nThis release represents a major evolution of PwEevee.\r\n\r\nThe project has moved from the older v1.x integration toward the significantly newer **EeveeSpotify 7.0.0** codebase, bringing a redesigned interface, Liquid Glass support, Spotify version spoofing, expanded customization, improved lyrics functionality, remote configuration capabilities, and numerous stability improvements.\r\n\r\n**v2.0.0 is the recommended starting point for new PwEevee users.**",
+               "prerelease": false,
+               "published_at": "2026-10-06T01:48:48Z",
+               "published_epoch": 1791251328,
+               "published_label": "6 October 2026",
+               "summary": "Major Release — EeveeSpotify 7.0.0 PwEevee v2.0.0 is a major update that brings the project to the new EeveeSpotify 7.0.0 generation, with a large number of new features, a redesigned…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v2.0.0",
+               "version": "v2.0.0",
+               "version_label": "v2.0.0"
+            },
+            {
+               "asset_count": 4,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/PwEevee.v1.0.2.ipa",
+                     "kind": "ipa",
+                     "name": "PwEevee.v1.0.2.ipa",
+                     "sha256": "476a94177ef87cd8d972f5847478a48e3695a37b34dbfc0d5a15f5940b78a252",
+                     "size": 139787217,
+                     "size_label": "133 MB",
+                     "updated_at": "2026-09-28T21:51:41Z"
+                  },
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/Spotpw.v0.23.0.PRE.ipa",
+                     "kind": "ipa",
+                     "name": "Spotpw.v0.23.0.PRE.ipa",
+                     "sha256": "785c54e42ea7c95d30fcb731f94bef43053d506bdb91f5663c19bd7c24661b47",
+                     "size": 171495099,
+                     "size_label": "164 MB",
+                     "updated_at": "2026-09-29T00:00:36Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb",
+                     "kind": "deb",
+                     "name": "com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb",
+                     "sha256": "e04ef60a509a47bb0a74701202a4840a941f80f32ffb38e96c9e8583bd93fa83",
+                     "size": 1987342,
+                     "size_label": "1.9 MB",
+                     "updated_at": "2026-09-28T21:52:16Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/com.spotipw_0.23.0-beta_iphoneos-arm.deb",
+                     "kind": "deb",
+                     "name": "com.spotipw_0.23.0-beta_iphoneos-arm.deb",
+                     "sha256": "97b92c30d7ef4a30edc93fb3a7d9c1eb9c6405a7d258d9391edcf6731943e905",
+                     "size": 669754,
+                     "size_label": "654 KB",
+                     "updated_at": "2026-09-28T21:51:41Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v1.0.2 | SpoTi.pw v0.23.0-beta Integration",
+               "notes": "# CRITICAL ERROR NOTICE | READ BEFORE DOWNLOADING\r\n\r\n> **PwEevee v1.0.2 has known compatibility issues. This release is experimental and is not considered stable.**\r\n\r\nThe combined IPA currently displays two critical warnings:\r\n\r\n- **Spotify compatibility:** SpoTi.pw reports that Spotify v9.1.76 is unsupported because the included mod identifies v9.1.78 as its intended version. BUT it does still work\r\n- **EeveeSpotify compatibility:** EeveeSpotify reports that it is unsupported  BUT it does still work\r\n\r\n### What should you download?\r\n\r\n- **`PwEevee.v1.0.2.ipa`** — The combined build containing SpoTi.pw and EeveeSpotify. It is affected by the reported compatibility warnings.\r\n- **`Spotpw v0.23.0 PRE.ipa`** — A separate SpoTi.pw-only build without EeveeSpotify. Its stated target is Spotify v9.1.78; it is not a fix for the combined build.\r\n- **Individual `.deb` packages** — Provided for users who want to customize their own IPA. Compatibility is not guaranteed.\r\n\r\n**Recommendation:** If you need a verified, working build, wait for a corrected release. Do not assume that the combined IPA or individual tweak packages will work correctly with your Spotify version.\r\n\r\n---\r\n\r\n## PwEevee v1.0.2 — SpoTi.pw v0.23.0-beta Integration\r\n\r\nPwEevee v1.0.2 is a pre-release combining the SpoTi.pw v0.23.0-beta codebase with EeveeSpotify v6.6.8 and PwEevee's unified integration.\r\n\r\nThis release advances the project to the newer SpoTi.pw baseline while continuing to bring its features together with PwEevee's unified settings experience.\r\n\r\n## Components\r\n\r\n- **SpoTi.pw:** v0.23.0-beta\r\n- **Upstream commit:** `49e02e2`\r\n- **EeveeSpotify:** v6.6.8\r\n- **Target Spotify version:** v9.1.76\r\n- **PwEevee version:** v1.0.2\r\n\r\n## Highlights\r\n\r\n- Updated SpoTi.pw upstream baseline.\r\n- Unified EeveeSpotify settings integration.\r\n- PwEevee custom settings organization.\r\n- Custom app icon support.\r\n- Continued integration of SpoTi.pw and EeveeSpotify features.\r\n\r\n## Downloads\r\n\r\n### All-in-One IPA\r\n\r\n**`PwEevee.v1.0.2.ipa`** (133.31 MB)\r\n\r\nThe combined PwEevee IPA containing both SpoTi.pw and EeveeSpotify. See the critical compatibility notice above before downloading.\r\n\r\n### SpoTi.pw-Only IPA\r\n\r\n**`Spotpw v0.23.0 PRE.ipa`**\r\n\r\nA separate build without EeveeSpotify. Its stated target is Spotify v9.1.78. This is an alternative build, not a confirmed fix for the combined IPA.\r\n\r\n### Individual Tweak Packages\r\n\r\nWant to use your own IPA instead of the provided PwEevee IPA? The following `.deb` packages are available separately:\r\n\r\n- **SpoTi.pw v0.23.0-beta:** `com.spotipw_0.23.0-beta_iphoneos-arm.deb` (0.64 MB)\r\n- **EeveeSpotify v6.6.8:** `com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb` (1.90 MB)\r\n\r\nThese packages are intended for users who want to work with their own IPA using an appropriate tweak injection or customization workflow. Their presence here does not guarantee compatibility with every IPA or Spotify version.\r\n\r\n## Known Issues\r\n\r\nThis is a pre-release, and bugs or unexpected behavior may occur.\r\n\r\nKnown concerns include:\r\n\r\n- SpoTi.pw reports Spotify v9.1.76 as unsupported in the combined build.\r\n- EeveeSpotify reports that it is unsupported despite being included in the combined build.\r\n- Individual features may behave unexpectedly.\r\n- Integrated settings or features may conflict.\r\n- Installation, signing, or compatibility problems may occur.\r\n- Behavior may differ across Spotify versions.\r\n\r\nPlease report reproducible bugs with steps to reproduce them and relevant logs.\r\n\r\n## Compatibility\r\n\r\n- **Combined PwEevee build:** Intended target Spotify v9.1.76, but compatibility warnings have been observed.\r\n- **SpoTi.pw-only build:** Its compatibility notice identifies Spotify v9.1.78 as the intended target.\r\n- Other Spotify versions, including v9.1.84, are not guaranteed to work.\r\n\r\n## Feedback\r\n\r\nPlease report reproducible bugs and compatibility problems through the repository's Issues page.\r\n\r\n**Important:** This is a pre-release and is not a guarantee of production stability. Compatibility issues must be investigated before the combined build can be considered stable.",
+               "prerelease": false,
+               "published_at": "2026-09-28T21:53:40Z",
+               "published_epoch": 1790632420,
+               "published_label": "28 September 2026",
+               "summary": "PwEevee v1.0.2 has known compatibility issues. This release is experimental and is not considered stable. The combined IPA currently displays two critical warnings: Spotify compatibility:…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v1.0.2",
+               "version": "v1.0.2",
+               "version_label": "v1.0.2"
+            },
+            {
+               "asset_count": 3,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/PwEeveeBeta2.ipa",
+                     "kind": "ipa",
+                     "name": "PwEeveeBeta2.ipa",
+                     "sha256": "10529b3b37f75929ebe2385fd0e92e086b175303968d23b539a06388b2ef6925",
+                     "size": 139511638,
+                     "size_label": "133 MB",
+                     "updated_at": "2026-09-27T02:39:09Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/com.eevee.spotify_6.6.8.deb",
+                     "kind": "deb",
+                     "name": "com.eevee.spotify_6.6.8.deb",
+                     "sha256": "e04ef60a509a47bb0a74701202a4840a941f80f32ffb38e96c9e8583bd93fa83",
+                     "size": 1987342,
+                     "size_label": "1.9 MB",
+                     "updated_at": "2026-09-27T02:40:40Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/com.spotipw_0.22.0.deb",
+                     "kind": "deb",
+                     "name": "com.spotipw_0.22.0.deb",
+                     "sha256": "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
+                     "size": 486568,
+                     "size_label": "475 KB",
+                     "updated_at": "2026-09-27T02:40:40Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v1.0.1 | v0.22.0-alpha.2",
+               "notes": "# PwEevee v0.22.0-alpha.2 — Read Disc\r\n\r\n>  **KNOWN ISSUES**\r\n>\r\n> This release is working and has been tested, but there are still some bugs and rough edges we're working out.\r\n\r\nPwEevee v0.22.0-alpha.2 is the second alpha build of PwEevee, combining **SpoTi.pw v0.22.0** with **EeveeSpotify v6.6.8**.\r\n\r\nThis build includes fixes and improvements over the previous v0.22.0-alpha release, including working custom app icon support.\r\n\r\n## What's New\r\n\r\n###  Custom App Icons\r\n\r\nCustom app icons are now working.\r\n\r\nEeveeSpotify's custom app icon functionality has been successfully integrated into PwEevee and tested with **Spotify v9.1.76**.\r\n\r\nAvailable icons can be selected through the EeveeSpotify settings.\r\n\r\n### Unified PwEevee Build\r\n\r\nThis release combines:\r\n\r\n- **SpoTi.pw v0.22.0** as the base\r\n- **EeveeSpotify v6.6.8** integrated into the build\r\n- Unified IPA packaging\r\n- Build and validation\r\n- Decrypted Spotify IPA workflow\r\n- Release and distribution workflow\r\n\r\n## Why EeveeSpotify Is Included\r\n\r\nSpoTi.pw has provided Spotify modifications such as **Hide Ads** and **Spoof Premium**.\r\n\r\nThose capabilities are no longer expected to remain available as options in future SpoTi.pw releases. Rather than losing those capabilities entirely, PwEevee brings EeveeSpotify into the SpoTi.pw-based build.\r\n\r\nPwEevee is not a replacement for either upstream project. It combines the projects into a unified build while keeping the upstream projects and their contributors properly credited.\r\n\r\n##  Known Issues\r\n\r\nThe IPA has been **tested and is working**, but there are still some bugs and unfinished areas we're working out.\r\n\r\nYou may encounter:\r\n\r\n- Bugs in certain features\r\n- Unexpected behavior\r\n- Installation or signing issues depending on your setup\r\n- Compatibility issues with different Spotify versions\r\n- Integration issues between components\r\n- Other bugs that have not yet been discovered\r\n\r\n### Spotify Version Compatibility\r\n\r\n**Tested:**\r\n- Spotify **v9.1.76**\r\n\r\n**Newer version:**\r\n- Spotify **v9.1.84** is newer than the version currently tested with this build and has not been fully tested yet.\r\n\r\nFor the most reliable experience, use the Spotify version this release was tested against.\r\n\r\n## Downloads\r\n\r\n### Main IPA\r\n\r\n**`PwEeveeBeta2.ipa`** — 133.05 MB\r\n\r\nThis is the primary PwEevee build.\r\n\r\n### Supporting Packages\r\n\r\n**`com.eevee.spotify_6.6.8.deb`** — 1.90 MB\r\n\r\nEeveeSpotify v6.6.8 package integrated into this PwEevee release.\r\n\r\n**`com.spotipw_0.22.0.deb`** — 0.46 MB\r\n\r\nSpoTi.pw v0.22.0 package used as part of the build.\r\n\r\n## Upstream Projects\r\n\r\n### SpoTi.pw v0.22.0\r\n\r\nhttps://github.com/skopevoj/spoti.pw/releases/tag/v0.22.0\r\n\r\n### EeveeSpotify v6.6.8\r\n\r\nhttps://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/tag/v6.6.8\r\n\r\nPlease refer to the upstream projects for their respective source, development history, and contributors.\r\n\r\n## Reporting Issues\r\n\r\nIf you find a problem, please report it to the PwEevee repository.\r\n\r\nWhen reporting an issue, include:\r\n\r\n- What happened\r\n- What you expected to happen\r\n- Your iOS version\r\n- Your Spotify version\r\n- Your signing/installation method\r\n- Relevant logs or screenshots\r\n- Steps to reproduce the issue\r\n\r\nPlease search existing issues before opening a duplicate.\r\n\r\n---\r\n\r\n**Base:** SpoTi.pw v0.22.0  \r\n**Integrated component:** EeveeSpotify v6.6.8  \r\n**PwEevee release:** v0.22.0-alpha.2  \r\n**Codename:** Read Disc  \r\n**Status:**  Working / Known Issues  \r\n**Tested Spotify version:** 9.1.76  \r\n**Newer Spotify version:** 9.1.84 — not fully tested",
+               "prerelease": false,
+               "published_at": "2026-09-27T02:40:40Z",
+               "published_epoch": 1790476840,
+               "published_label": "27 September 2026",
+               "summary": "KNOWN ISSUES This release is working and has been tested, but there are still some bugs and rough edges we're working out. PwEevee v0.22.0-alpha.2 is the second alpha build of PwEevee,…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v0.22.0-alpha.2",
+               "version": "v0.22.0-alpha.2",
+               "version_label": "v0.22.0-alpha.2"
+            },
+            {
+               "asset_count": 3,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/PwEvevee.ipa",
+                     "kind": "ipa",
+                     "name": "PwEvevee.ipa",
+                     "sha256": "a8d39f299d22db2814f3708ed7277ffb150255e3650f084c69a25ba55cb0cbfc",
+                     "size": 154100896,
+                     "size_label": "147 MB",
+                     "updated_at": "2026-09-26T05:19:06Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/com.spotipw_0.22.0.deb",
+                     "kind": "deb",
+                     "name": "com.spotipw_0.22.0.deb",
+                     "sha256": "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
+                     "size": 486568,
+                     "size_label": "475 KB",
+                     "updated_at": "2026-09-26T05:19:06Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/EeveeSpotify-6.6.8.deb",
+                     "kind": "deb",
+                     "name": "EeveeSpotify-6.6.8.deb",
+                     "sha256": "e2d7859a0740bb095fedb66f78962cc2a63cf467ff5d0eda8437cf53947e3c14",
+                     "size": 5933942,
+                     "size_label": "5.7 MB",
+                     "updated_at": "2026-09-26T05:19:06Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v1.0.0 | v0.22.0-alpha",
+               "notes": "# PwEevee v0.22.0-alpha — Read Disc\r\n\r\n> ⚠️ **ALPHA RELEASE — KNOWN ISSUES**\r\n\r\nThis release is experimental and contains known bugs. It is **not production-ready**.\r\n\r\nPwEevee v0.22.0-alpha is the first unified PwEevee release, combining **SpoTi.pw v0.22.0** with **EeveeSpotify v6.6.8**.\r\n\r\n## Why EeveeSpotify is included\r\n\r\nSpoTi.pw has provided Spotify modifications such as **Hide Ads** and **Spoof Premium**.\r\n\r\nThose capabilities are **no longer expected to remain available as options in future SpoTi.pw releases**. Rather than losing those capabilities entirely, PwEevee brings EeveeSpotify into the SpoTi.pw-based build.\r\n\r\nThis allows PwEevee to continue developing as a unified Spotify iOS project while keeping the functionality provided by the integrated upstream components clearly separated and attributed.\r\n\r\nPwEevee is not a replacement for either upstream project. It combines them into a unified build and maintains the integration, packaging, validation, and distribution workflow.\r\n\r\n## What's in this release\r\n\r\n### SpoTi.pw v0.22.0\r\n\r\nSpoTi.pw provides the base Spotify modification framework for this build.\r\n\r\n**Upstream release:**  \r\nSpoTi.pw v0.22.0\r\n\r\n### EeveeSpotify v6.6.8\r\n\r\nEeveeSpotify is integrated into the PwEevee build to provide functionality that is no longer expected to be offered through future SpoTi.pw releases, including functionality historically associated with **Hide Ads** and **Spoof Premium**.\r\n\r\n**Upstream release:**  \r\nEeveeSpotify v6.6.8\r\n\r\n### PwEevee integration\r\n\r\nPwEevee handles the work of bringing these components together into one build, including:\r\n\r\n- Unified integration\r\n- Packaging\r\n- Build and validation\r\n- IPA creation\r\n- Decrypted Spotify IPA workflow\r\n- Release and distribution workflow\r\n\r\n## ⚠️ Alpha / Known Issues\r\n\r\nThis is the first unified PwEevee build, so issues are expected.\r\n\r\nThe IPA has been **tested and is working**, but there are still known bugs and unfinished features.\r\n\r\nKnown issues may include:\r\n\r\n- Bugs in certain features\r\n- Unexpected behavior\r\n- Installation or signing issues\r\n- Integration issues between components\r\n- Other bugs that have not yet been discovered\r\n- **Custom app icons are not currently working**\r\n\r\nCustom app icon support is planned for investigation in a future release.\r\n\r\n**Do not treat this build as production-ready.**\r\n\r\nIf you use this IPA and find a problem, please report it to the PwEevee repository.\r\n\r\nWhen reporting an issue, include as much useful information as possible:\r\n\r\n- What happened\r\n- What you expected to happen\r\n- Your iOS version\r\n- Your Spotify version\r\n- Your signing/installation method\r\n- Relevant logs or screenshots\r\n- Steps to reproduce the issue\r\n\r\nPlease search existing issues before opening a duplicate.\r\n\r\n## Downloads\r\n\r\n### Main IPA\r\n\r\n**`PwEvevee.ipa`** — 146.96 MB\r\n\r\nThis is the primary PwEevee build and the file most users should download.\r\n\r\n### Supporting packages\r\n\r\n**`EeveeSpotify-6.6.8.deb`** — 5.66 MB\r\n\r\nUpstream EeveeSpotify package integrated into this PwEevee release.\r\n\r\n**`com.spotipw_0.22.0.deb`** — 0.46 MB\r\n\r\nSpoTi.pw v0.22.0 package used as part of the build.\r\n\r\n## Upstream Projects\r\n\r\nPwEevee builds upon the work of the upstream projects and their contributors.\r\n\r\n- **SpoTi.pw v0.22.0**  \r\n  https://github.com/skopevoj/spoti.pw/releases/tag/v0.22.0\r\n\r\n- **EeveeSpotify v6.6.8**  \r\n  https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/tag/v6.6.8\r\n\r\nPlease refer to the upstream projects for their respective source, development history, and contributors.\r\n\r\n---\r\n\r\n**Base:** SpoTi.pw v0.22.0  \r\n**Integrated component:** EeveeSpotify v6.6.8  \r\n**PwEevee release:** v0.22.0-alpha  \r\n**Codename:** Read Disc  \r\n**Status:** ⚠️ Alpha / Known Issues  \r\n**Production ready:** No",
+               "prerelease": false,
+               "published_at": "2026-09-26T05:41:00Z",
+               "published_epoch": 1790401260,
+               "published_label": "26 September 2026",
+               "summary": "⚠️ ALPHA RELEASE — KNOWN ISSUES This release is experimental and contains known bugs. It is not production-ready. PwEevee v0.22.0-alpha is the first unified PwEevee release, combining…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v0.22.0-alpha",
+               "version": "v0.22.0-alpha",
+               "version_label": "v0.22.0-alpha"
+            },
+            {
+               "asset_count": 3,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/com.spotipw_0.22.0-fixed-bundle-id.ipa",
                      "kind": "ipa",
                      "name": "com.spotipw_0.22.0-fixed-bundle-id.ipa",
                      "sha256": "57e63e77561362add315641eb102dd8d5ce8f090882c8e39e65af6e67d6b32d7",
@@ -20,7 +260,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.22.0/Spotify-Decrypted.ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/Spotify-Decrypted.ipa",
                      "kind": "ipa",
                      "name": "Spotify-Decrypted.ipa",
                      "sha256": "954124af0640c1a733ef0cad503f1edf4254feaa7ff490af595d6a92ac36e50a",
@@ -30,7 +270,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
-                     "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.22.0/com.spotipw_0.22.0_iphoneos-arm.deb",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/com.spotipw_0.22.0_iphoneos-arm.deb",
                      "kind": "deb",
                      "name": "com.spotipw_0.22.0_iphoneos-arm.deb",
                      "sha256": "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
@@ -47,7 +287,7 @@
                "published_epoch": 1790200843,
                "published_label": "23 September 2026",
                "summary": "Released September 23, 2026 This release contains the spoti.pw v0.22.0 IPA builds based on the upstream project. ⚠️ Important: v0.21.1 is the last spoti.pw release to include Spoof Premium…",
-               "url": "https://github.com/codeboy2012/spoti.pw-builds/releases/tag/v0.22.0",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v0.22.0",
                "version": "v0.22.0",
                "version_label": "v0.22.0"
             },
@@ -56,7 +296,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.21.1/com.spotipw_0.21.1.ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/com.spotipw_0.21.1.ipa",
                      "kind": "ipa",
                      "name": "com.spotipw_0.21.1.ipa",
                      "sha256": "a6efc2dc0e571595042d1ce25f95c984896b78d271c5d0888ae590ff82295cec",
@@ -66,7 +306,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.21.1/Spotify-Decrypted.ipa",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/Spotify-Decrypted.ipa",
                      "kind": "ipa",
                      "name": "Spotify-Decrypted.ipa",
                      "sha256": "954124af0640c1a733ef0cad503f1edf4254feaa7ff490af595d6a92ac36e50a",
@@ -76,7 +316,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
-                     "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.21.1/spoti.pw-v0.21.1.deb",
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/spoti.pw-v0.21.1.deb",
                      "kind": "deb",
                      "name": "spoti.pw-v0.21.1.deb",
                      "sha256": "63492c5d57f4b011c3d4a2542dab6910088b4a5c5904b1f5339f9c4b94fe0955",
@@ -93,7 +333,7 @@
                "published_epoch": 1790119234,
                "published_label": "22 September 2026",
                "summary": "Released September 21, 2026 This release contains the spoti.pw v0.21.1 IPA builds based on the upstream project. ⚠️ Important: v0.21.1 is the last spoti.pw release to include Spoof Premium…",
-               "url": "https://github.com/codeboy2012/spoti.pw-builds/releases/tag/v0.21.1",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v0.21.1",
                "version": "v0.21.1",
                "version_label": "v0.21.1"
             }
@@ -104,46 +344,46 @@
             "assets": [
                {
                   "content_type": "application/x-itunes-ipa",
-                  "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.22.0/com.spotipw_0.22.0-fixed-bundle-id.ipa",
+                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
                   "kind": "ipa",
-                  "name": "com.spotipw_0.22.0-fixed-bundle-id.ipa",
-                  "sha256": "57e63e77561362add315641eb102dd8d5ce8f090882c8e39e65af6e67d6b32d7",
-                  "size": 149045868,
-                  "size_label": "142 MB",
-                  "updated_at": "2026-09-24T10:48:57Z"
+                  "name": "com.spotify.client_9.1.78_No_Watch.ipa",
+                  "sha256": "b03c869e0811634d94f90fd66fa57d0d4ec0c839324381c5f89ee67e5a0b4db4",
+                  "size": 176784338,
+                  "size_label": "169 MB",
+                  "updated_at": "2026-10-06T01:48:48Z"
                },
                {
                   "content_type": "application/x-itunes-ipa",
-                  "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.22.0/Spotify-Decrypted.ipa",
+                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
                   "kind": "ipa",
-                  "name": "Spotify-Decrypted.ipa",
-                  "sha256": "954124af0640c1a733ef0cad503f1edf4254feaa7ff490af595d6a92ac36e50a",
-                  "size": 161335553,
-                  "size_label": "154 MB",
-                  "updated_at": "2026-09-23T21:59:38Z"
+                  "name": "EeveeSpotifyv7.0.0.ipa",
+                  "sha256": "1fff261d89e085e11dbf234ae1205c82c42ee144f31b23b92f24631a6cfe688f",
+                  "size": 139507438,
+                  "size_label": "133 MB",
+                  "updated_at": "2026-10-06T01:47:02Z"
                },
                {
-                  "content_type": "application/octet-stream",
-                  "download_url": "https://github.com/codeboy2012/spoti.pw-builds/releases/download/v0.22.0/com.spotipw_0.22.0_iphoneos-arm.deb",
-                  "kind": "deb",
-                  "name": "com.spotipw_0.22.0_iphoneos-arm.deb",
-                  "sha256": "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
-                  "size": 486568,
-                  "size_label": "475 KB",
-                  "updated_at": "2026-09-23T21:59:33Z"
+                  "content_type": "application/x-itunes-ipa",
+                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
+                  "kind": "ipa",
+                  "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
+                  "sha256": "8f29fae6681e99a90f69f6e6f7165d87f192bc761388867eb08e0ad0e4d115d6",
+                  "size": 161793103,
+                  "size_label": "154 MB",
+                  "updated_at": "2026-10-06T01:46:57Z"
                }
             ],
             "author": "codeboy2012",
-            "name": "v0.22.0",
-            "notes": "# spoti.pw v0.22.0\r\n\r\n**Released September 23, 2026**\r\n\r\nThis release contains the **spoti.pw v0.22.0 IPA builds** based on the upstream project.\r\n\r\n> ⚠️ **Important:** v0.21.1 is the **last spoti.pw release to include Spoof Premium and Hide Ads**. These features are not available in newer releases, so users who specifically want them should use v0.21.1.\r\n\r\n> Important: spoti.pw is a UI tweak for Spotify on iOS. Sign the resulting build with your own certificate.\r\n\r\n## Downloads\r\n\r\n### Spotify Tweaked\r\n\r\n**spoti.pw-v0.22.0.ipa**\r\n\r\nBuilt using the updated spoti.pw v0.22.0 changes.\r\n\r\n---\r\n\r\n### Spotify Decrypted\r\n\r\n**Spotify-Decrypted.ipa**\r\n\r\nThis is the same decrypted Spotify IPA carried forward from the previous v0.21.1 release.\r\n\r\n---\r\n\r\n### Spotify Tweaks `.deb`\r\n\r\n**com.spotipw_0.22.0_iphoneos-arm.deb**\r\n\r\n**SHA-256:** `b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547`\r\n\r\n## What's Included\r\n\r\nThis build is based on **spoti.pw v0.22.0**, which includes:\r\n\r\n* Apple Music-style animated album artwork on the lock screen when a track has no Canvas\r\n* Canvas playback as animated lock-screen artwork\r\n* Audio effects running on the mod's own engine; libjamesdsp has been removed\r\n* Glass search bar for finding tracks in playlists when pulling down\r\n* Genius lyric line meanings with artist-owned lines shown differently\r\n* Mod > Licenses now shows the mod license and full third-party licenses\r\n* Follow now uses the same glyph/checkmark behavior as Add to Library\r\n* Fixes for long settings notes being truncated\r\n* Fixes for Add to Library and Follow state behavior\r\n* Player menu and lyrics loading fixes\r\n* Playlist cover sizing and fade fixes while pulling down\r\n* Fix for the redesigned player being able to scroll upward\r\n\r\nFor the complete upstream changelog, see the [[v0.22.0 upstream release](https://github.com/skopevoj/spoti.pw/releases/tag/v0.22.0)](https://github.com/skopevoj/spoti.pw/releases/tag/v0.22.0).\r\n\r\n## Installation\r\n\r\nThe IPA is **unsigned** and must be signed before installation.\r\n\r\nCompatible signing methods include:\r\n\r\n* **SideStore**\r\n* **AltStore**\r\n* **Feather**\r\n* **Sideloadly**\r\n* Other compatible IPA signing tools\r\n\r\nYour signing certificate and provisioning profile are your responsibility.\r\n\r\n## Important\r\n\r\n* This project is **not affiliated with Spotify**.\r\n* Installation and signing are performed at your own risk.\r\n\r\n## Credits\r\n\r\nBuilt from the upstream [[skopevoj/spoti.pw](https://github.com/skopevoj/spoti.pw)](https://github.com/skopevoj/spoti.pw) project.\r\n\r\nAll original development and source-code changes belong to the upstream project and its contributors.\r\n\r\nThis repository primarily provides **built IPA releases**.\r\n\r\n---\r\n\r\n### Support the upstream project\r\n\r\nIf you enjoy spoti.pw, consider supporting the developers through Ko-fi.\r\n\r\n**Upstream:** [[github.com/skopevoj/spoti.pw](https://github.com/skopevoj/spoti.pw)](https://github.com/skopevoj/spoti.pw)\r\n\r\n**License:** GPL-3.0",
+            "name": "PwEevee v2.0.0 | SpoTi.pw v50.0 Integration",
+            "notes": "# PwEevee v2.0.0\r\n\r\n> **Major Release — EeveeSpotify 7.0.0**\r\n\r\nPwEevee **v2.0.0** is a major update that brings the project to the new **EeveeSpotify 7.0.0** generation, with a large number of new features, a redesigned experience, Liquid Glass support, Spotify version spoofing, and many stability and UI improvements.\r\n\r\nThis release is a **major overhaul** from the previous v1.x builds.\r\n\r\n## ⭐ Recommended Build\r\n\r\n### `EeveeSpotifyv7.0.0.ipa`\r\n\r\n**154 MB — 161,793,103 bytes**\r\n\r\nThis is the **recommended PwEevee build**.\r\n\r\nIt provides the new EeveeSpotify 7.0.0 experience while avoiding the additional restrictions introduced by the newer SpoTi.pw releases.\r\n\r\n### Highlights\r\n\r\n-  EeveeSpotify **7.0.0**\r\n-  **Liquid Glass** support\r\n-  Redesigned settings experience\r\n-  Updated customization system\r\n-  Enhanced lyrics and karaoke features\r\n-  Custom lyrics improvements\r\n-  Tab customization\r\n-  Appearance customization\r\n-  Player customization\r\n-  App flag tool\r\n-  Privacy and stability improvements\r\n-  Updated iOS 26/27 experience\r\n-  Major underlying updates from previous versions\r\n\r\n**This is the build we recommend for most users.**\r\n\r\n---\r\n\r\n## Optional Combined Build\r\n\r\n### `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`\r\n\r\n**133 MB — 139,507,438 bytes**\r\n\r\nThis build combines:\r\n\r\n- **SpoTi.pw 0.50.0**\r\n- **EeveeSpotify 7.0.0**\r\n\r\nIt provides a larger portion of the functionality available through the SpoTi.pw + EeveeSpotify combination.\r\n\r\nHowever, **this build is optional and is not our primary recommendation**.\r\n\r\nThe newer SpoTi.pw releases have introduced paid/premium functionality, so users looking for the best free experience should generally use the **EeveeSpotify 7.0.0 build** instead.\r\n\r\n> **Important:** The combined build does **not** contain every feature from SpoTi.pw 0.50.0.\r\n\r\n---\r\n\r\n## Why EeveeSpotify Is Recommended\r\n\r\nPwEevee's goal is to provide a powerful Spotify customization experience without requiring users to rely on paid functionality.\r\n\r\nThe standalone EeveeSpotify 7.0.0 build already provides a substantial feature set, including:\r\n\r\n- Liquid Glass\r\n- Spotify version spoofing\r\n- Advanced appearance customization\r\n- Tab customization\r\n- Custom lyrics\r\n- Karaoke / lyrics enhancements\r\n- Player customization\r\n- Remote feature flags\r\n- Extensive settings customization\r\n- Privacy and stability improvements\r\n\r\nFor most users, **EeveeSpotify 7.0.0 is the build to install.**\r\n\r\n---\r\n\r\n## Version Information\r\n\r\n| Component | Version |\r\n|---|---|\r\n| **PwEevee** | **v2.0.0** |\r\n| **EeveeSpotify** | **v7.0.0** |\r\n| **SpoTi.pw** | **v0.50.0** *(combined build only)* |\r\n| **Primary build** | EeveeSpotify 7.0.0 |\r\n| **Combined build** | SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0 |\r\n\r\n---\r\n\r\n##  Important\r\n\r\nPwEevee v2.0.0 is a major release and has undergone significant changes from v1.x.\r\n\r\nCompatibility can vary depending on:\r\n\r\n- Spotify version\r\n- iOS version\r\n- Device\r\n- Sideloading method\r\n- Signing environment\r\n- Installed tweaks\r\n- Whether the combined build is being used\r\n\r\nIf you encounter an issue, please include:\r\n\r\n1. Your iOS version\r\n2. Your Spotify version\r\n3. Which PwEevee IPA you installed\r\n4. Your signing/sideloading method\r\n5. What happened\r\n6. Any relevant crash or installation logs\r\n\r\n---\r\n\r\n## Downloads\r\n\r\n###  Recommended\r\n\r\n**`EeveeSpotifyv7.0.0.ipa`**\r\n\r\nEeveeSpotify 7.0.0 standalone build with Liquid Glass, Spotify version spoofing, customization features, lyrics enhancements, and the updated EeveeSpotify experience.\r\n\r\n### Optional\r\n\r\n**`SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`**\r\n\r\nCombined SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0 build.\r\n\r\n> **Recommendation:** Start with the standalone EeveeSpotify 7.0.0 build.\r\n\r\n---\r\n\r\n## What's New in v2.0.0\r\n\r\nThis release represents a major evolution of PwEevee.\r\n\r\nThe project has moved from the older v1.x integration toward the significantly newer **EeveeSpotify 7.0.0** codebase, bringing a redesigned interface, Liquid Glass support, Spotify version spoofing, expanded customization, improved lyrics functionality, remote configuration capabilities, and numerous stability improvements.\r\n\r\n**v2.0.0 is the recommended starting point for new PwEevee users.**",
             "prerelease": false,
-            "published_at": "2026-09-23T22:00:43Z",
-            "published_epoch": 1790200843,
-            "published_label": "23 September 2026",
-            "summary": "Released September 23, 2026 This release contains the spoti.pw v0.22.0 IPA builds based on the upstream project. ⚠️ Important: v0.21.1 is the last spoti.pw release to include Spoof Premium…",
-            "url": "https://github.com/codeboy2012/spoti.pw-builds/releases/tag/v0.22.0",
-            "version": "v0.22.0",
-            "version_label": "v0.22.0"
+            "published_at": "2026-10-06T01:48:48Z",
+            "published_epoch": 1791251328,
+            "published_label": "6 October 2026",
+            "summary": "Major Release — EeveeSpotify 7.0.0 PwEevee v2.0.0 is a major update that brings the project to the new EeveeSpotify 7.0.0 generation, with a large number of new features, a redesigned…",
+            "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v2.0.0",
+            "version": "v2.0.0",
+            "version_label": "v2.0.0"
          },
          "name": "PwEevee",
          "releases_url": "https://github.com/codeboy2012/spoti.pw-builds/releases",
@@ -156,7 +396,115 @@
          "available": true,
          "history": [
             {
-               "asset_count": 1,
+               "asset_count": 2,
+               "assets": [
+                  {
+                     "content_type": "application/x-debian-package",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.51.0-beta.1/spoti.pw-0.51.0-beta.1.deb",
+                     "kind": "deb",
+                     "name": "spoti.pw-0.51.0-beta.1.deb",
+                     "sha256": "6b86116703efd49c53a2767e727fcfb24deb67012a80063c0bbc0a9ff3b16be9",
+                     "size": 2025528,
+                     "size_label": "1.9 MB",
+                     "updated_at": "2026-10-10T10:19:43Z"
+                  },
+                  {
+                     "content_type": "application/zip",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.51.0-beta.1/spoti.pw-0.51.0-beta.1-kit.zip",
+                     "kind": "archive",
+                     "name": "spoti.pw-0.51.0-beta.1-kit.zip",
+                     "sha256": "d25d949b8de41e4a8fb067e013600ad20691fcda9aeabcd33042d85bcf419fa0",
+                     "size": 2785153,
+                     "size_label": "2.7 MB",
+                     "updated_at": "2026-10-10T10:37:35Z"
+                  }
+               ],
+               "author": "skopevoj",
+               "name": "v0.51.0-beta.1",
+               "notes": "## 0.51.0-beta.1 (2026-10-10)\n\n\n### Features\n\n* the Visualizer, a background for the redesigned player that moves with the music, from built-in shaders or ones shared on chroma.pw, with Plus\n* the Workshop in Mod Settings, with shaders, audio presets, headphone corrections and fonts to download, with Plus\n* AutoMix blends each song into the next on playlists, albums and radio, beat-matched or as a crossfade, with Plus\n* Spotify 9.1.90 is supported beside 9.1.78, and the player opens with the Apple Music style morph there too\n* Apple Music's animated artwork in the player and on the lock screen, animated album covers, artist logos and line meanings no longer need Plus\n* Vibrations no longer need Plus, Controls and Music Haptics included\n* Top picks on the redesigned Home, one of Home's shelves drawn large the way the Music app does\n* Home's shortcuts sit on glass tinted by their covers\n* a volume slider under the redesigned player's controls, for this iPhone or the Connect device playing\n* the player's accent colour can follow the cover of the song playing\n* audio presets get a Library in the Workshop, and the current effects save as a new preset, with Plus\n* 31 fonts to download from the Workshop for the whole app, with Plus\n* the DJ's player takes the redesign's look and the player's ⋯ menu\n* a Plain checkmark option on the Appearance page swaps Spotify's circled tick for a plain one in the accent colour\n* a lighter voice model for Sing on older iPhones, picked beside the full one, with Plus\n* Sing can ignore memory warnings, with Plus\n\n\n### Fixes\n\n* Sing keeps going through rewinds, relative seeks and Previous\n* a raised playback speed no longer pauses for a rebuffer\n* Translate is hidden for a song already in the target language\n* landscape lyrics centre a bigger cover when the song has no lines\n* the player's footer row is placed again once the player settles\n* Always animated covers wait for their render budget instead of staying still\n* a lighter black fade under the tab bar\n\n\n### Performance\n\n* lyrics sources are asked with a head start, and the next song's lyrics and animated artwork are fetched ahead\n* Home scrolls more smoothly\n* less work in the background and on the lock screen\n",
+               "prerelease": true,
+               "published_at": "2026-10-10T10:19:44Z",
+               "published_epoch": 1791627584,
+               "published_label": "10 October 2026",
+               "summary": "the Visualizer, a background for the redesigned player that moves with the music, from built-in shaders or ones shared on chroma.pw, with Plus the Workshop in Mod Settings, with shaders,…",
+               "url": "https://github.com/skopevoj/spoti.pw/releases/tag/v0.51.0-beta.1",
+               "version": "v0.51.0-beta.1",
+               "version_label": "v0.51.0-beta.1"
+            },
+            {
+               "asset_count": 2,
+               "assets": [
+                  {
+                     "content_type": "application/x-debian-package",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.50.0/spoti.pw-0.50.0.deb",
+                     "kind": "deb",
+                     "name": "spoti.pw-0.50.0.deb",
+                     "sha256": "238cdf3e0496070f788922182ebac655307bd9b7193c93961b8d0c943d97f746",
+                     "size": 1510924,
+                     "size_label": "1.4 MB",
+                     "updated_at": "2026-10-05T09:13:29Z"
+                  },
+                  {
+                     "content_type": "application/zip",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.50.0/spoti.pw-0.50.0-kit.zip",
+                     "kind": "archive",
+                     "name": "spoti.pw-0.50.0-kit.zip",
+                     "sha256": "da81a22bbdb4a27a060bead23eb3ff0aa90a06e4f22cd44927f7f9bff161839f",
+                     "size": 1986334,
+                     "size_label": "1.9 MB",
+                     "updated_at": "2026-10-05T09:13:29Z"
+                  }
+               ],
+               "author": "skopevoj",
+               "name": "v0.50.0",
+               "notes": "## 0.50.0 (2026-10-05)\n\n\n### Features\n\n* a Reverb slider joins speed and pitch in the player's ⋯ menu, with Plus\n* a scroll back up expands the minimized tab bar anywhere in the list\n* a scroll through the player's lyrics hides the controls, and hiding them after a few seconds is a switch of its own\n* a setting that waits on a switch stays greyed out under it instead of vanishing, and a tap on it nudges the switch\n* a switch hides the artists in an album's track list\n* a tap on the redesigned player's progress bar seeks there\n* a What's new sheet on the first launch after an update lists what the version brought, and the Mod page opens it again\n* Add a tab is a sheet with a name, a link and an icon picked from Spotify's glyphs or SF Symbols\n* AirPods gestures learn how you nod and shake your head\n* AirPods gestures, a double nod likes the song and a shake of the head skips it\n* Albums and Artists get their own settings, with a switch for each section the redesign hides\n* an album's page plays Apple Music's animated cover at its top where the album has one\n* Animated artwork blurs under the player's controls and behind the lyrics, and switches on and off from the player's ⋯ menu\n* animated artwork downloads in Low Data Mode too, from a switch on the Lock screen, Player and Albums pages\n* Animated artwork draws the player the Music app's way, the artwork edge to edge fading into its colour\n* Animated artwork, the track's Canvas or Apple Music's animated cover behind the redesigned player\n* Apple Music's red joins Spotify's green under the accent colour, under either look\n* audio effects presets and AutoEq headphone corrections from chroma.pw\n* beta builds update to beta pre-releases\n* Edit Info changes a local file's title, artist, album and cover\n* Fluid artwork, the cover itself blurred and slowly warped behind the redesigned player\n* full-screen lyrics on the lock screen are a choice beside animated artwork\n* Headphones sits next to Presets on the Audio effects page\n* holding either side of the cover plays faster until the finger lifts\n* implement spatial audio\n* installs signed with a free Apple ID are offered a certificate\n* Karaoke and Lyrics have their own rows on Mod Settings' main page, Karaoke's saying whether Sing is on or how far its model has come\n* Karaoke's Ignore heat warnings switch keeps Sing going on a hot iPhone\n* landscape lyrics show the cover on the left, with the title and the controls under it and the lines beside it\n* listening stats kept on the phone, with Spotify's own export imported\n* live activity\n* Live Activity gets its own Plus category in Mod Settings instead of a section on the Lock screen page\n* local files get lyrics in the redesigned player\n* lyrics can play as the lock screen's animated artwork, a clip per line\n* lyrics translate into any language, from Musixmatch's community or, with your own Gemini key, any song on a tap\n* mini player in the tab bar, Apple Music style\n* Mod &gt; App icon changes the home screen icon to a Liquid Glass one or the logo in another colour, on iOS 26\n* Mod Settings in the system Settings' style, with its own Account page\n* more visualisations\n* Music Haptics keep going in the background and on the lock screen, through iOS's own Music Haptics\n* one font for the whole app, picked on a new Appearance page beside the accent colour and the app icon\n* Pitch follows speed is on until it is turned off\n* Plus features lock the same way everywhere, under a Mod Settings split into free and Plus\n* Plus offer with the glass mark and what else Plus brings\n* restore Connect discovery without multicast entitlement\n* save on someone else's playlist turns into download once saved, Remove from Your Library in its ⋯ menu\n* say when EeveeSpotify is injected alongside the mod\n* say when Spotify isn't the version the mod is made for\n* Sing downloads its voice model from Lyrics &gt; Karaoke, and its switch there turns the microphone on and off at once\n* Sing gets its own Plus category at the top of Mod Settings instead of a section on the Lyrics page\n* Sing goes up to vocals only, at the top of the mic's slider\n* Sing turns a song's vocals down from the redesigned player's lyrics\n* Sing's microphone shows what Sing is doing on the button itself instead of in words beside it\n* Speed and pitch has a Pitch follows speed switch that plays a song faster and higher together, like a record, without the time stretch's smearing\n* Spicy Lyrics is a lyrics source again, through its Developer Platform with a key of your own\n* Switch to video can be hidden from the player, under either look\n* tapping the cover beside the redesigned lyrics brings the full player back\n* the Apple Music style player keeps the first and last Navbar tabs beside it\n* the artist's and the owner's picture are back beside their names on album and playlist pages\n* the certificate offer rises in the Ko-fi sheet's card, with Arctic Sign's logo and two short lines\n* the Live Activity carries the cover in its colours and a progress bar, sizes, centres and translates the lyrics, and comes to Apple Watch, CarPlay and StandBy\n* the lock screen can animate every song, its cover over a moving Fluid artwork\n* the lock screen widget's star switches between animated artwork and full-screen lyrics\n* the lyrics in the redesigned player take the whole screen while they play untouched\n* the Lyrics page leads with a live preview of the lyrics, presets under it and their sliders in a sheet, and a held word's letters rise in a wave\n* the lyrics' translate button goes with the player's controls when the lines take the whole player\n* the pinned ⋯ of the playlist, album, artist, show and episode pages opens the system menu the player's does\n* the player's lyrics turn sideways with the phone onto a landscape screen of their own, controls coming and going as in the player\n* the redesign can be turned on below iOS 26, after a warning that it is untested there\n* the redesign's device button and background rows sit on the Player page itself\n* the redesign's Player page leads with a showcase of the player over Fluid or Animated artwork, its sliders in a sheet above it\n* the redesign's Tab bar page shows the bar it makes, and Spotify's own tabs take a name and icon of your own\n* the redesigned artist page shows Apple Music's artist logo in place of the name\n* the redesigned player's ⋯ opens a menu the way the Music app draws one\n* the redesigned player's ⋯ opens the system menu\n* the redesigned playlist, album and artist pages come in whole instead of a piece at a time\n* the sung word glows in the redesign's lyrics, the more the longer it is held\n* the welcome tour calls the redesign stable and warns Legacy is no longer developed\n* the welcome tour opens on the logo in glass, its four pieces flying in and landing before the page comes in under it\n\n\n### Fixes\n\n* a paused cover keeps its size while the redesigned player opens and closes\n* a redesigned album, playlist or artist page takes its colour from the cover's main colour, not its bottom edge\n* a tab of the mod's own stays lit on the redesign's glass bar while its page is open\n* a tapped lyrics line glides into place at once instead of back to the line sung and then jumping\n* album track artists hide only the album's own artists\n* an always animated lock screen gets its clip in time, the cover over a blur flowing round it\n* Animated artwork keeps its clip sharp to near its foot, and the field under it blurs in from the seam\n* Animated artwork lays its clip over its own foot drawn on down, as the Music app does, and a track without one keeps the square cover\n* app icons\n* fade the pages to black under the redesign's tab bar and now playing bar\n* harden Connect discovery bridge\n* local files at another sample rate no longer make playback speed up and distort, or go silent\n* lyric meanings sheet can be pulled down in landscape lyrics\n* lyrics come back after the track changes while Spotify is in the background\n* lyrics on the lock screen are drawn only when the lock screen asks for them, and Still is their default\n* lyrics scrolled by hand no longer run into each other when their room changes meanwhile\n* no dark flash over the screen as the redesigned player's ⋯ menu opens\n* Privacy & clutter drops Hide social proof, and the video carousel switch shows only in the native look\n* record injected Connect replies before sending them\n* Remove leftover debug line that reshows update notice every launch\n* restore Mod Settings row when drawer relayouts\n* seeking hands Spotify back the result of its seek instead of whatever Sing's hook left behind\n* SF Symbol tab icons are drawn at Spotify's glyph size and no longer redraw as the bar expands\n* sing limit\n* Sing runs from iOS 18, the floor of its Core ML model, instead of iOS 27, a leftover of the Core AI backend\n* Sing says which of iOS 27, the voice model or the iPhone it was built for is missing, instead of naming all three\n* Sing's model download leaves other background sessions' events to their owners\n* Spotify no longer freezes after launch when EeveeSpotify is injected with its own lyrics on\n* synced lyrics whose lines go back in time no longer crash the lyrics page\n* the Apple Music style player follows Plus starting or ending without a restart\n* the Apple Music style player's bar minimizes on every page, and a scroll back up anywhere brings it back\n* the Apple Music style player's bar no longer expands on a scroll back up mid-list\n* the cards of a section shown under an album's tracks sit on the page's colour, not on black\n* the fade under the redesigned tab bar ends at half black\n* the lock screen settings keep only the like and dislike buttons' flag; the podcast and audiobook ones stay in All flags\n* the lock screen's progress bar no longer jumps back when lock screen lyrics leave a line\n* the player's ⋯ menu opens at once, every time, on Spotify's rows as last read\n* the player's ⋯ menu opens at once, with no flash of black, and is always on in the redesign\n* the playlist's Mix can be turned off again after the page reloads\n* the redesigned player also opens for Spotify Free accounts\n* the redesigned player's ⋯ menu waits for Spotify's rows as long as it is open instead of turning into Spotify's sheet after 4 s\n* the redesigned player's cover no longer shrinks to make room for lyrics it never shows\n* the Spicy Lyrics credit follows Show source, like every other source's\n* the update sheet is offered once per release again, not on every launch\n\n\n### Performance\n\n* less work on the main thread as Spotify starts and as a tab first opens\n",
+               "prerelease": false,
+               "published_at": "2026-10-05T09:13:30Z",
+               "published_epoch": 1791191610,
+               "published_label": "5 October 2026",
+               "summary": "a Reverb slider joins speed and pitch in the player's ⋯ menu, with Plus a scroll back up expands the minimized tab bar anywhere in the list a scroll through the player's lyrics hides the…",
+               "url": "https://github.com/skopevoj/spoti.pw/releases/tag/v0.50.0",
+               "version": "v0.50.0",
+               "version_label": "v0.50.0"
+            },
+            {
+               "asset_count": 2,
+               "assets": [
+                  {
+                     "content_type": "application/x-debian-package",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.23.0-beta/com.spotipw_0.23.0-beta_iphoneos-arm.deb",
+                     "kind": "deb",
+                     "name": "com.spotipw_0.23.0-beta_iphoneos-arm.deb",
+                     "sha256": "97b92c30d7ef4a30edc93fb3a7d9c1eb9c6405a7d258d9391edcf6731943e905",
+                     "size": 669754,
+                     "size_label": "654 KB",
+                     "updated_at": "2026-09-28T11:58:09Z"
+                  },
+                  {
+                     "content_type": "application/zip",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.23.0-beta/spoti.pw-0.23.0-beta-kit.zip",
+                     "kind": "archive",
+                     "name": "spoti.pw-0.23.0-beta-kit.zip",
+                     "sha256": "01cb87bfd1a890d0d681537d06535d0176f2af93c46faa684e48dd49a41b1dbd",
+                     "size": 995354,
+                     "size_label": "972 KB",
+                     "updated_at": "2026-09-29T19:17:31Z"
+                  }
+               ],
+               "author": "github-actions[bot]",
+               "name": "v0.23.0-beta",
+               "notes": "## [0.23.0-beta](https://github.com/skopevoj/spoti.pw/compare/v0.22.0...v0.23.0-beta) (2026-09-28)\n\n\n### Features\n\n* a tap on the redesigned player's progress bar seeks there ([990b67e](https://github.com/skopevoj/spoti.pw/commit/990b67ef5bd72c6fcfecd31104400581370b7aee))\n* Add a tab is a sheet with a name, a link and an icon picked from Spotify's glyphs or SF Symbols ([e3222da](https://github.com/skopevoj/spoti.pw/commit/e3222daae66e79ff220a498d1f79a78d44ce3c75))\n* an album's page plays Apple Music's animated cover at its top where the album has one ([df6c8c1](https://github.com/skopevoj/spoti.pw/commit/df6c8c1b1518bd476047712fddfa9c027ca8cc77))\n* Animated artwork, the track's Canvas or Apple Music's animated cover behind the redesigned player ([6afe869](https://github.com/skopevoj/spoti.pw/commit/6afe869a411b87139647a5cc6f84f5827dd266bb))\n* beta builds update to beta pre-releases ([bbcaa62](https://github.com/skopevoj/spoti.pw/commit/bbcaa62659d8b2516174308cc0128bd7ef14574e))\n* Fluid artwork, the cover itself blurred and slowly warped behind the redesigned player ([c2b5fb1](https://github.com/skopevoj/spoti.pw/commit/c2b5fb18b80a268f1cb9cefb7c81b80020028ba2))\n* installs signed with a free Apple ID are offered a certificate, and the usage ping says how the app is signed ([7b60553](https://github.com/skopevoj/spoti.pw/commit/7b6055336a4bec1406706ff7b14e831c8104eadc))\n* Karaoke and Lyrics have their own rows on Mod Settings' main page, Karaoke's saying whether Sing is on or how far its model has come ([5341f33](https://github.com/skopevoj/spoti.pw/commit/5341f338775bc5c9cd59cdcc1e46353d50a804b2))\n* mini player in the tab bar, Apple Music style ([#60](https://github.com/skopevoj/spoti.pw/issues/60)) ([3ffc528](https://github.com/skopevoj/spoti.pw/commit/3ffc528c5f3ae489f4b24c8ccfeff8e63a854c2c))\n* Mod &gt; App icon changes the home screen icon to a Liquid Glass one or the logo in another colour, on iOS 26 ([4834cfd](https://github.com/skopevoj/spoti.pw/commit/4834cfdeb4bc2a8927b7266566a74c9497900e00))\n* Pitch follows speed is on until it is turned off ([aed6289](https://github.com/skopevoj/spoti.pw/commit/aed6289d08cbbb0e5ffa46aaedd129e50c5d9e47))\n* restore Connect discovery without multicast entitlement ([3c4af4e](https://github.com/skopevoj/spoti.pw/commit/3c4af4e190264fcff9bac6a52c65acb04bf1c26a))\n* say when EeveeSpotify is injected alongside the mod ([442702a](https://github.com/skopevoj/spoti.pw/commit/442702afd918e82eff80770d9224f895f0f94289))\n* say when Spotify isn't the version the mod is made for ([865aa35](https://github.com/skopevoj/spoti.pw/commit/865aa354496f6955d9844af86e1c0c4d756b4dcc))\n* Sing downloads its voice model from Lyrics &gt; Karaoke, and its switch there turns the microphone on and off at once ([aa70285](https://github.com/skopevoj/spoti.pw/commit/aa70285e9c03af2b1645ccec5011689b97474b5b))\n* Sing turns a song's vocals down from the redesigned player's lyrics ([d4a8ecc](https://github.com/skopevoj/spoti.pw/commit/d4a8ecc5025ad8f2a525167cf75bfcea83293daf))\n* Sing's microphone shows what Sing is doing on the button itself instead of in words beside it ([c977240](https://github.com/skopevoj/spoti.pw/commit/c9772404f46ad0edac66132073dbf6472055093b))\n* Speed and pitch has a Pitch follows speed switch that plays a song faster and higher together, like a record, without the time stretch's smearing ([8d90be3](https://github.com/skopevoj/spoti.pw/commit/8d90be37f514101bc356c241ca58180d92ffd3a6)), closes [#5](https://github.com/skopevoj/spoti.pw/issues/5)\n* Spicy Lyrics is a lyrics source again, through its Developer Platform with a key of your own ([6c0d7e6](https://github.com/skopevoj/spoti.pw/commit/6c0d7e667d781ca02d224c4372d425d7533fe154))\n* tapping the cover beside the redesigned lyrics brings the full player back ([99edfba](https://github.com/skopevoj/spoti.pw/commit/99edfba6e91f1c0ee62dc18af9166d32afa9bae7))\n* the Apple Music style player keeps the first and last Navbar tabs beside it ([c2474f2](https://github.com/skopevoj/spoti.pw/commit/c2474f2671b174e38a3cf57bf5369f7d685bab85))\n* the artist's and the owner's picture are back beside their names on album and playlist pages ([#149](https://github.com/skopevoj/spoti.pw/issues/149)) ([800e91c](https://github.com/skopevoj/spoti.pw/commit/800e91c2a341848bf6de2726222e5416a6e1b6c9))\n* the certificate offer rises in the Ko-fi sheet's card, with Arctic Sign's logo and two short lines ([78be41d](https://github.com/skopevoj/spoti.pw/commit/78be41db1a128f0ea144cdccae0539aa092ba853))\n* the lyrics in the redesigned player take the whole screen while they play untouched ([03df0e2](https://github.com/skopevoj/spoti.pw/commit/03df0e29e1faa6c5a5e8760871e41d2fa25823d9))\n* the redesign can be turned on below iOS 26, after a warning that it is untested there ([58bc4d8](https://github.com/skopevoj/spoti.pw/commit/58bc4d809da5a14271463b5f600d0d8cd8039099))\n* the redesign's device button and background rows sit on the Player page itself ([8df5157](https://github.com/skopevoj/spoti.pw/commit/8df51571b360be18b6641e2fa5ca4cfe5bfc0ba5))\n* the redesigned player's ⋯ opens a menu the way the Music app draws one ([9b27ab0](https://github.com/skopevoj/spoti.pw/commit/9b27ab03e868be9a4f7d8e8107786a9cde1c5ed4))\n* the redesigned player's ⋯ opens the system menu ([70053a4](https://github.com/skopevoj/spoti.pw/commit/70053a4d825030fb7f08a17413bbaa7a2edf6fda))\n* the redesigned playlist, album and artist pages come in whole instead of a piece at a time ([4c3b0da](https://github.com/skopevoj/spoti.pw/commit/4c3b0daae339f7b5ed416f359ab4b3090c9e098a))\n\n\n### Fixes\n\n* a paused cover keeps its size while the redesigned player opens and closes ([#84](https://github.com/skopevoj/spoti.pw/issues/84)) ([05d38fa](https://github.com/skopevoj/spoti.pw/commit/05d38fa383e232353fcc709f1c38f4b9a2dfb57f))\n* a redesigned album, playlist or artist page takes its colour from the cover's main colour, not its bottom edge ([b3c6afa](https://github.com/skopevoj/spoti.pw/commit/b3c6afa0959dc55c65d117551bae91f360dd6fa9))\n* a tab of the mod's own stays lit on the redesign's glass bar while its page is open ([#139](https://github.com/skopevoj/spoti.pw/issues/139)) ([4c420ac](https://github.com/skopevoj/spoti.pw/commit/4c420ac4bca6f0df06c88ef6d75dd9e0c48279ce))\n* fade the pages to black under the redesign's tab bar and now playing bar ([3d4db64](https://github.com/skopevoj/spoti.pw/commit/3d4db6429140eb4d2791a65ae9095b90617349c1))\n* harden Connect discovery bridge ([cbbb24e](https://github.com/skopevoj/spoti.pw/commit/cbbb24efb6421b17c925abe9b49d43243fe5d983))\n* local files at another sample rate no longer make playback speed up and distort, or go silent ([8ee50f3](https://github.com/skopevoj/spoti.pw/commit/8ee50f3c24e79bf505e00d95b41957c46b9ff069))\n* lyrics come back after the track changes while Spotify is in the background ([76855e0](https://github.com/skopevoj/spoti.pw/commit/76855e0f0d272a17688313c080f0dc15aad66618)), closes [#1](https://github.com/skopevoj/spoti.pw/issues/1)\n* no dark flash over the screen as the redesigned player's ⋯ menu opens ([18c6989](https://github.com/skopevoj/spoti.pw/commit/18c6989fbffd18aae24e3e7defef6570827ddadf))\n* record injected Connect replies before sending them ([87b3014](https://github.com/skopevoj/spoti.pw/commit/87b3014f38ec8d82c821a4674cf83a3739a93569))\n* Remove leftover debug line that reshows update notice every launch ([425d68b](https://github.com/skopevoj/spoti.pw/commit/425d68bc1761e90a6b5828864720511bcef79fa9))\n* restore Mod Settings row when drawer relayouts ([0a3216a](https://github.com/skopevoj/spoti.pw/commit/0a3216a616a71f5a3d8e8c3a24038e2cc19090d5))\n* seeking hands Spotify back the result of its seek instead of whatever Sing's hook left behind ([3cf13e7](https://github.com/skopevoj/spoti.pw/commit/3cf13e7c5001197ef1c7d2075042a310f28049e5))\n* Sing downloads its voice model from huggingface.co/Darkkos/spoti-sing, the account that hosts it ([02762ed](https://github.com/skopevoj/spoti.pw/commit/02762ed1a08136c32fe9dba6c6492cf31e42b839))\n* Sing says which of iOS 27, the voice model or the iPhone it was built for is missing, instead of naming all three ([4fa59a1](https://github.com/skopevoj/spoti.pw/commit/4fa59a1bab70fdd1978bc3087a00b607778c426c))\n* Sing's model download leaves other background sessions' events to their owners ([f4fbf36](https://github.com/skopevoj/spoti.pw/commit/f4fbf364e7c56a5d39608e89cbb4514d808d16e4))\n* Spotify no longer freezes after launch when EeveeSpotify is injected with its own lyrics on ([#141](https://github.com/skopevoj/spoti.pw/issues/141)) ([33eb031](https://github.com/skopevoj/spoti.pw/commit/33eb03190ae962a85baf61affb754e529d0624dd))\n* synced lyrics whose lines go back in time no longer crash the lyrics page ([9dd722c](https://github.com/skopevoj/spoti.pw/commit/9dd722c30dc8dbbac806bb0cbf7ea76fd4a6e572))\n* the fade under the redesigned tab bar ends at half black ([2d8f1eb](https://github.com/skopevoj/spoti.pw/commit/2d8f1ebcf0cf05b4ed6f1a47addcaeb31f62a67e))\n* the lock screen's progress bar no longer jumps back when lock screen lyrics leave a line ([#127](https://github.com/skopevoj/spoti.pw/issues/127)) ([b75c331](https://github.com/skopevoj/spoti.pw/commit/b75c33109b15dc642f14a825515524ca7312f626))\n* the player's ⋯ menu opens at once, with no flash of black, and is always on in the redesign ([969da22](https://github.com/skopevoj/spoti.pw/commit/969da22893548bffce3001461cc5dc622b4ec53b))\n* the playlist's Mix can be turned off again after the page reloads ([#116](https://github.com/skopevoj/spoti.pw/issues/116)) ([97827ac](https://github.com/skopevoj/spoti.pw/commit/97827accc8048cab71b711fcdd537df5842aedee))\n* the redesigned player also opens for Spotify Free accounts ([ab933fc](https://github.com/skopevoj/spoti.pw/commit/ab933fc61228a3f784fbc8000c6a6a1610967726))\n* the redesigned player's ⋯ menu waits for Spotify's rows as long as it is open instead of turning into Spotify's sheet after 4 s ([5fe0857](https://github.com/skopevoj/spoti.pw/commit/5fe0857d39f023b27a8314b33b103e650aa260f6))\n* the update sheet is offered once per release again, not on every launch ([53e7f25](https://github.com/skopevoj/spoti.pw/commit/53e7f256b713f811b5128d28f2e97323368dcaac))\n\n\n### Performance\n\n* less work on the main thread as Spotify starts and as a tab first opens ([f4f4652](https://github.com/skopevoj/spoti.pw/commit/f4f46526877b3b254015d92a390c646c47d75494)), closes [#2](https://github.com/skopevoj/spoti.pw/issues/2)",
+               "prerelease": true,
+               "published_at": "2026-09-28T11:55:39Z",
+               "published_epoch": 1790596539,
+               "published_label": "28 September 2026",
+               "summary": "a tap on the redesigned player's progress bar seeks there (990b67e) Add a tab is a sheet with a name, a link and an icon picked from Spotify's glyphs or SF Symbols (e3222da) an album's page…",
+               "url": "https://github.com/skopevoj/spoti.pw/releases/tag/v0.23.0-beta",
+               "version": "v0.23.0-beta",
+               "version_label": "v0.23.0-beta"
+            },
+            {
+               "asset_count": 2,
                "assets": [
                   {
                      "content_type": "application/x-debian-package",
@@ -167,6 +515,16 @@
                      "size": 486568,
                      "size_label": "475 KB",
                      "updated_at": "2026-09-23T17:16:29Z"
+                  },
+                  {
+                     "content_type": "application/zip",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.22.0/spoti.pw-0.22.0-kit.zip",
+                     "kind": "archive",
+                     "name": "spoti.pw-0.22.0-kit.zip",
+                     "sha256": "62497d65f66eda8f248ec288ad1ea0cd54be9ba29d2b4ca948a4dda67a8029c3",
+                     "size": 746570,
+                     "size_label": "729 KB",
+                     "updated_at": "2026-09-29T19:17:28Z"
                   }
                ],
                "author": "github-actions[bot]",
@@ -182,7 +540,7 @@
                "version_label": "v0.22.0"
             },
             {
-               "asset_count": 1,
+               "asset_count": 2,
                "assets": [
                   {
                      "content_type": "application/x-debian-package",
@@ -193,6 +551,16 @@
                      "size": 1176992,
                      "size_label": "1.1 MB",
                      "updated_at": "2026-09-21T18:49:50Z"
+                  },
+                  {
+                     "content_type": "application/zip",
+                     "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.21.1/spoti.pw-0.21.1-kit.zip",
+                     "kind": "archive",
+                     "name": "spoti.pw-0.21.1-kit.zip",
+                     "sha256": "e43f7e31f03270ae82a4ced435af2fdab52dd5434c2161b7cc76b4d896a98060",
+                     "size": 1558662,
+                     "size_label": "1.5 MB",
+                     "updated_at": "2026-09-29T19:30:56Z"
                   }
                ],
                "author": "github-actions[bot]",
@@ -314,30 +682,40 @@
          ],
          "issues_url": "https://github.com/skopevoj/spoti.pw/issues",
          "latest": {
-            "asset_count": 1,
+            "asset_count": 2,
             "assets": [
                {
                   "content_type": "application/x-debian-package",
-                  "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.22.0/com.spotipw_0.22.0_iphoneos-arm.deb",
+                  "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.50.0/spoti.pw-0.50.0.deb",
                   "kind": "deb",
-                  "name": "com.spotipw_0.22.0_iphoneos-arm.deb",
-                  "sha256": "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
-                  "size": 486568,
-                  "size_label": "475 KB",
-                  "updated_at": "2026-09-23T17:16:29Z"
+                  "name": "spoti.pw-0.50.0.deb",
+                  "sha256": "238cdf3e0496070f788922182ebac655307bd9b7193c93961b8d0c943d97f746",
+                  "size": 1510924,
+                  "size_label": "1.4 MB",
+                  "updated_at": "2026-10-05T09:13:29Z"
+               },
+               {
+                  "content_type": "application/zip",
+                  "download_url": "https://github.com/skopevoj/spoti.pw/releases/download/v0.50.0/spoti.pw-0.50.0-kit.zip",
+                  "kind": "archive",
+                  "name": "spoti.pw-0.50.0-kit.zip",
+                  "sha256": "da81a22bbdb4a27a060bead23eb3ff0aa90a06e4f22cd44927f7f9bff161839f",
+                  "size": 1986334,
+                  "size_label": "1.9 MB",
+                  "updated_at": "2026-10-05T09:13:29Z"
                }
             ],
-            "author": "github-actions[bot]",
-            "name": "v0.22.0",
-            "notes": "## [0.22.0](https://github.com/skopevoj/spoti.pw/compare/v0.21.1...v0.22.0) (2026-09-23)\n\n\n### Features\n\n* Apple Music's animated album cover on the lock screen where the track has no Canvas ([e0d5538](https://github.com/skopevoj/spoti.pw/commit/e0d55383bc26149d7f3f5c803d07df0d0cf0e8bc))\n* audio effects run on the mod's own engine, libjamesdsp is gone ([413b2d3](https://github.com/skopevoj/spoti.pw/commit/413b2d3e5647822961b3f9eed317c9accf729a4c))\n* find in playlist as a glass search bar above the header, shown on pull-down ([#81](https://github.com/skopevoj/spoti.pw/issues/81)) ([36ed0a7](https://github.com/skopevoj/spoti.pw/commit/36ed0a798fb2f7756e8e62f2e0ee893b8329a1b8))\n* line meanings from Genius on the lyrics, a bubble for the artist's own and an underline for the rest, opened in a sheet ([950baf7](https://github.com/skopevoj/spoti.pw/commit/950baf778f6aa342176f293bc2ab00f0e960640a))\n* Mod &gt; Licenses shows the mod's license and the full text of the third-party ones ([c790445](https://github.com/skopevoj/spoti.pw/commit/c790445c70fcf6d0dea07b9550fa6d64a7fb87b7))\n* play the track's Canvas as the lock screen's animated artwork ([c4b75e3](https://github.com/skopevoj/spoti.pw/commit/c4b75e3785de5a49407cd6762fb8cc30c26cf5fa))\n* the artist's Follow is a glyph that turns into a checkmark, as add to library does ([#88](https://github.com/skopevoj/spoti.pw/issues/88)) ([f10bf8d](https://github.com/skopevoj/spoti.pw/commit/f10bf8d88e7d4a126ad143a77280999a64ab1c58))\n\n\n### Fixes\n\n* a long note under a settings section shows in full instead of ending in an ellipsis ([a6b1876](https://github.com/skopevoj/spoti.pw/commit/a6b187684356c83dad10cda2213f933886d6cc69))\n* add to library turns into a checkmark, and Follow no longer flips from a glyph to a word ([#86](https://github.com/skopevoj/spoti.pw/issues/86), [#88](https://github.com/skopevoj/spoti.pw/issues/88)) ([e524034](https://github.com/skopevoj/spoti.pw/commit/e524034ed886ff624761ca2299940d7b143e380f))\n* the player's more menu no longer hangs on loading and greys out lyrics for tracks no source has lyrics for ([#93](https://github.com/skopevoj/spoti.pw/issues/93)) ([283ac30](https://github.com/skopevoj/spoti.pw/commit/283ac308180468a1e124a3fb1e7a2ab9633d9241))\n* the playlist's cover keeps its size and its fade after the page is pulled down past the top ([a83562c](https://github.com/skopevoj/spoti.pw/commit/a83562cd928fa7a710d8a28ddd32c9e7486a0fa7))\n* the redesigned player can no longer be scrolled up ([#83](https://github.com/skopevoj/spoti.pw/issues/83)) ([62eee33](https://github.com/skopevoj/spoti.pw/commit/62eee3363981310b0e3d3c79e60acb2f9c309182))",
+            "author": "skopevoj",
+            "name": "v0.50.0",
+            "notes": "## 0.50.0 (2026-10-05)\n\n\n### Features\n\n* a Reverb slider joins speed and pitch in the player's ⋯ menu, with Plus\n* a scroll back up expands the minimized tab bar anywhere in the list\n* a scroll through the player's lyrics hides the controls, and hiding them after a few seconds is a switch of its own\n* a setting that waits on a switch stays greyed out under it instead of vanishing, and a tap on it nudges the switch\n* a switch hides the artists in an album's track list\n* a tap on the redesigned player's progress bar seeks there\n* a What's new sheet on the first launch after an update lists what the version brought, and the Mod page opens it again\n* Add a tab is a sheet with a name, a link and an icon picked from Spotify's glyphs or SF Symbols\n* AirPods gestures learn how you nod and shake your head\n* AirPods gestures, a double nod likes the song and a shake of the head skips it\n* Albums and Artists get their own settings, with a switch for each section the redesign hides\n* an album's page plays Apple Music's animated cover at its top where the album has one\n* Animated artwork blurs under the player's controls and behind the lyrics, and switches on and off from the player's ⋯ menu\n* animated artwork downloads in Low Data Mode too, from a switch on the Lock screen, Player and Albums pages\n* Animated artwork draws the player the Music app's way, the artwork edge to edge fading into its colour\n* Animated artwork, the track's Canvas or Apple Music's animated cover behind the redesigned player\n* Apple Music's red joins Spotify's green under the accent colour, under either look\n* audio effects presets and AutoEq headphone corrections from chroma.pw\n* beta builds update to beta pre-releases\n* Edit Info changes a local file's title, artist, album and cover\n* Fluid artwork, the cover itself blurred and slowly warped behind the redesigned player\n* full-screen lyrics on the lock screen are a choice beside animated artwork\n* Headphones sits next to Presets on the Audio effects page\n* holding either side of the cover plays faster until the finger lifts\n* implement spatial audio\n* installs signed with a free Apple ID are offered a certificate\n* Karaoke and Lyrics have their own rows on Mod Settings' main page, Karaoke's saying whether Sing is on or how far its model has come\n* Karaoke's Ignore heat warnings switch keeps Sing going on a hot iPhone\n* landscape lyrics show the cover on the left, with the title and the controls under it and the lines beside it\n* listening stats kept on the phone, with Spotify's own export imported\n* live activity\n* Live Activity gets its own Plus category in Mod Settings instead of a section on the Lock screen page\n* local files get lyrics in the redesigned player\n* lyrics can play as the lock screen's animated artwork, a clip per line\n* lyrics translate into any language, from Musixmatch's community or, with your own Gemini key, any song on a tap\n* mini player in the tab bar, Apple Music style\n* Mod &gt; App icon changes the home screen icon to a Liquid Glass one or the logo in another colour, on iOS 26\n* Mod Settings in the system Settings' style, with its own Account page\n* more visualisations\n* Music Haptics keep going in the background and on the lock screen, through iOS's own Music Haptics\n* one font for the whole app, picked on a new Appearance page beside the accent colour and the app icon\n* Pitch follows speed is on until it is turned off\n* Plus features lock the same way everywhere, under a Mod Settings split into free and Plus\n* Plus offer with the glass mark and what else Plus brings\n* restore Connect discovery without multicast entitlement\n* save on someone else's playlist turns into download once saved, Remove from Your Library in its ⋯ menu\n* say when EeveeSpotify is injected alongside the mod\n* say when Spotify isn't the version the mod is made for\n* Sing downloads its voice model from Lyrics &gt; Karaoke, and its switch there turns the microphone on and off at once\n* Sing gets its own Plus category at the top of Mod Settings instead of a section on the Lyrics page\n* Sing goes up to vocals only, at the top of the mic's slider\n* Sing turns a song's vocals down from the redesigned player's lyrics\n* Sing's microphone shows what Sing is doing on the button itself instead of in words beside it\n* Speed and pitch has a Pitch follows speed switch that plays a song faster and higher together, like a record, without the time stretch's smearing\n* Spicy Lyrics is a lyrics source again, through its Developer Platform with a key of your own\n* Switch to video can be hidden from the player, under either look\n* tapping the cover beside the redesigned lyrics brings the full player back\n* the Apple Music style player keeps the first and last Navbar tabs beside it\n* the artist's and the owner's picture are back beside their names on album and playlist pages\n* the certificate offer rises in the Ko-fi sheet's card, with Arctic Sign's logo and two short lines\n* the Live Activity carries the cover in its colours and a progress bar, sizes, centres and translates the lyrics, and comes to Apple Watch, CarPlay and StandBy\n* the lock screen can animate every song, its cover over a moving Fluid artwork\n* the lock screen widget's star switches between animated artwork and full-screen lyrics\n* the lyrics in the redesigned player take the whole screen while they play untouched\n* the Lyrics page leads with a live preview of the lyrics, presets under it and their sliders in a sheet, and a held word's letters rise in a wave\n* the lyrics' translate button goes with the player's controls when the lines take the whole player\n* the pinned ⋯ of the playlist, album, artist, show and episode pages opens the system menu the player's does\n* the player's lyrics turn sideways with the phone onto a landscape screen of their own, controls coming and going as in the player\n* the redesign can be turned on below iOS 26, after a warning that it is untested there\n* the redesign's device button and background rows sit on the Player page itself\n* the redesign's Player page leads with a showcase of the player over Fluid or Animated artwork, its sliders in a sheet above it\n* the redesign's Tab bar page shows the bar it makes, and Spotify's own tabs take a name and icon of your own\n* the redesigned artist page shows Apple Music's artist logo in place of the name\n* the redesigned player's ⋯ opens a menu the way the Music app draws one\n* the redesigned player's ⋯ opens the system menu\n* the redesigned playlist, album and artist pages come in whole instead of a piece at a time\n* the sung word glows in the redesign's lyrics, the more the longer it is held\n* the welcome tour calls the redesign stable and warns Legacy is no longer developed\n* the welcome tour opens on the logo in glass, its four pieces flying in and landing before the page comes in under it\n\n\n### Fixes\n\n* a paused cover keeps its size while the redesigned player opens and closes\n* a redesigned album, playlist or artist page takes its colour from the cover's main colour, not its bottom edge\n* a tab of the mod's own stays lit on the redesign's glass bar while its page is open\n* a tapped lyrics line glides into place at once instead of back to the line sung and then jumping\n* album track artists hide only the album's own artists\n* an always animated lock screen gets its clip in time, the cover over a blur flowing round it\n* Animated artwork keeps its clip sharp to near its foot, and the field under it blurs in from the seam\n* Animated artwork lays its clip over its own foot drawn on down, as the Music app does, and a track without one keeps the square cover\n* app icons\n* fade the pages to black under the redesign's tab bar and now playing bar\n* harden Connect discovery bridge\n* local files at another sample rate no longer make playback speed up and distort, or go silent\n* lyric meanings sheet can be pulled down in landscape lyrics\n* lyrics come back after the track changes while Spotify is in the background\n* lyrics on the lock screen are drawn only when the lock screen asks for them, and Still is their default\n* lyrics scrolled by hand no longer run into each other when their room changes meanwhile\n* no dark flash over the screen as the redesigned player's ⋯ menu opens\n* Privacy & clutter drops Hide social proof, and the video carousel switch shows only in the native look\n* record injected Connect replies before sending them\n* Remove leftover debug line that reshows update notice every launch\n* restore Mod Settings row when drawer relayouts\n* seeking hands Spotify back the result of its seek instead of whatever Sing's hook left behind\n* SF Symbol tab icons are drawn at Spotify's glyph size and no longer redraw as the bar expands\n* sing limit\n* Sing runs from iOS 18, the floor of its Core ML model, instead of iOS 27, a leftover of the Core AI backend\n* Sing says which of iOS 27, the voice model or the iPhone it was built for is missing, instead of naming all three\n* Sing's model download leaves other background sessions' events to their owners\n* Spotify no longer freezes after launch when EeveeSpotify is injected with its own lyrics on\n* synced lyrics whose lines go back in time no longer crash the lyrics page\n* the Apple Music style player follows Plus starting or ending without a restart\n* the Apple Music style player's bar minimizes on every page, and a scroll back up anywhere brings it back\n* the Apple Music style player's bar no longer expands on a scroll back up mid-list\n* the cards of a section shown under an album's tracks sit on the page's colour, not on black\n* the fade under the redesigned tab bar ends at half black\n* the lock screen settings keep only the like and dislike buttons' flag; the podcast and audiobook ones stay in All flags\n* the lock screen's progress bar no longer jumps back when lock screen lyrics leave a line\n* the player's ⋯ menu opens at once, every time, on Spotify's rows as last read\n* the player's ⋯ menu opens at once, with no flash of black, and is always on in the redesign\n* the playlist's Mix can be turned off again after the page reloads\n* the redesigned player also opens for Spotify Free accounts\n* the redesigned player's ⋯ menu waits for Spotify's rows as long as it is open instead of turning into Spotify's sheet after 4 s\n* the redesigned player's cover no longer shrinks to make room for lyrics it never shows\n* the Spicy Lyrics credit follows Show source, like every other source's\n* the update sheet is offered once per release again, not on every launch\n\n\n### Performance\n\n* less work on the main thread as Spotify starts and as a tab first opens\n",
             "prerelease": false,
-            "published_at": "2026-09-23T17:14:23Z",
-            "published_epoch": 1790183663,
-            "published_label": "23 September 2026",
-            "summary": "Apple Music's animated album cover on the lock screen where the track has no Canvas (e0d5538) audio effects run on the mod's own engine, libjamesdsp is gone (413b2d3) find in playlist as a…",
-            "url": "https://github.com/skopevoj/spoti.pw/releases/tag/v0.22.0",
-            "version": "v0.22.0",
-            "version_label": "v0.22.0"
+            "published_at": "2026-10-05T09:13:30Z",
+            "published_epoch": 1791191610,
+            "published_label": "5 October 2026",
+            "summary": "a Reverb slider joins speed and pitch in the player's ⋯ menu, with Plus a scroll back up expands the minimized tab bar anywhere in the list a scroll through the player's lyrics hides the…",
+            "url": "https://github.com/skopevoj/spoti.pw/releases/tag/v0.50.0",
+            "version": "v0.50.0",
+            "version_label": "v0.50.0"
          },
          "name": "spoti.pw",
          "releases_url": "https://github.com/skopevoj/spoti.pw/releases",
@@ -349,6 +727,52 @@
       {
          "available": true,
          "history": [
+            {
+               "asset_count": 3,
+               "assets": [
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
+                     "kind": "deb",
+                     "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
+                     "sha256": "513a50b197aa558c34b02b87bff9f46e6cad3b2e462ee8622fc72fd939e83a9b",
+                     "size": 2535140,
+                     "size_label": "2.4 MB",
+                     "updated_at": "2026-10-05T12:00:26Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
+                     "kind": "deb",
+                     "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
+                     "sha256": "945bfe90ac99a3c30daa4a8b4ffc50eacd4621b95b7f1a53b3f9ad0db587d69b",
+                     "size": 2609642,
+                     "size_label": "2.5 MB",
+                     "updated_at": "2026-10-05T12:00:28Z"
+                  },
+                  {
+                     "content_type": "text/plain",
+                     "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
+                     "kind": "other",
+                     "name": "txt.txt",
+                     "sha256": "f207c5fe480a81fdb9861f7bd8cf8f2ed077c3bc47782d58b11c106a172ed9a2",
+                     "size": 86,
+                     "size_label": "86 bytes",
+                     "updated_at": "2026-10-05T12:08:20Z"
+                  }
+               ],
+               "author": "jaydenjcpy",
+               "name": "v7.0.0",
+               "notes": "# EeveeSpotify 7.0.0\r\n\r\nA ground-up overhaul of the tweak's interface, built around native **iOS 26 Liquid Glass**, plus a redesigned settings app, a remote flag browser, and a large batch of stability and privacy fixes.\r\n---\r\n\r\n## ✨ Liquid Glass UI *(iOS 26)*\r\n\r\nA new opt-in rendering layer that replaces Spotify's stock chrome with real system glass, toggleable surface-by-surface — take the tab bar without touching the player.\r\n\r\n- **Tab bar** — a genuine `UITabBar` rendered as native glass, with taps replayed onto Spotify's own tab items\r\n- **Now Playing bar** — glass capsule with album-colour tinting\r\n- **Spotify's own bars & menus** — existing blur views swapped for real `UIGlassEffect`\r\n- **Player, lyrics, search, home, and page headers**\r\n- **Playlist, album, and artist** glass action rows, with header and Home section controls\r\n- **Custom lyrics view** — optional glass rendering, with the button hidden automatically when no lyrics are fetched\r\n\r\n## 🎛️ Tab bar customization\r\n\r\nReorder tabs, hide tabs you never tap, hide labels for an icon-only bar, choose a launch tab, and pin any Spotify page as a custom tab. Liked Songs, Downloads, Podcasts, and Queue ship as presets; any `spotify:` URI can be added. Custom tabs navigate in-app rather than bouncing to your other Spotify install.\r\n\r\n## 🎨 Appearance\r\n\r\n- **AMOLED black theme** — see [Credits](#-credits) below\r\n- **Custom accent colours** and **custom background colours**\r\n- **Rounded playlist cover art** for library rows and playlist track rows\r\n- **Dynamic background colours** pulled from album art\r\n- **Home gradient control** — style (gradient or solid), height (short, medium, tall), strength, fade curve, and per-page targeting for Home, Library, and Search\r\n- **Player backdrop** and **glass lyrics card** toggles\r\n\r\n## 🎧 Player\r\n\r\nControl decluttering, double-tap seek/skip zones, haptics for buttons and scrubbing, and direct access to Word-Synced lyrics.\r\n\r\n## 📜 Lyrics & karaoke\r\n\r\nThe biggest change here: **word-synced lyrics now work in the custom lyrics view**, not just on Spotify's own lyrics screen.\r\n\r\n- **Word-synced support for the custom lyrics view**, with a dedicated on/off toggle gating the rest of the section\r\n- **Customisable blur intensity** (0–6) for inactive lyric lines\r\n- **Other lyrics sources can now use line-synced mode**, not just Spicy Lyrics\r\n- **Credits footer** with real attribution — who wrote, provided, and uploaded the lyrics\r\n- **Official Spicy Lyrics API** with a configurable key, in-app validation, and a link to the key template\r\n- Lyrics uncensoring fill, RTL karaoke highlighting, text alignment and reversed-direction controls\r\n\r\n## 🔧 New settings surfaces\r\n\r\n- **Remote flag browser** — browse, search, and override Spotify's server-side feature flags, with change-only filtering and per-flag reset\r\n- **Curated Spotify Features page** — hidden switches Spotify already ships (trim silence, library Pro, denser rows, lock-screen options, sleep timer, and more)\r\n- **Redesigned settings** grouped into Listening / Looks / Advanced, with per-page previews, page-level resets, and a Troubleshooting section\r\n- **Debug logging** with export and clear\r\n\r\n## 🛡️ Privacy & stability\r\n\r\n- **Blocks third-party tracking SDKs** — Firebase, Facebook, Branch, and other analytics\r\n- **Hide Jam** — strips Jam entry points from the app without touching tracks or artists that happen to be titled \"Jam\"\r\n- **Blocks App Store rating prompts** — no more review popups interrupting playback\r\n- Resolves an access-token race crash, a karaoke long-press scope bug, settings tint leaks, and assorted stability issues\r\n\r\n---\r\n\r\n## 🐛 Fixes in this release\r\n\r\n### Custom lyrics view didn't update between songs\r\n\r\nThe biggest fix. Previously, opening the custom lyrics view pinned it to whatever song was playing at that moment — skip to the next track and it kept showing the old lyrics until you closed and reopened it.\r\n\r\nIt now follows the player: when the track changes, it swaps in the new song's lyrics and resets scroll position and per-line state so each song starts fresh. If the new track's lyrics aren't in hand yet, it fetches them and retries a few times before giving up.\r\n\r\nIt also tracks the **actually playing** track rather than the one a lyrics request last named — Spotify preloads lyrics for upcoming songs, so the old behaviour could latch onto the wrong one. If no lyrics turn up at all, the view closes itself instead of sitting there empty.\r\n\r\n### iPad Liquid Glass layout\r\n\r\n- **Tab bar rendered too small** — the glass bar inherited Spotify's short iPad strip height, squashing every item. Now floored at 50pt and centred on the original strip.\r\n- **Album art escaped the mini player** — clipping was applied inside a radius check that iPad's capsule radius skipped entirely, so artwork bled past the corners. Clipping is now unconditional, and the artwork search is iPad-aware.\r\n\r\n### Localisations\r\n\r\n- Non-English tables brought in line with English\r\n- Version appearance simplified, build number surfaced in-app\r\n- \"Rounded artwork\" renamed to **\"Rounded playlist cover art\"** across all 27 languages\r\n\r\n---\r\n\r\n## 📦 Packaging\r\n\r\nLocally built IPAs now ship with the alternate app icons baked in, and the deb dependency was corrected.\r\n\r\n---\r\n\r\n## 📋 At a glance\r\n\r\n| | |\r\n|---|---|\r\n| Minimum iOS | **16.1** |\r\n| Liquid Glass | iOS 26 + restart |\r\n| Languages | **27** |\r\n| Alternate app icons | **34** |\r\n| Spotify | 9.1.x |\r\n\r\n---\r\n\r\n## 📥 Install\r\n\r\nSign the IPA with **SideStore**, **FlareStore**, or a certificate-based signer like **RyukSign**. For jailbroken devices, grab the `.deb` matching your architecture from the releases page.\r\n\r\n---\r\n\r\n## 🙏 Credits\r\n\r\nThis release stands on a lot of contributed work. Thank you to everyone who opened a PR, reported an issue, or tested a build.\r\n\r\n### Hide Jam & block rating prompts\r\n\r\n**Hide Jam** and **Block rating prompts** were proposed and implemented by **[Incognito-Coder](https://github.com/Incognito-Coder)** in **[PR #152](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/152)** (*feat: hide Jam from menus and block app star rating dialogs*).\r\n\r\n**Hide Jam** strips Jam out of the app without touching tracks or artists that happen to be titled \"Jam\" — it overrides 17 Jam-related remote configuration flags covering the queue button, guest controls, device-picker integration, nearby-session nudges, invite deep links, and local-network discovery. Rating prompts are suppressed by hooking `SKStoreReviewController` directly.\r\n\r\nBoth are off by default and take effect after restarting Spotify.\r\n\r\n### AMOLED black theme\r\n\r\nThe optional **AMOLED black theme** was originally proposed and implemented by **[nodzen](https://github.com/nodzen)** in **[PR #126](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/126)** (*feat: add optional AMOLED black theme*).\r\n\r\nRather than flattening every dark surface to pure black, nodzen's approach was surgical: it replaces only opaque, nearly neutral dark `UIView` backgrounds with true black, while deliberately preserving coloured artwork-derived backgrounds, gradients, translucent materials, text, icons, and shadows. That constraint is what keeps the theme from destroying album art and glass surfaces elsewhere in the app.\r\n\r\nThe theme ships disabled by default and takes effect after restarting Spotify.\r\n\r\n### Word-synced lyrics\r\n\r\n**Word-synced lyrics in the custom lyrics view**\r\n\r\n### Other contributions\r\n\r\n- **[hooray804](https://github.com/hooray804)** — Korean localisation ([PR #172](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/172))\r\n- **[marcinmajsc](https://github.com/marcinmajsc)** — Polish localisation and lyrics source footer ([PR #123](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/123), [PR #147](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/147))\r\n- **[Huseyin-Korkmaz](https://github.com/Huseyin-Korkmaz)** — Turkish localisation ([PR #137](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/137))\r\n- **[U-rTrDD-fyi](https://github.com/U-rTrDD-fyi)** — Musixmatch lyrics fix for the `apic` ELB 403 ([PR #166](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/166))\r\n- **[karlfrank916](https://github.com/karlfrank916)** — the Messages `si` parameter report that prompted this release's share-link investigation ([#171](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/issues/171))\r\n\r\n---\r\n\r\n## Known issues\r\n\r\n- **Share links to Messages still include Spotify's `si` tracking parameter** ([#171](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/issues/171)). Clean Share Links strips it for the share sheet, clipboard, and direct share targets, but the Messages route isn't covered yet. An attempted fix was reverted because it targeted a class we couldn't confirm on that code path.\r\n\r\n---\r\n\r\nMade by @SideloadLabs:\r\n@jaydenjcpy\r\n@faroukbmiled \r\n@M0d-4 \r\n",
+               "prerelease": false,
+               "published_at": "2026-10-05T12:11:43Z",
+               "published_epoch": 1791202303,
+               "published_label": "5 October 2026",
+               "summary": "A ground-up overhaul of the tweak's interface, built around native iOS 26 Liquid Glass, plus a redesigned settings app, a remote flag browser, and a large batch of stability and privacy…",
+               "url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/tag/v7.0.0",
+               "version": "v7.0.0",
+               "version_label": "v7.0.0"
+            },
             {
                "asset_count": 3,
                "assets": [
@@ -657,47 +1081,47 @@
             "asset_count": 3,
             "assets": [
                {
-                  "content_type": "application/vnd.debian.binary-package",
-                  "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.8/com.eevee.spotify_6.6.8_iphoneos-arm64.deb",
+                  "content_type": "application/octet-stream",
+                  "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                   "kind": "deb",
-                  "name": "com.eevee.spotify_6.6.8_iphoneos-arm64.deb",
-                  "sha256": "e04ef60a509a47bb0a74701202a4840a941f80f32ffb38e96c9e8583bd93fa83",
-                  "size": 1987342,
-                  "size_label": "1.9 MB",
-                  "updated_at": "2026-08-19T13:01:25Z"
+                  "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
+                  "sha256": "513a50b197aa558c34b02b87bff9f46e6cad3b2e462ee8622fc72fd939e83a9b",
+                  "size": 2535140,
+                  "size_label": "2.4 MB",
+                  "updated_at": "2026-10-05T12:00:26Z"
                },
                {
-                  "content_type": "application/vnd.debian.binary-package",
-                  "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.8/com.eevee.spotify_6.6.8_iphoneos-arm64e-roothide.deb",
+                  "content_type": "application/octet-stream",
+                  "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                   "kind": "deb",
-                  "name": "com.eevee.spotify_6.6.8_iphoneos-arm64e-roothide.deb",
-                  "sha256": "a3ca60351ac8a790fa53fbe160ea19d1828a0d3e5963b1109a323938212a1c6f",
-                  "size": 2058428,
-                  "size_label": "2.0 MB",
-                  "updated_at": "2026-08-19T13:01:26Z"
+                  "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
+                  "sha256": "945bfe90ac99a3c30daa4a8b4ffc50eacd4621b95b7f1a53b3f9ad0db587d69b",
+                  "size": 2609642,
+                  "size_label": "2.5 MB",
+                  "updated_at": "2026-10-05T12:00:28Z"
                },
                {
                   "content_type": "text/plain",
-                  "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.8/txt.txt",
+                  "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                   "kind": "other",
                   "name": "txt.txt",
-                  "sha256": "86735daf9541dbeb629c359df55507298b86559498ef9fc8f41e17001b1cfe24",
-                  "size": 67,
-                  "size_label": "67 bytes",
-                  "updated_at": "2026-08-19T13:01:34Z"
+                  "sha256": "f207c5fe480a81fdb9861f7bd8cf8f2ed077c3bc47782d58b11c106a172ed9a2",
+                  "size": 86,
+                  "size_label": "86 bytes",
+                  "updated_at": "2026-10-05T12:08:20Z"
                }
             ],
             "author": "jaydenjcpy",
-            "name": "v6.6.8",
-            "notes": "# Release Notes:\r\n\r\nNew Features:\r\n\r\n- Clean Share Links 743f3dc\r\n- Prank for my friend 02fa97a\r\n\r\n\r\n\r\nImproved :\r\n\r\n- Support for Spotify 9.1.72 and .74\r\n- Crossfade can be fixed by enabling overwrite configuration, will find a better solution in the future\r\n\r\n\r\n**Non-Patched for SideStore, AltStore, sideloadly, LiveContainer, free leaked enterprise cert.”**\r\n\r\n**Patched = for jailbroken, TrollStore or paid cert**\r\n\r\n**ESign will cause crash**\r\n\r\n@SideloadLabs team:\r\n@faroukbmiled\r\n@M0d-4\r\n@jaydenjcpy\r\n\r\nDonation Links:\r\n[faroukbmiled](https://buymeacoffee.com/axryuk)\r\n[jaydenjcpy](https://ko-fi.com/jaydenjcpy)\r\n[Mod4](https://ko-fi.com/mo0d4)\r\n\r\n\r\n**Join [TG channel](https://t.me/compiledipas) to receive news on development**\r\n\r\n**VIEW TXT FILE**\r\n\r\n",
+            "name": "v7.0.0",
+            "notes": "# EeveeSpotify 7.0.0\r\n\r\nA ground-up overhaul of the tweak's interface, built around native **iOS 26 Liquid Glass**, plus a redesigned settings app, a remote flag browser, and a large batch of stability and privacy fixes.\r\n---\r\n\r\n## ✨ Liquid Glass UI *(iOS 26)*\r\n\r\nA new opt-in rendering layer that replaces Spotify's stock chrome with real system glass, toggleable surface-by-surface — take the tab bar without touching the player.\r\n\r\n- **Tab bar** — a genuine `UITabBar` rendered as native glass, with taps replayed onto Spotify's own tab items\r\n- **Now Playing bar** — glass capsule with album-colour tinting\r\n- **Spotify's own bars & menus** — existing blur views swapped for real `UIGlassEffect`\r\n- **Player, lyrics, search, home, and page headers**\r\n- **Playlist, album, and artist** glass action rows, with header and Home section controls\r\n- **Custom lyrics view** — optional glass rendering, with the button hidden automatically when no lyrics are fetched\r\n\r\n## 🎛️ Tab bar customization\r\n\r\nReorder tabs, hide tabs you never tap, hide labels for an icon-only bar, choose a launch tab, and pin any Spotify page as a custom tab. Liked Songs, Downloads, Podcasts, and Queue ship as presets; any `spotify:` URI can be added. Custom tabs navigate in-app rather than bouncing to your other Spotify install.\r\n\r\n## 🎨 Appearance\r\n\r\n- **AMOLED black theme** — see [Credits](#-credits) below\r\n- **Custom accent colours** and **custom background colours**\r\n- **Rounded playlist cover art** for library rows and playlist track rows\r\n- **Dynamic background colours** pulled from album art\r\n- **Home gradient control** — style (gradient or solid), height (short, medium, tall), strength, fade curve, and per-page targeting for Home, Library, and Search\r\n- **Player backdrop** and **glass lyrics card** toggles\r\n\r\n## 🎧 Player\r\n\r\nControl decluttering, double-tap seek/skip zones, haptics for buttons and scrubbing, and direct access to Word-Synced lyrics.\r\n\r\n## 📜 Lyrics & karaoke\r\n\r\nThe biggest change here: **word-synced lyrics now work in the custom lyrics view**, not just on Spotify's own lyrics screen.\r\n\r\n- **Word-synced support for the custom lyrics view**, with a dedicated on/off toggle gating the rest of the section\r\n- **Customisable blur intensity** (0–6) for inactive lyric lines\r\n- **Other lyrics sources can now use line-synced mode**, not just Spicy Lyrics\r\n- **Credits footer** with real attribution — who wrote, provided, and uploaded the lyrics\r\n- **Official Spicy Lyrics API** with a configurable key, in-app validation, and a link to the key template\r\n- Lyrics uncensoring fill, RTL karaoke highlighting, text alignment and reversed-direction controls\r\n\r\n## 🔧 New settings surfaces\r\n\r\n- **Remote flag browser** — browse, search, and override Spotify's server-side feature flags, with change-only filtering and per-flag reset\r\n- **Curated Spotify Features page** — hidden switches Spotify already ships (trim silence, library Pro, denser rows, lock-screen options, sleep timer, and more)\r\n- **Redesigned settings** grouped into Listening / Looks / Advanced, with per-page previews, page-level resets, and a Troubleshooting section\r\n- **Debug logging** with export and clear\r\n\r\n## 🛡️ Privacy & stability\r\n\r\n- **Blocks third-party tracking SDKs** — Firebase, Facebook, Branch, and other analytics\r\n- **Hide Jam** — strips Jam entry points from the app without touching tracks or artists that happen to be titled \"Jam\"\r\n- **Blocks App Store rating prompts** — no more review popups interrupting playback\r\n- Resolves an access-token race crash, a karaoke long-press scope bug, settings tint leaks, and assorted stability issues\r\n\r\n---\r\n\r\n## 🐛 Fixes in this release\r\n\r\n### Custom lyrics view didn't update between songs\r\n\r\nThe biggest fix. Previously, opening the custom lyrics view pinned it to whatever song was playing at that moment — skip to the next track and it kept showing the old lyrics until you closed and reopened it.\r\n\r\nIt now follows the player: when the track changes, it swaps in the new song's lyrics and resets scroll position and per-line state so each song starts fresh. If the new track's lyrics aren't in hand yet, it fetches them and retries a few times before giving up.\r\n\r\nIt also tracks the **actually playing** track rather than the one a lyrics request last named — Spotify preloads lyrics for upcoming songs, so the old behaviour could latch onto the wrong one. If no lyrics turn up at all, the view closes itself instead of sitting there empty.\r\n\r\n### iPad Liquid Glass layout\r\n\r\n- **Tab bar rendered too small** — the glass bar inherited Spotify's short iPad strip height, squashing every item. Now floored at 50pt and centred on the original strip.\r\n- **Album art escaped the mini player** — clipping was applied inside a radius check that iPad's capsule radius skipped entirely, so artwork bled past the corners. Clipping is now unconditional, and the artwork search is iPad-aware.\r\n\r\n### Localisations\r\n\r\n- Non-English tables brought in line with English\r\n- Version appearance simplified, build number surfaced in-app\r\n- \"Rounded artwork\" renamed to **\"Rounded playlist cover art\"** across all 27 languages\r\n\r\n---\r\n\r\n## 📦 Packaging\r\n\r\nLocally built IPAs now ship with the alternate app icons baked in, and the deb dependency was corrected.\r\n\r\n---\r\n\r\n## 📋 At a glance\r\n\r\n| | |\r\n|---|---|\r\n| Minimum iOS | **16.1** |\r\n| Liquid Glass | iOS 26 + restart |\r\n| Languages | **27** |\r\n| Alternate app icons | **34** |\r\n| Spotify | 9.1.x |\r\n\r\n---\r\n\r\n## 📥 Install\r\n\r\nSign the IPA with **SideStore**, **FlareStore**, or a certificate-based signer like **RyukSign**. For jailbroken devices, grab the `.deb` matching your architecture from the releases page.\r\n\r\n---\r\n\r\n## 🙏 Credits\r\n\r\nThis release stands on a lot of contributed work. Thank you to everyone who opened a PR, reported an issue, or tested a build.\r\n\r\n### Hide Jam & block rating prompts\r\n\r\n**Hide Jam** and **Block rating prompts** were proposed and implemented by **[Incognito-Coder](https://github.com/Incognito-Coder)** in **[PR #152](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/152)** (*feat: hide Jam from menus and block app star rating dialogs*).\r\n\r\n**Hide Jam** strips Jam out of the app without touching tracks or artists that happen to be titled \"Jam\" — it overrides 17 Jam-related remote configuration flags covering the queue button, guest controls, device-picker integration, nearby-session nudges, invite deep links, and local-network discovery. Rating prompts are suppressed by hooking `SKStoreReviewController` directly.\r\n\r\nBoth are off by default and take effect after restarting Spotify.\r\n\r\n### AMOLED black theme\r\n\r\nThe optional **AMOLED black theme** was originally proposed and implemented by **[nodzen](https://github.com/nodzen)** in **[PR #126](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/126)** (*feat: add optional AMOLED black theme*).\r\n\r\nRather than flattening every dark surface to pure black, nodzen's approach was surgical: it replaces only opaque, nearly neutral dark `UIView` backgrounds with true black, while deliberately preserving coloured artwork-derived backgrounds, gradients, translucent materials, text, icons, and shadows. That constraint is what keeps the theme from destroying album art and glass surfaces elsewhere in the app.\r\n\r\nThe theme ships disabled by default and takes effect after restarting Spotify.\r\n\r\n### Word-synced lyrics\r\n\r\n**Word-synced lyrics in the custom lyrics view**\r\n\r\n### Other contributions\r\n\r\n- **[hooray804](https://github.com/hooray804)** — Korean localisation ([PR #172](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/172))\r\n- **[marcinmajsc](https://github.com/marcinmajsc)** — Polish localisation and lyrics source footer ([PR #123](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/123), [PR #147](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/147))\r\n- **[Huseyin-Korkmaz](https://github.com/Huseyin-Korkmaz)** — Turkish localisation ([PR #137](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/137))\r\n- **[U-rTrDD-fyi](https://github.com/U-rTrDD-fyi)** — Musixmatch lyrics fix for the `apic` ELB 403 ([PR #166](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/pull/166))\r\n- **[karlfrank916](https://github.com/karlfrank916)** — the Messages `si` parameter report that prompted this release's share-link investigation ([#171](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/issues/171))\r\n\r\n---\r\n\r\n## Known issues\r\n\r\n- **Share links to Messages still include Spotify's `si` tracking parameter** ([#171](https://github.com/SideloadLabs/EeveeSpotifyReincarnated/issues/171)). Clean Share Links strips it for the share sheet, clipboard, and direct share targets, but the Messages route isn't covered yet. An attempted fix was reverted because it targeted a class we couldn't confirm on that code path.\r\n\r\n---\r\n\r\nMade by @SideloadLabs:\r\n@jaydenjcpy\r\n@faroukbmiled \r\n@M0d-4 \r\n",
             "prerelease": false,
-            "published_at": "2026-08-19T13:06:11Z",
-            "published_epoch": 1787144771,
-            "published_label": "19 August 2026",
-            "summary": "New Features: Clean Share Links 743f3dc Prank for my friend 02fa97a Improved : Support for Spotify 9.1.72 and .74 Crossfade can be fixed by enabling overwrite configuration, will find a…",
-            "url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/tag/v6.6.8",
-            "version": "v6.6.8",
-            "version_label": "v6.6.8"
+            "published_at": "2026-10-05T12:11:43Z",
+            "published_epoch": 1791202303,
+            "published_label": "5 October 2026",
+            "summary": "A ground-up overhaul of the tweak's interface, built around native iOS 26 Liquid Glass, plus a redesigned settings app, a remote flag browser, and a large batch of stability and privacy…",
+            "url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/tag/v7.0.0",
+            "version": "v7.0.0",
+            "version_label": "v7.0.0"
          },
          "name": "EeveeSpotify",
          "releases_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases",

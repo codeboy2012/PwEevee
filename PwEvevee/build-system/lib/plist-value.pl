@@ -7,12 +7,24 @@ use warnings;
 
 my ($plist, $key) = @ARGV;
 defined $key or die "usage: plist-value.pl <plist> <Key>\n";
+
+# On macOS prefer plutil for binary plists: it parses the object table correctly.
+# The raw scanner below only sees serialized strings, not offsets, so on a real
+# app's Info.plist it can return the WRONG object (observed: 'T16.0' instead of
+# the bundle id). Keep the raw path as the portable fallback only.
+if (eval { require POSIX; 1 } && $^O eq 'darwin' && -x '/usr/bin/plutil') {
+  my $rc = system('/usr/bin/plutil', '-extract', $key, 'raw', '-o', '-', $plist);
+  exit 0 if $rc == 0;    # plutil prints the value itself
+  # fall through to the raw path when plutil cannot find/format the key
+}
+
 open(my $f, '<:raw', $plist) or die "open $plist: $!";
 local $/; my $d = <$f>; close $f;
 
 if (substr($d, 0, 6) eq 'bplist') {
-  # binary plist: key then the value string follows in the object table; take the first
-  # printable run after the key that is not itself a key-ish token.
+  # binary plist WITHOUT plutil (other platforms): key then the value string
+  # follows in the object table; take the first printable run after the key.
+  # UNRELIABLE for arbitrary binaries (see comment above) — only a fallback.
   my $i = index($d, $key);
   die "key not found in binary plist: $key\n" if $i < 0;
   my $rest = substr($d, $i + length($key));
