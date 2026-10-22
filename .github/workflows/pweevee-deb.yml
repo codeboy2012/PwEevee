@@ -46,6 +46,8 @@ jobs:
           echo "$SG_FLAG_LIST" | base64 -d | gunzip > Spotipw/tweak/Sources/Shared/Flags/SGFlagList.m
 
       - name: Build the deb
+        env:
+          THEOS: ${{ github.workspace }}/theos
         run: |
           cd Spotipw
           PATH="/usr/local/opt/make/libexec/gnubin:$PATH" ./scripts/build-deb.sh
