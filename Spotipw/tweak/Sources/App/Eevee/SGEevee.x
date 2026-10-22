@@ -269,10 +269,10 @@ static NSString *eeveePrettyIconName(NSString *key) {
     return out.length ? out : key;
 }
 
-@interface SGEeveeIconsPage : SGPage
+@interface SGEeveeIconsTable : SGPage
 @end
 
-@implementation SGEeveeIconsPage {
+@implementation SGEeveeIconsTable {
     NSArray<NSDictionary *> *_icons;   // { key, name, alternate }
     NSString *_selected;
     NSString *_error;
@@ -384,7 +384,7 @@ static NSString *eeveePrettyIconName(NSString *key) {
 @end
 
 UIViewController *SGEeveeIconsPage(void) {
-    return [SGEeveeIconsPage new];
+    return [SGEeveeIconsTable new];
 }
 
 // The exclusivity policy (Shared/AdBlock/PremiumExclusivity.m) drives Eevee's patching key through
