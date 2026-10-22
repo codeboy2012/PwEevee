@@ -10,20 +10,78 @@
 #   AppexBundleIDNotPrefixed        every .appex id must start with the
 #                                   id of its containing bundle
 #   IntentsAppexIntentsSupported-   every intent an extension declares must
-#     NotASubset                    also appear in the phone app
-#   missing WKCompanionApp-         companion/parent embedded metadata must
-#     BundleIdentifier              agree on BOTH sides
+#     NotASubset                    also appear in its parent app
+#   Watch-app pair metadata         per Apple's watchOS Info.plist key
+#     (schema violation)            reference, WKWatchKitApp (Boolean) and
+#                                   WKCompanionAppBundleIdentifier live on
+#                                   the WATCH app's Info.plist; the companion
+#                                   must NOT claim WKWatchKitApp
 #
 # The base id is optional; when given, additionally verify the outer app's
 # CFBundleIdentifier equals it (the deterministic mapping invariant).
+#
+# Prefixed-with-a-dot detection (--catch-double-prefix): an OUTER id that is
+# 'a.b.' or ends with '.' is caught by the normal MISMATCH check when a base
+# id is supplied; this flag additionally rejects such ids with no base id
+# given. Used by the double-prefix regression test.
 # ============================================================================
 use strict;
 use warnings;
 use File::Find;
 use JSON::PP ();
 
-my ($app, $base_id) = @ARGV;
-$app or die "usage: validate-watchfix.pl <staged .app> [base-id]\n";
+# python plistlib detection: a structured binary-plist parser on every host
+# (macOS plutil OR any host with python). Never byte-edits.
+my $py;
+foreach my $c ('python', 'python3') {
+  my $probe = `$c -c 'import plistlib' 2>&1`;
+  if (defined $probe && $probe eq '') { $py = $c; last; }
+}
+my $have_plistlib = defined $py ? 1 : 0;
+
+# structured reader for one key: returns a hash { type, value } or undef
+sub plistlib_read {
+  my ($path, $key) = @_;
+  return undef unless $have_plistlib;
+  my $json = `$py - "$path" "$key" <<'PYEOF' 2>&1
+import plistlib, sys, json
+with open(sys.argv[1], 'rb') as f: d = plistlib.load(f)
+for k in d.keys():
+    if k.lower() == sys.argv[2].lower():
+        v = d[k]
+        t = 'boolean' if isinstance(v, bool) else 'string' if isinstance(v, str) else 'other'
+        print(json.dumps({'type': t, 'value': v}))
+        sys.exit(0)
+sys.exit(1)
+PYEOF`;
+  return undef unless defined $json && $json =~ /^\{/;
+  my $data = eval { JSON::PP::decode_json($json) };
+  return $data;
+}
+# structured reader for the FULL array under one key
+sub plistlib_read_array {
+  my ($path, $key) = @_;
+  return () unless $have_plistlib;
+  my $json = `$py - "$path" "$key" <<'PYEOF' 2>&1
+import plistlib, sys, json
+with open(sys.argv[1], 'rb') as f: d = plistlib.load(f)
+for k in d.keys():
+    if k.lower() == sys.argv[2].lower():
+        v = d[k]
+        print(json.dumps(v if isinstance(v, list) else [v]))
+        sys.exit(0)
+sys.exit(1)
+PYEOF`;
+  return () unless defined $json && $json =~ /^\[/;
+  my $data = eval { JSON::PP::decode_json($json) };
+  return ref $data eq 'ARRAY' ? @$data : ();
+}
+
+my $catch_double = 0;
+my @pos = grep { defined && $_ ne '' && $_ ne '--catch-double-prefix' } @ARGV;
+$catch_double = 1 if scalar(@pos) != scalar(grep { defined && $_ ne '' } @ARGV);
+my ($app, $base_id) = @pos;
+$app or die "usage: validate-watchfix.pl <staged .app> [base-id] [--catch-double-prefix]\n";
 $app =~ s{/+$}{};
 
 my (@fail, @warn);
@@ -40,10 +98,15 @@ sub plist_scalar {
   open my $fh, '<:raw', $path or do { fail("READ: $path ($!)"); return undef };
   local $/; my $d = <$fh>; close $fh;
   if (substr($d, 0, 6) eq 'bplist') {
-    # Binary plist: scan with plutil FIRST on macOS (parses the object table
-    # correctly). The serialized-string scan cannot see offsets and returns
-    # garbage on real app plists (observed: 'WKWatchKitApp_' instead of the
-    # bundle id), so it is the last-resort fallback only.
+    # Order: (1) python plistlib — structured, works on every host and parses
+    # the object table correctly; (2) macOS plutil; (3) warn + give up. The
+    # serialized-string scan is NOT used: it cannot see offsets and returns
+    # garbage on real app plists (observed: 'WKWatchKitApp_' for a bundle id).
+    my $struct = plistlib_read($path, $key);
+    if (defined $struct && $struct->{type} ne 'other') { return $struct->{value} }
+    if (defined $struct && $struct->{type} eq 'other') {
+      return undef;   # non-scalar (array/dict) is not a string value here
+    }
     if ($^O eq 'darwin' && -x '/usr/bin/plutil') {
       my $out = `/usr/bin/plutil -extract '$key' raw -o - '$path' 2>/dev/null`;
       return undef unless defined $out && length $out;
@@ -52,15 +115,55 @@ sub plist_scalar {
       $out =~ s/\r?\n.*//s;
       return $out;
     }
-    warn_("BINARY PLIST without plutil: $path — $key unreadable statically");
+    warn_("BINARY PLIST without plutil/plistlib: $path — $key unreadable statically");
     return undef;
   }
-  # XML
+  # XML: capture the top-level <key> and support string AND Boolean values
   my $i = index($d, "<key>$key</key>");
   return undef if $i < 0;
   my $rest = substr($d, $i + length("<key>$key</key>"));
   $rest =~ /<string>([^<]*)<\/string>/ or return undef;
   return $1;
+}
+
+# Type-aware reader: returns (value, 'string'|'boolean'|undef) and reports a
+# clear failure when the key is present with an unsupported/empty XML value.
+# Note: plist_scalar is deliberately retained for callers that only handle
+# strings (bundle ids, version strings); use plist_typed for Boolean keys.
+sub plist_typed {
+  my ($path, $key) = @_;
+  return (undef, undef) unless -f $path;
+  open my $fh, '<:raw', $path or do { fail("READ: $path ($!)"); return (undef, undef) };
+  local $/; my $d = <$fh>; close $fh;
+  if (substr($d, 0, 6) eq 'bplist') {
+    # plistlib first (structured, type-aware, any host); plutil on macOS.
+    my $struct = plistlib_read($path, $key);
+    if (defined $struct) {
+      if ($struct->{type} eq 'boolean') {
+        return ($struct->{value} ? (1, 'boolean') : (0, 'boolean'));
+      }
+      if ($struct->{type} eq 'string') { return ($struct->{value}, 'string') }
+      return (undef, undef);   # array/dict/other: not a scalar for this check
+    }
+    if ($^O eq 'darwin' && -x '/usr/bin/plutil') {
+      my $out = `/usr/bin/plutil -extract '$key' raw -o - '$path' 2>/dev/null`;
+      return (undef, undef) unless defined $out && length $out;
+      $out =~ s/\r?\n.*//s;
+      if (index($out, 'true') == 0) { return (1, 'boolean'); }
+      if (index($out, 'false') == 0) { return (0, 'boolean'); }
+      return ($out, 'string');
+    }
+    warn_("BINARY PLIST without plutil/plistlib: $path — $key unreadable statically");
+    return (undef, undef);
+  }
+  my $i = index($d, "<key>$key</key>");
+  return (undef, undef) if $i < 0;
+  my $rest = substr($d, $i + length("<key>$key</key>"));
+  if ($rest =~ /<true\/>/) { return (1, 'boolean'); }
+  if ($rest =~ /<false\/>/) { return (0, 'boolean'); }
+  if ($rest =~ /<string>([^<]*)<\/string>/) { return ($1, 'string'); }
+  fail("UNREADABLE VALUE for $key in $path (unsupported plist element type)");
+  return (undef, undef);
 }
 
 # outer app id
@@ -97,20 +200,49 @@ my $watch_id = defined $watch
 
 fail('MISSING watch CFBundleIdentifier') if defined $watch && !defined $watch_id;
 
-# 1. outer app must carry companion metadata for the watch id.
+# 1. embedded Watch app must carry the Apple-documented pair metadata;
+#    the OUTER (companion) app must NOT claim WKWatchKitApp.
 if (defined $watch) {
-  my $comp = plist_scalar("$app/Info.plist", 'WKCompanionAppBundleIdentifier');
-  if (!defined $comp) {
-    fail('MISSING WKCompanionAppBundleIdentifier on outer app');
-  } elsif ($comp ne $watch_id) {
-    fail("COMPANION ID MISMATCH: WKCompanionAppBundleIdentifier=$comp but watch id=$watch_id");
+  my $w = "$watch/Info.plist";
+  my ($wkk, $wkk_type) = plist_typed($w, 'WKWatchKitApp');
+  if (!defined $wkk && !defined $wkk_type) {
+    my $raw_present = undef;
+    if (open my $fh, '<:raw', $w) { local $/; $raw_present = index(<$fh>, '<key>WKWatchKitApp</key>') >= 0; close $fh; }
+    if ($raw_present) {
+      fail("WKWatchKitApp on Watch app has an unreadable/unsupported plist value (expected Boolean true)");
+    } else {
+      fail('MISSING WKWatchKitApp on Watch app Info.plist');
+    }
+  } elsif ($wkk_type ne 'boolean') {
+    fail("WKWatchKitApp WRONG TYPE on Watch app: got '" . ($wkk // 'undef') . "' ($wkk_type), expected plist Boolean");
+  } elsif (!$wkk) {
+    fail('WKWatchKitApp is Boolean false on Watch app (expected true)');
   } else { ok(); }
 
-  # WKWatchKitApp must NOT claim the watch side is the companion.
-  my $w_wkk = plist_scalar("$watch/Info.plist", 'WKWatchKitApp');
-  if (defined $w_wkk) {
-    fail("WRONG SIDE: WKWatchKitApp on Watch app Info.plist (belongs on the companion)");
+  my $comp = plist_scalar($w, 'WKCompanionAppBundleIdentifier');
+  if (!defined $comp) {
+    fail('MISSING WKCompanionAppBundleIdentifier on Watch app Info.plist');
+  } elsif (defined $outer_id && $comp ne $outer_id) {
+    fail("COMPANION ID MISMATCH: WKCompanionAppBundleIdentifier=$comp but outer app id=$outer_id");
   } else { ok(); }
+
+  # The companion must NOT claim the Watch role (Apple: the key "applies to
+  # the Watch app only"). A string "true" is not a Boolean either.
+  my ($a_wkk, $a_wkk_type) = plist_typed("$app/Info.plist", 'WKWatchKitApp');
+  if (defined $a_wkk_type) {
+    fail("WRONG SIDE: WKWatchKitApp on companion app Info.plist (Apple: applies to the Watch app only) — type=$a_wkk_type");
+  } else {
+    if (open my $fh, '<:raw', "$app/Info.plist") {
+      local $/; my $d = <$fh>; close $fh;
+      if (substr($d, 0, 6) ne 'bplist' && index($d, '<key>WKWatchKitApp</key>') >= 0) {
+        fail('WRONG SIDE: WKWatchKitApp key present on companion app Info.plist (must be removed)');
+      }
+    }
+    ok();
+  }
+
+  my $w_min = plist_scalar($w, 'MinimumOSVersion');
+  warn_('watch MinimumOSVersion missing') unless defined $w_min;
 }
 
 # 2. every .appex id must start with its parent bundle id.
@@ -135,13 +267,44 @@ for my $dir (@app_dirs) {
       fail("APPEX NOT PREFIXED: $ax_id should start with $prefix");
     } else { ok(); }
 
-    # collect IntentsSupported declared by this extension (XML plists; binary
-    # plists cannot be parsed by the naive scanner and are reported as a
-    # warning rather than silently passing)
+    # double-prefix sentinel (AppexBundleIDNotPrefixed class): an id that
+    # embeds its parent id's dot-terminated namespace TWICE was rewritten
+    # twice (e.g. base watch id applied over an already-derived id).
+    if ($catch_double) {
+      my $cnt = 0;
+      my $probe = "$parent_id.";
+      my $p = 0;
+      while (($p = index($ax_id, $probe, $p)) >= 0) { $cnt++; $p += 1; }
+      if ($cnt > 1) {
+        fail("APPEX DOUBLE-PREFIXED: $ax_id embeds its parent id $parent_id more than once ($cnt)");
+      } else { ok() if $cnt == 1; }
+    }
+
+    # stale-namespace sentinel: an appex id still in a namespace that is NOT
+    # the parent's namespace at all (i.e. it doesn't share the parent's first
+    # two dot-separated components) — the exact shape that produced the real
+    # AppexBundleIDNotPrefixed install failure (com.skywatch.* appex under a
+    # com.spotipw.* renamed parent).
+    {
+      my @p = split /\./, $parent_id;
+      my @a = split /\./, $ax_id;
+      my $shared = 0;
+      $shared++ while $shared < @p && $shared < @a && $p[$shared] eq $a[$shared];
+      if ($shared < 2) {
+        fail("APPEX STALE NAMESPACE: $ax_id does not share its parent's namespace ($parent_id) — stale pre-rewrite id");
+      } else { ok(); }
+    }
+
+    # collect IntentsSupported declared by this extension (XML plists are
+    # text-scanned; BINARY plists are read through plistlib when available)
     my $raw = do { local $/; open my $fh, '<:raw', "$ax/Info.plist" or next; <$fh> };
     next unless defined $raw;
     if (substr($raw, 0, 6) eq 'bplist00') {
-      warn_("BINARY PLIST: $leaf/Info.plist — IntentsSupported not statically verifiable");
+      if (my @ints = plistlib_intents("$ax/Info.plist")) {
+        push @{ $appex_intents{$parent_id} ||= [] }, @ints;
+      } else {
+        warn_("BINARY PLIST: $leaf/Info.plist — IntentsSupported not statically verifiable");
+      }
       next;
     }
     my @ints;
@@ -157,37 +320,77 @@ for my $dir (@app_dirs) {
   }
 }
 
+# structured plistlib reader: full IntentsSupported array of a plist, any host
+sub plistlib_intents {
+  my ($path) = @_;
+  return () unless $have_plistlib;
+  my $json = `$py - "$path" <<'PYINT' 2>/dev/null
+import plistlib, json, sys
+with open(sys.argv[1], 'rb') as f: d = plistlib.load(f)
+print(json.dumps(d.get('IntentsSupported', [])))
+PYINT`;
+  my $arr = eval { JSON::PP::decode_json($json) };
+  return () unless ref $arr eq 'ARRAY';
+  return @$arr;
+}
+
 # phone app's own declared intents (top-level IntentsSupported). Arrays are
 # structured: parse via plutil->json on macOS, else fall back to the XML scan
 # (binary XML-less hosts cannot verify and are reported as a warning).
 my %app_intents;
-if (defined $watch) {
-  my @phone_ints;
+# Every parent app (phone and watch) must declare a top-level IntentsSupported
+# superset of its extensions'. Read each parent's own Info.plist (via plutil
+# on macOS; XML scan fallback elsewhere; binary plists are reported as a
+# warning rather than silently passing).
+my @parents = ([$outer_id, "$app/Info.plist"]);
+my %parent_seen = map { $_->[0] => 1 } @parents;
+for my $pdir ($app, (defined $watch ? $watch : ())) {
+  next unless -d $pdir;
+  my $pid = plist_scalar("$pdir/Info.plist", 'CFBundleIdentifier');
+  next unless defined $pid && length $pid;
+  next if $parent_seen{$pid}++;
+  push @parents, [$pid, "$pdir/Info.plist"];
+}
+for my $pair (@parents) {
+  my ($pid, $ppath) = @$pair;
+  next unless -f $ppath;
+  my @parent_ints;
   if ($^O eq 'darwin' && -x '/usr/bin/plutil') {
-    my $json = `/usr/bin/plutil -convert json -o - '$app/Info.plist' 2>/dev/null`;
+    my $json = `/usr/bin/plutil -convert json -o - '$ppath' 2>/dev/null`;
     if ($json) {
       my $data = eval { JSON::PP::decode_json($json) };
       if ($data && ref $data->{IntentsSupported} eq 'ARRAY') {
-        @phone_ints = @{ $data->{IntentsSupported} };
+        @parent_ints = @{ $data->{IntentsSupported} };
       }
     }
   }
-  unless (@phone_ints) {
+  unless (@parent_ints) {
     my $raw;
-    if (open my $fh, '<:raw', "$app/Info.plist") { local $/; $raw = <$fh>; close $fh; }
+    if (open my $fh, '<:raw', $ppath) { local $/; $raw = <$fh>; close $fh; }
     if (defined $raw) {
       if (substr($raw, 0, 6) eq 'bplist') {
-        warn_("phone Info.plist is binary and plutil could not read IntentsSupported")
+        if (my @pl = plistlib_intents($ppath)) {
+          @parent_ints = @pl;
+        } else {
+          warn_("Info.plist of $pid is binary and plutil/plistlib could not read IntentsSupported")
+        }
       } else {
         my $k = index($raw, 'IntentsSupported');
         if ($k >= 0) {
           my $rest = substr($raw, $k + length('IntentsSupported'));
-          while ($rest =~ /<string>([^<]*)<\/string>/g) { push @phone_ints, $1; }
+          my $a = index($rest, '<array>');
+          if ($a >= 0) {
+            my $close = index($rest, '</array>', $a);
+            if ($close >= 0) {
+              my $inner = substr($rest, 0, $close);
+              @parent_ints = ($inner =~ /<string>([^<]*)<\/string>/g);
+            }
+          }
         }
       }
     }
   }
-  $app_intents{$outer_id} = \@phone_ints if @phone_ints;
+  $app_intents{$pid} = \@parent_ints if @parent_ints;
 }
 
 # 5. subset check: every intent declared by an extension of the app must be
@@ -205,10 +408,7 @@ for my $parent (sort keys %appex_intents) {
 
 # 6. minimum OS coherence: iPhone app MinOS < watch MinOS is normal; flag if
 #    watch MinOS is missing or nonsense (e.g. lower than its appex's).
-if (defined $watch) {
-  my $w_min = plist_scalar("$watch/Info.plist", 'MinimumOSVersion');
-  warn_('watch MinimumOSVersion missing') unless defined $w_min;
-}
+# (watch MinimumOSVersion is warned about inside the metadata block above.)
 
 # ---- summary ----------------------------------------------------------------
 if (@warn) { print "WARNINGS:\n  - $_\n" for @warn; }

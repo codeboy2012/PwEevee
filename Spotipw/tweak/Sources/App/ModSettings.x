@@ -18,11 +18,13 @@
 #import "Settings/SGModPage.h"
 #import "Native/Home/Home.h"
 #import "Shared/Privacy/Privacy.h"
+#import "Shared/AdBlock/AdBlock.h"
 #import "Shared/Flags/Flags.h"
 #import "Shared/AudioEffects/AudioEffectsPage.h"
 #import "Shared/LiveActivity/LiveActivity.h"
 #import "App/About/About.h"
 #import "App/Donate/Donate.h"
+#import "App/Eevee/SGEevee.h"
 #import "Pages.h"
 
 static const CGFloat kRowHeight = 56;
@@ -61,19 +63,33 @@ static UIViewController *modSettingsPage(void) {
         [parts addObject:liveActivity];
     }
     if (!SGRedesignedUIStored()) [parts addObject:pageRow(@"Home & Library", @"house", ^UIViewController *{ return SGHomeSettingsPage(); })];
+    // idle Spoof Premium — Spot.pw's own premium spoof (Shared/AdBlock), kept under its upstream
+    // label. It is mutually exclusive with the Eevee page's Spoofed Premium row: turning one on
+    // writes the other off (Shared/AdBlock/PremiumExclusivity.m), and a launch that finds both
+    // stored on settles for Spot.pw's.
+    SGModRow *spoofPremium = SGOptionRow(@"Spoof Premium", nil, SGKeyFakePremium);
+    spoofPremium.defaultOn = YES;
+    spoofPremium.warning = SGFakePremiumWarning;
+    spoofPremium.changed = ^(BOOL on) { SGPremiumSpoofSetOn(on); };
+    SGModRow *eevee = pageRow(@"EeveeSpotify", @"heart.fill", ^UIViewController *{ return SGEeveeSpotifyPage(); });
+    eevee.value = ^NSString *{ return SGEeveePremiumOn() ? @"On" : @"Off"; };
     [sections addObjectsFromArray:@[
         SGAppearanceSection(),
         SGSection(nil, parts),
+        SGNotedSection(@"Premium", @[
+            SGWithSymbol(spoofPremium, @"crown"),
+        ], @"Enabled by default, for free accounts only; it is unstable and may force a logout. Spoof Premium and Eevee's Spoofed Premium exclude each other: switching one on switches the other off."),
         SGSection(nil, @[
             pageRow(@"Privacy & clutter", @"hand.raised", ^UIViewController *{ return SGPrivacySettingsPage(); }),
             pageRow(@"Labs", @"testtube.2", ^UIViewController *{ return SGLabsPage(); }),
+            eevee,
         ]),
         SGSection(nil, @[
             pageRow(@"All flags", @"flag", ^UIViewController *{ return SGAllFlagsPage(); }),
             mod,
         ]),
     ]];
-    return [[SGModPage alloc] initWithTitle:@"spoti.pw" intro:nil sections:sections footer:nil];
+    return [[SGModPage alloc] initWithTitle:@"PwEevee" intro:nil sections:sections footer:nil];
 }
 
 #pragma mark - row in the settings list and the side drawer
@@ -94,7 +110,7 @@ static UIViewController *modSettingsPage(void) {
     if (!(self = [super initWithFrame:frame])) return nil;
     _icon = SGSymbolView(@"slider.horizontal.3", 20, UIImageSymbolWeightRegular, 24);
     _title = [UILabel new];
-    _title.text = @"Mod Settings";
+    _title.text = @"PwEevee options";
     _title.textColor = UIColor.whiteColor;
     _chevron = SGSymbolView(@"chevron.right", 11, UIImageSymbolWeightSemibold, 12);
     for (UIView *v in @[_icon, _title, _chevron]) [self addSubview:v];
@@ -202,6 +218,9 @@ static BOOL isSettingsRoot(UIViewController *list) {
 - (void)viewDidLayoutSubviews {
     %orig;
     BOOL root = isSettingsRoot((UIViewController *)self);
+    // The Eevee payload injects its own row into this same list; the mod's row is the one entry.
+    for (UIView *sub in ((UIViewController *)self).view.subviews)
+        if ([sub isKindOfClass:UICollectionView.class]) SGEeveeRemoveStandaloneRow((UICollectionView *)sub);
     for (UIView *sub in ((UIViewController *)self).view.subviews) {
         if (![sub isKindOfClass:UICollectionView.class]) continue;
         SGModSettingsRow *row = objc_getAssociatedObject(sub, &kRowKey);
@@ -226,6 +245,7 @@ static BOOL isSettingsRoot(UIViewController *list) {
 - (void)viewDidLayoutSubviews {
     %orig;
     SGForEachView(((UIViewController *)self).view, ^(UIView *v) {
+        if ([v isKindOfClass:UICollectionView.class]) SGEeveeRemoveStandaloneRow((UICollectionView *)v);
         if (![v isKindOfClass:UICollectionView.class] || ![NSStringFromClass(v.class) containsString:@"SideDrawerListCollectionView"]) return;
         if (objc_getAssociatedObject(v, &kRowKey)) return;
         SGModSettingsRow *row = [[SGModSettingsRow alloc] initWithFrame:CGRectZero];
@@ -252,4 +272,7 @@ static BOOL isSettingsRoot(UIViewController *list) {
     SGCheckSigningOnce();
     SGWatchForUpdates();
     SGWatchForDonate();
+    // One lyrics pipeline, Eevee's own: the forced notReplaced value the old integration lock wrote
+    // is undone, and the payload's stored choice rules the lyrics pipeline again.
+    SGEeveeRestoreLyricsReplacement();
 }

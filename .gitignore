@@ -7,6 +7,12 @@ dist/
 # Temporary unified build workspace
 PwEvevee/build-system/_work/
 
+# Theos build workspace and tweak packages
+Spotipw/tweak/.theos/
+Spotipw/tweak/packages/
+Spotipw/out/
+Spotipw/ipa/*.ipa
+
 # Large IPA/source artifacts
 Evevee Spotify/source-artifacts/*.ipa
 

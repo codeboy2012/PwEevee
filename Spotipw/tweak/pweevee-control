@@ -1,0 +1,9 @@
+Package: com.pweevee.unified
+Name: PwEevee
+Version: 0.22.0-alpha.2
+Architecture: iphoneos-arm
+Description: Unified PwEevee for Spotify 9.1.76 (SpoTi.pw v0.22.0 + EeveeSpotify v6.6.8 + PwEevee settings integration). ALPHA - for the 9.1.76 IPA only.
+Maintainer: PwEevee
+Author: PwEevee (SpoTi.pw by skopevoj; EeveeSpotify by Eevee/jaydenjcpy)
+Section: Tweaks
+Depends: firmware (>= 15.0), mobilesubstrate

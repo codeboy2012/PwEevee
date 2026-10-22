@@ -12,7 +12,9 @@ FLEX_ARG := $(if $(filter 0,$(FLEX)),--no-flex,)
 DEV_NAME ?= spoti.dev
 DEV_ICON ?= docs/icon.png
 
-.PHONY: build release install trees session log flags
+.PHONY: build release install trees session log flags deb
+deb:      ## the unified PwEevee Debian package into dist/ (needs Theos; see scripts/build-deb.sh -h)
+	./scripts/build-deb.sh
 build:    ## FLEX + glass IPA into out/
 	./scripts/pipeline.sh $(IPA)
 release:  ## glass only, no FLEX

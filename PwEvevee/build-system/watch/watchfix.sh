@@ -22,10 +22,11 @@
 #        outer app        <base-id>
 #        Watch app        <outer>.watchkitapp
 #        any .appex       <parent-id>.<leaf-name>
-#   3. fix companion metadata on both sides:
-#        outer Info.plist gets WKWatchKitApp=true and a matching
-#        WKCompanionAppBundleIdentifier; Watch app gets WKWatchKitApp removed
-#        (it marks the WATCH side of the pair, not the companion).
+#   3. fix companion metadata on both sides:  #        Watch app Info.plist gets WKWatchKitApp=true (a real plist
+  #        Boolean) and WKCompanionAppBundleIdentifier pointing at the
+  #        companion's id; the COMPANION's Info.plist gets WKWatchKitApp
+  #        removed (that key marks the WATCH side of the pair; Apple: "this
+  #        key applies to the Watch app only").
 #   4. phone-side entitlements gain the watchcompanion domains for the watch
 #        app id and watch app's NSExtension NSExtensionPointIdentifier list
 #        is left alone (no invented intents).
@@ -72,7 +73,12 @@ trap 'rm -rf "$WORK"' EXIT
 mkdir -p "$WORK/in" "$REPO/dist"
 
 # ---------------- 1. unpack ------------------------------------------------
+# NOTE: store-only IPA entries often carry DOS read-only attributes (especially
+# SC_Info-adjacent bundles). Strip them after extraction so the structured
+# plist editors can write; the packager re-serializes cleanly.
 unzip -q "$IN" -d "$WORK/in"
+find "$WORK/in" -type f ! -perm -u+w -exec chmod u+w {} + 2>/dev/null || true
+find "$WORK/in" -type d ! -perm -u+w -exec chmod u+w {} + 2>/dev/null || true
 APP_REL="$(cd "$WORK/in" && unzip -Z1 "$IN" -l 2>/dev/null | grep -oE '^Payload/[^/]+\.app/$' | head -1 || true)"
 if [ -z "$APP_REL" ]; then
   APP_REL="$(find "$WORK/in/Payload" -maxdepth 1 -name '*.app' -type d | head -1 | sed "s|^$WORK/in/||")"
@@ -82,70 +88,156 @@ APP_REL="${APP_REL%/}"
 APP_DIR="$WORK/in/$APP_REL"
 [ -d "$APP_DIR" ] || { echo "app dir missing: $APP_DIR" >&2; exit 1; }
 
+# python plistlib check (structured binary-plist API for non-macOS hosts;
+# never byte-edits — parses/writes the whole object table)
+HAVE_PY_PLIST=""
+if command -v python >/dev/null 2>&1 && python -c 'import plistlib' 2>/dev/null; then
+  HAVE_PY_PLIST=python
+elif command -v python3 >/dev/null 2>&1 && python3 -c 'import plistlib' 2>/dev/null; then
+  HAVE_PY_PLIST=python3
+fi
+export HAVE_PY_PLIST   # the perl intents-fixup child reads it to detect plistlib
+
 # outer Info.plist reader (XML and binary; falls back to plutil on macOS)
 plist_value() { # $1 plist, $2 key
-  # List plutil first on macOS: it parses binary plists correctly. The perl
-  # plist-value.pl binary scanner is a portable fallback only (it can grab
-  # the wrong object on real app plists).
-  plutil -extract "$2" raw -o - "$1" 2>/dev/null \
-    || perl "$BS/../lib/plist-value.pl" "$1" "$2" 2>/dev/null || true
-}
-plist_set() { # $1 plist, $2 key, $3 value
-  # On macOS ALWAYS use plutil for binary plists; the perl byte-slicer below
-  # would corrupt the object table on a real app's Info.plist.
-  if [ "$(head -c 6 "$1" 2>/dev/null)" = "bplist" ] && command -v plutil >/dev/null 2>&1; then
-    plutil -replace "$2" -string "$3" "$1" 2>/dev/null || plutil -insert "$2" -string "$3" "$1" 2>/dev/null || {
-      echo "WARN: plutil could not set $2 in $1" >&2; return 1;
-    }
+  # Order: (1) macOS plutil — parses binary plists correctly; (2) python
+  # plistlib — structured parser on any host, safe for binary plists; (3) the
+  # perl plist-value.pl binary scanner, a last-resort fallback that can grab
+  # the wrong object on real app plists.
+  if command -v plutil >/dev/null 2>&1 \
+      && out="$(plutil -extract "$2" raw -o - "$1" 2>/dev/null)"; then
+    printf '%s\n' "$out"
     return 0
   fi
-  perl - "$1" "$2" "$3" <<'PERLEOF'
+  if [ -n "$HAVE_PY_PLIST" ]; then
+    "${HAVE_PY_PLIST:-python}" - "$1" "$2" <<'PYEOF' 2>/dev/null || true
+import plistlib, sys
+with open(sys.argv[1], 'rb') as f: d = plistlib.load(f)
+path = sys.argv[2].split('.')
+for k in path[:-1]:
+    d = d[k]
+key = path[-1]
+for k in d.keys():
+    if k.lower() == key.lower():
+        print(d[k]); break
+else:
+    sys.exit(1)
+PYEOF
+    return 0
+  fi
+  perl "$BS/../lib/plist-value.pl" "$1" "$2" 2>/dev/null || true
+}
+plist_set() { # $1 plist, $2 key, $3 value; $4 optional "--boolean"
+  # Order: (1) macOS plutil for binary plists; (2) python plistlib on ANY
+  # host — a structured read-modify-write of the full object table that never
+  # byte-edits; (3) the perl XML editor for XML plists only.
+  if [ "$(head -c 6 "$1" 2>/dev/null)" = "bplist" ]; then
+    if command -v plutil >/dev/null 2>&1; then
+      if [ "${4:-}" = "--boolean" ]; then
+        plutil -replace "$2" -bool "true" "$1" 2>/dev/null || plutil -insert "$2" -bool "true" "$1" 2>/dev/null || {
+          echo "WARN: plutil could not set $2 (boolean) in $1" >&2; return 1;
+        }
+        return 0
+      fi
+      plutil -replace "$2" -string "$3" "$1" 2>/dev/null || plutil -insert "$2" -string "$3" "$1" 2>/dev/null || {
+        echo "WARN: plutil could not set $2 in $1" >&2; return 1;
+      }
+      return 0
+    fi
+    # No plutil but a python plistlib? Structured set preserves the plist's
+    # original format and never touches the object table by hand.
+    if [ -n "$HAVE_PY_PLIST" ]; then
+      set -- "$1" "$2" "$3" "${4:-}"   # re-assign for the python heredoc
+      "${HAVE_PY_PLIST:-python}" - "$@" <<'PYEOF'
+import plistlib, sys
+path, key, val, mode = sys.argv[1:5]
+with open(path, 'rb') as f: d = plistlib.load(f)
+found = [k for k in d.keys() if k.lower() == key.lower()]
+k = found[0] if found else key
+d[k] = True if mode == '--boolean' else (
+    float(val) if (mode != '--boolean' and val.replace('.','',1).isdigit()
+                   and '.' in val) else
+    int(val) if (mode != '--boolean' and val.lstrip('-').isdigit()) else val)
+with open(path, 'wb') as f: plistlib.dump(d, f, fmt=plistlib.FMT_BINARY)
+PYEOF
+      [ $? -eq 0 ] || { echo "WARN: python plistlib could not set $2 in $1" >&2; return 1; }
+      return 0
+    fi
+    # No safe structured editor available: refuse rather than corrupt.
+    echo "WARN: binary plist $1 but no plutil/plistlib — cannot edit $2 safely" >&2
+    return 1
+  fi
+  perl - "$1" "$2" "$3" "${4:-}" <<'PERLEOF'
   # XML path only (no plutil on this host). Replace the value between the
   # key's closing </key> and the next opening tag; when the key is missing
   # entirely, insert key+value before the closing </dict> of the top dict.
-  my ($path, $key, $val) = @ARGV;
+  # '--boolean' writes a real plist Boolean (<true/>) instead of a string.
+  my ($path, $key, $val, $mode) = @ARGV;
   open my $f, '<:raw', $path or die "open $path: $!";
   local $/; my $d = <$f>; close $f;
   die "refusing to byte-edit binary plist $path without plutil; convert with plutil -convert xml1\n"
     if substr($d, 0, 6) eq 'bplist';
   my $kv = "<key>$key</key>";
+  my $newel = $mode eq '--boolean' ? '<true/>' : "<string>$val</string>";
   my $i = index($d, $kv);
   my $new;
   if ($i >= 0) {
     my $pos = $i + length($kv);              # start of the value region
-    # skip whitespace/comments? plists don't have comments; skip whitespace only
+    # skip whitespace only (plists have no comments)
     $pos++ while $pos < length($d) && substr($d, $pos, 1) =~ /\s/;
     my $open = '<string>';
     if (substr($d, $pos, length($open)) eq $open) {
       my $close = index($d, '</string>', $pos);
       die "unterminated <string> for $key in $path\n" if $close < 0;
-      $new = substr($d, 0, $pos) . "<string>$val</string>" . substr($d, $close + length('</string>'));
+      $new = substr($d, 0, $pos) . $newel . substr($d, $close + length('</string>'));
     } else {
       # non-string (true/false/integer...) after the key: replace the whole
       # element up to the next '<' of the following tag
       my $next = index($d, '<', $pos + 1);
-      $new = substr($d, 0, $pos) . "<string>$val</string>" . substr($d, $next);
+      $new = substr($d, 0, $pos) . $newel . substr($d, $next);
     }
   } else {
-    my $kvx = "<key>$key</key><string>$val</string>\n";
-    $new = $d;
-    $new =~ s/<\/dict>/$kvx<\/dict>/;
+    my $kvx = "<key>$key</key>$newel\n";
+    # Insert before the LAST </dict> (top-level dict); the first occurrence
+    # may close a nested structure (icons, NSExtension, ...).
+    my $insert = rindex($d, '</dict>');
+    die "no closing top-level </dict> in $path\n" if $insert < 0;
+    $new = substr($d, 0, $insert) . $kvx . substr($d, $insert);
   }
   open my $o, '>:raw', $path or die "write $path: $!";
   print $o $new; close $o;
 PERLEOF
 }
 plist_del() { plist="$1"; key="$2"
-  # plutil handles binary; perl XML fallback below
-  if command -v plutil >/dev/null 2>&1; then plutil -remove "$key" "$plist" 2>/dev/null && return 0; fi
+  # Order: (1) plutil for any plist; (2) python plistlib for binary plists
+  # (structured, never byte-edited); (3) perl XML editor. With no structured
+  # tooling, deleting from a binary plist is unsafe: FAIL LOUDLY.
+  if command -v plutil >/dev/null 2>&1 \
+      && plutil -remove "$key" "$plist" 2>/dev/null; then
+    return 0
+  fi
+  if [ "$(head -c 6 "$plist" 2>/dev/null)" = "bplist" ] && [ -n "$HAVE_PY_PLIST" ]; then
+    "${HAVE_PY_PLIST:-python}" - "$plist" "$key" <<'PYEOF' || return 1
+import plistlib, sys
+path, key = sys.argv[1:3]
+with open(path, 'rb') as f: d = plistlib.load(f)
+for k in [k for k in d.keys() if k.lower() == key.lower()]:
+    del d[k]
+with open(path, 'wb') as f: plistlib.dump(d, f, fmt=plistlib.FMT_BINARY)
+PYEOF
+    return 0
+  fi
   perl - "$plist" "$key" <<'PERLEOF2'
   my ($path, $key) = @ARGV;
   open my $f, '<:raw', $path or die "open $path: $!";
   local $/; my $d = <$f>; close $f;
+  die "refusing to byte-edit binary plist $path without plutil; convert with plutil -convert xml1\n"
+    if substr($d, 0, 6) eq 'bplist';
   my $kv = "<key>$key</key>";
   my $i = index($d, $kv);
   if ($i >= 0) {
-    # remove key plus the value up to the next <key> or </dict>
+    # remove key plus its value up to the next <key> or the closing tag of
+    # the VALUE's element (only string/true/false handled here)
     my $rest = substr($d, $i);
     $rest =~ s/^<key>$key<\/key>(<string>[^<]*<\/string>|<true\/>|<false\/>)*//;
     $d = substr($d, 0, $i) . $rest;
@@ -205,17 +297,21 @@ for appex in "$APP_DIR/PlugIns"/*.appex; do
     echo "    phone appex id: $old -> $want"
     plist_set "$appex/Info.plist" CFBundleIdentifier "$want"
   fi
-done
-
-# ---------------- 4. companion metadata --------------------------------------
-if [ -n "$WATCH_APP" ]; then
-  # The phone (companion) side must know the watch id; the watch side must
-  # NOT claim WKWatchKitApp (that key belongs to the companion Info.plist).
-  plist_set "$APP_DIR/Info.plist" WKCompanionAppBundleIdentifier "$WATCH_ID"
-  plist_set "$APP_DIR/Info.plist" WKWatchKitApp "true"
-  plist_del "$WATCH_APP/Info.plist" WKWatchKitApp
-  echo "    companion metadata: WKCompanionAppBundleIdentifier=$WATCH_ID on phone app"
-fi
+done  # ---------------- 4. companion metadata --------------------------------------
+  # Apple's watchOS Info.plist key reference (InfoPlistKeyReference, watchOS
+  # keys): WKWatchKitApp is a BOOL that "specifies whether the bundle is the
+  # Watch app that the user launches" and "applies to the Watch app only";
+  # WKCompanionAppBundleIdentifier "specifies the bundle identifier of the iOS
+  # app with which the Watch app is paired". Both belong on the WATCH app's
+  # Info.plist; the companion's Info.plist must NOT claim WKWatchKitApp.
+  if [ -n "$WATCH_APP" ]; then
+    # NOTE: this runs AFTER step 3 rewrote the outer id, so the companion id
+    # is the rewritten BASE_ID, not the pre-rewrite OLD_OUTER_ID.
+    plist_set "$WATCH_APP/Info.plist" WKWatchKitApp "true" --boolean
+    plist_set "$WATCH_APP/Info.plist" WKCompanionAppBundleIdentifier "$BASE_ID"
+    plist_del "$APP_DIR/Info.plist" WKWatchKitApp
+    echo "    watch metadata: WKWatchKitApp=<true/> + WKCompanionAppBundleIdentifier=$BASE_ID on Watch app; companion cleaned"
+  fi
 
 # ---------------- 5. Siri Intents consistency --------------------------------
 # IntentsAppexIntentsSupportedNotASubset fires when an extension declares
@@ -229,23 +325,71 @@ use strict; use warnings;
 use JSON::PP qw(decode_json encode_json);
 my ($app, $watch) = @ARGV;
 
+# python helper (invoked from the binary-plist branch): merges the needed
+# intent names into Info.plist's IntentsSupported via plistlib; structured,
+# format-preserving, exit 0 ONLY when the file was actually changed.
+my $PLIST_INTENTS_MERGE = <<'PYMERGE';
+import plistlib, sys
+path, needed = sys.argv[1], sys.argv[2:]
+with open(path, 'rb') as f: d = plistlib.load(f)
+cur = None
+for k in d.keys():
+    if k.lower() == 'intentsupported':
+        cur = d[k]; break
+if cur is None:
+    d['IntentsSupported'] = sorted(set(needed))
+elif isinstance(cur, list):
+    merged = sorted(set(cur) | set(needed))
+    if merged == list(cur):
+        sys.exit(1)
+    d[[k for k in d.keys() if k.lower() == 'intentsupported'][0]] = merged
+else:
+    sys.exit(1)
+with open(path, 'wb') as f: plistlib.dump(d, f, fmt=plistlib.FMT_BINARY)
+sys.exit(0)
+PYMERGE
+
 sub slurp { my $p = shift; open my $f, '<:raw', $p or return undef; local $/; my $d = <$f>; close $f; return $d }
 sub spew  { my ($p, $d) = @_; open my $f, '>:raw', $p or die "write $p: $!"; print $f $d; close $f }
-
-# collect IntentsSupported values from an extension's Info.plist (XML only;
-# binary plists keep whatever they already had and are reported below)
-sub intents_from {
-  my $d = slurp($_[0]) or return ();
-  my $k = index($d, 'IntentsSupported');
-  return () if $k < 0;
-  my $rest = substr($d, $k + length('IntentsSupported'));
-  my @ints;
-  while ($rest =~ /<string>([^<]*)<\/string>/g) { push @ints, $1; last if $rest =~ /<\/array>/; }
-  return @ints;
-}
+  # collect IntentsSupported values from an extension's Info.plist.
+  # XML plists are text-scanned; BINARY plists are read through python
+  # plistlib (HAVE_PY_PLIST env, exported by the shell) — structured, never
+  # byte-edited. Only strings inside the FIRST top-level <array> after the
+  # key count — anything later in the file must not leak into the merge set.
+  sub intents_from {
+    my $path = $_[0];
+    return () unless defined $path && -f $path;
+    my $d = slurp($path);
+    return () unless defined $d;
+    if (substr($d, 0, 6) eq 'bplist') {
+      my $py = $ENV{HAVE_PY_PLIST} or return ();
+      my $cmd = $py eq 'python3' ? 'python3' : 'python';
+      my $json = `$cmd - '$path' <<'PYREAD' 2>/dev/null
+import plistlib, json, sys
+with open(sys.argv[1], 'rb') as f: d = plistlib.load(f)
+print(json.dumps(d.get('NSExtension', {}).get('NSExtensionAttributes', {}).get('IntentsSupported', [])))
+PYREAD`;
+      chomp $json;
+      my $arr = eval { decode_json($json) } or return ();
+      return () unless ref $arr eq 'ARRAY';
+      return map { $_ } @$arr;
+    }
+    my $k = index($d, '<key>IntentsSupported</key>');
+    return () if $k < 0;
+    my $pos = $k + length('<key>IntentsSupported</key>');
+    my $open = index($d, '<array>', $pos);
+    return () if $open < 0 || $open > $pos + 64;   # value must directly follow the key
+    my $close = index($d, '</array>', $open);
+    return () if $close < 0;
+    my $inner = substr($d, $open + length('<array>'), $close - $open - length('<array>'));
+    return $inner =~ /<string>([^<]*)<\/string>/g;
+  }
 
 my @sources;
-# Watch-side extensions and the watch app itself
+# Watch-side extensions and the watch app itself (the watch app's own
+# declaration is BOTH a source and a later target: each parent app must keep
+# a top-level IntentsSupported that is a superset of its extensions', or the
+# installer raises IntentsAppexIntentsSupportedNotASubset).
 if (defined $watch && -d $watch) {
   if (opendir my $dh, "$watch/PlugIns") {
     for my $leaf (grep { /\.appex$/ } readdir $dh) {
@@ -267,18 +411,31 @@ my $nsrc = scalar keys %need;
 exit 0 if $nsrc == 0;
 
 my $changed = 0;
-for my $info ("$app/Info.plist", glob "$app/PlugIns/*.appex/Info.plist") {
+# Targets: the phone app, the watch app, and every .appex of each. Each
+# extension's parent app must itself carry a top-level IntentsSupported
+# superset, and the insertion must land in the TOP-level dict — anchored at
+# the LAST </dict> of the file, not the first (nested dicts end earlier).
+my @targets = ("$app/Info.plist");
+push @targets, "$watch/Info.plist" if defined $watch && -f "$watch/Info.plist";
+for my $top ($app, (defined $watch && -d $watch) ? $watch : ()) {
+  if (opendir my $dh, "$top/PlugIns") {
+    for my $leaf (grep { /\.appex$/ } readdir $dh) {
+      push @targets, "$top/PlugIns/$leaf/Info.plist";
+    }
+  }
+}
+for my $info (@targets) {
   next unless defined $info && -f $info;
   my $d = slurp($info) or next;
   if (substr($d, 0, 6) eq 'bplist') {
-    # Binary plist: shell out to plutil (macOS). Merge = insert any missing
-    # intent names into the existing IntentsSupported array, or add the key.
+    # Binary plist: structured read-modify-write through python plistlib
+    # (any host); macOS plutil keeps priority when present. Merge = insert
+    # any missing intent names into the existing IntentsSupported array, or
+    # add the key. Never byte-edits the object table.
+    my $done = 0;
     if ($^O eq 'darwin' && -x '/usr/bin/plutil') {
-      my $have = `/usr/bin/plutil -extract IntentsSupported raw -o - '$info' 2>/dev/null`; # unsupported for arrays
-      # plutil 'raw' can't dump arrays; use -json for the whole plist and read it back
       my $json = `/usr/bin/plutil -convert json -o - '$info' 2>/dev/null`;
       if ($json) {
-        # crude but safe: require JSON::PP (core since 5.14)
         my $data = eval { decode_json($json) } or next;   # malformed json: leave the plist alone
         my $cur = $data->{IntentsSupported} || [];
         my %h = map { $_ => 1 } (@$cur, keys %need);
@@ -290,6 +447,17 @@ for my $info ("$app/Info.plist", glob "$app/PlugIns/*.appex/Info.plist") {
         print $jf encode_json($data); close $jf;
         system('/usr/bin/plutil', '-convert', 'binary1', $tmp) == 0 or do { unlink $tmp; next };
         rename($tmp, $info) and $changed++;
+        $done = 1;
+      }
+    }
+    unless ($done) {
+      my $py = $ENV{HAVE_PY_PLIST};
+      if (defined $py && $py ne '') {
+        my $cmd = $py eq 'python3' ? 'python3' : 'python';
+        my $ok = system($cmd, '-c', $PLIST_INTENTS_MERGE, $info, sort keys %need) == 0;
+        $changed++ if $ok;   # python only reports success when the file changed
+      } else {
+        warn "WARN: binary plist intents merge unavailable (no plutil/plistlib): $info\n";
       }
     }
     next;
@@ -302,7 +470,12 @@ for my $info ("$app/Info.plist", glob "$app/PlugIns/*.appex/Info.plist") {
   if (defined $have) {
     $d =~ s/<key>IntentsSupported<\/key><array>.*?<\/array>/<key>IntentsSupported<\/key><array>$list<\/array>/s;
   } else {
-    $d =~ s/<\/dict>/<key>IntentsSupported<\/key><array>$list<\/array><\/dict>/;
+    my $kvx = "<key>IntentsSupported<\/key><array>$list<\/array>\n";
+    # Insert before the LAST </dict> so the pair lands in the top-level dict;
+    # the first </dict> may belong to a nested structure (icons, NSExtension).
+    my $insert = rindex($d, '</dict>');
+    die "no closing top-level </dict> in $info\n" if $insert < 0;
+    $d = substr($d, 0, $insert) . $kvx . substr($d, $insert);
   }
   spew($info, $d);
   $changed++;

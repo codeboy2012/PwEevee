@@ -10,11 +10,15 @@
 #        ↓  inject           LC_LOAD_DYLIB for every declared load command
 #        ↓  validate         Mach-O + filesystem structure
 #        ↓  package          deterministic store-only IPA
-#        ↓  manifest         dist/build-manifest.json
+#        ↓  manifest         build-manifest.json next to the output IPA
 #
-#   PwEvevee/build-system/unified.sh <decrypted.ipa> [-o dist/out.ipa]
+#   PwEvevee/build-system/unified.sh <decrypted.ipa> [-o dist/out.ipa] [--watch]
 #
 # No manual file editing between steps; rerunnable; stale-output safe.
+#
+# Environment:
+#   PWEEVEE_KEEP_WORK=1    keep the per-run _work workspace after exit (debug)
+#   PWEEVEE_WORK_TENANT=N  tenant id under _work (default: this shell's PID)
 set -euo pipefail
 umask 022
 
@@ -22,20 +26,20 @@ ORIG_PWD="$(pwd)"
 BS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$BS/../.." && pwd)"
 cd "$REPO"
 
-IN="" OUT="" OUT_GIVEN=0
+IN="" OUT="" OUT_GIVEN=0 WATCH=0
 while [ $# -gt 0 ]; do
   case "$1" in
     -o) OUT="$2"; OUT_GIVEN=1; shift 2 ;;
+    --watch) WATCH=1; shift ;;
     -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
     *) IN="$1"; shift ;;
   esac
 done
-[ -n "$IN" ] || { echo "usage: PwEvevee/build-system/unified.sh <decrypted Spotify .ipa> [-o dist/out.ipa]" >&2; exit 1; }
+[ -n "$IN" ] || { echo "usage: PwEvevee/build-system/unified.sh <decrypted Spotify .ipa> [-o dist/out.ipa] [--watch]" >&2; exit 1; }
 case "$IN" in /*) ;; *) IN="$ORIG_PWD/$IN" ;; esac
 [ -f "$IN" ] || { echo "no such input IPA: $IN" >&2; exit 1; }
 if [ "$OUT_GIVEN" = 1 ]; then case "$OUT" in /*) ;; *) OUT="$ORIG_PWD/$OUT" ;; esac; fi
 
-WORK="$BS/_work"
 DIST="dist"
 
 step() { printf '\n==> %s\n' "$*"; }
@@ -45,8 +49,31 @@ command -v perl >/dev/null || fail "perl is required"
 command -v xz    >/dev/null || fail "xz is required (apt/brew install xz)"
 command -v unzip >/dev/null || fail "unzip is required"
 
-step "0. clean stale output"
-rm -rf "$WORK"; mkdir -p "$WORK/app/Payload" "$DIST"
+# Per-invocation workspace: the legacy $BS/_work is a FIXED path, so parallel
+# builds or a crashed run would clobber/cross-del each other's trees. Move the
+# per-run workspace under _work with a tenant id (default: PID), and clean it
+# with an EXIT trap that preserves the original exit status.
+TENANT="${PWEEVEE_WORK_TENANT:-$$}"
+WORK="$BS/_work/$TENANT"
+KEEP_WORK=0
+case "${PWEEVEE_KEEP_WORK:-}" in 1|yes|true) KEEP_WORK=1 ;; esac
+
+# SINGLE EXIT trap: removes ONLY this run's tenant dir. PWEEVEE_KEEP_WORK=1
+# preserves it for debugging (prints the path). 'trap x EXIT; exit N' retains
+# N, and a trapped INT/TERM causes bash to exit with 130/143 — never hide 1.
+another_run() { kill -0 "$1" 2>/dev/null; }
+if [ -e "$WORK" ]; then
+  if another_run "${TENANT}"; then
+    fail "workspace $WORK already exists and tenant PID $TENANT is ALIVE (another build on this tenant id?); bailing out instead of deleting it"
+  fi
+  rm -rf "$WORK"   # stale tree from a completed/crashed prior run of THIS tenant id
+fi
+mkdir -p "$WORK"
+cleanup_work() { if [ "$KEEP_WORK" = 1 ]; then echo "PWEEVEE_KEEP_WORK: workspace kept at $WORK" >&2; else rm -rf "$WORK"; fi }
+trap cleanup_work EXIT
+
+step "0. prepare per-run workspace"
+mkdir -p "$WORK/app/Payload" "$DIST"
 
 step "1. prepare input IPA"
 APP_REL="$(unzip -Z1 "$IN" | grep -oE '^Payload/[^/]+\.app/' | sort -u | head -1)"
@@ -95,10 +122,30 @@ done < <(perl -MJSON::PP -e 'local $/; my $d=decode_json(<>); print "$_->{name}\
 step "5. validate Mach-O"
 perl "$BS/validate/validate-macho.pl" "$BIN" "$STAGED" || fail "Mach-O validation failed"
 
-step "6. validate filesystem structure"
-perl "$BS/validate/validate-ipa.pl" "$STAGED" || fail "structure validation failed"
+step "6. --watch: normalize embedded Watch companion (optional)"
+# Test hook only (set exclusively by cleanup-tests.pl; unset by default):
+# simulate a mid-pipeline failure AFTER the workspace exists, preserving the
+# normal failure path end to end.
+if [ "${PWEEVEE_FORCE_FAIL:-}" = "1" ]; then fail "FORCE_FAIL: simulated mid-pipeline failure"; fi
+if [ "$WATCH" = 1 ]; then
+  # With --watch the embedded Watch/ tree is normalized in place on the STAGED
+  # app (IDs derived from the input's own outer id — no cross-scheme mixing),
+  # followed by its dedicated validator. A Watch fix or validation failure
+  # hard-fails the build: no broken Watch IPA ships silently. Without --watch,
+  # step 7's structure validator below still REJECTS any Watch/ leftovers
+  # (same behaviour as before this stage existed).
+  bash "$BS/watch/watchfix-stage.sh" "$STAGED" || fail "Watch fix failed"
+  perl "$BS/watch/validate-watchfix.pl" "$STAGED" || fail "Watch validation failed"
+  WATCH_ENABLED=1
+else
+  echo "    (--watch not given; any embedded Watch/ tree will fail structure validation)"
+  WATCH_ENABLED=0
+fi
 
-step "7. package IPA (deterministic, store-only)"
+step "7. validate filesystem structure"
+perl "$BS/validate/validate-ipa.pl" "$STAGED" "$WATCH_ENABLED" || fail "structure validation failed"
+
+step "8. package IPA (deterministic, store-only)"
 MOD_VERSION="$(sed 's/[^0-9A-Za-z.-]//g' "$REPO/Spotipw/version.txt" 2>/dev/null || echo 0.0.0)"
 EEVEE_VERSION="$(perl -MJSON::PP -e 'local $/; my $d=decode_json(<>); print $d->{version}' < "Evevee Spotify/component/manifest.json")"
 STAMP="$(date -u +%Y%m%d-%H%M%S)"
@@ -109,7 +156,7 @@ mkdir -p "$(dirname "$OUT")"
 perl "$BS/package/make-ipa.pl" "$STAGED" "$OUT"
 echo "    $(du -h "$OUT" | cut -f1)  $OUT"
 
-step "8. build manifest"
+step "9. build manifest"
 BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 IPA_SHA256="$(perl -MDigest::SHA -e 'print Digest::SHA::sha256_hex(scalar do { local $/; open(my $f,"<:raw",$ARGV[0]); <$f> })' "$OUT")"
 IPA_SIZE="$(wc -c < "$OUT" | tr -d ' ')"
@@ -119,7 +166,10 @@ FRAMEWORKS="$(cd "$STAGED/Frameworks" && ls -d *.framework 2>/dev/null | sed 's/
 SPOTIPW_VERSION="$(perl -MJSON::PP -e 'local $/; my $d=decode_json(<>); print $d->{version}' < "$BS/../components/spotipw/manifest.json")"
 SPOTIPW_COMMIT="$(git -C "$REPO" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 EEVEE_COMMIT="unknown (binary release 6.6.8-selfcontained.1)"
-MANIFEST="$DIST/build-manifest.json"
+# Manifest travels WITH the output IPA: for default builds OUT lives in dist/
+# so this is still dist/build-manifest.json; for an explicit -o elsewhere the
+# manifest is colocated and can never overwrite the shared dist/ metadata.
+MANIFEST="$(dirname "$OUT")/build-manifest.json"
 
 cat > "$MANIFEST" <<EOF
 {
@@ -151,7 +201,7 @@ cat > "$MANIFEST" <<EOF
 EOF
 echo "    $MANIFEST"
 
-step "9. run packaging tests"
+step "10. run packaging tests"
 perl "$BS/tests/deb-format-test.pl" >/dev/null && echo "    deb format tests: OK"
 perl "$BS/tests/build-tests.pl"    >/dev/null && echo "    build tests: OK"
 
