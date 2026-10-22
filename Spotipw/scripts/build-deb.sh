@@ -36,10 +36,11 @@
 set -euo pipefail
 umask 022
 
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# The script lives at <repo>/Spotipw/scripts/: the repo root is two levels up.
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO"
 
-VERSION="$(tr -d '\r\n' < version.txt)-alpha.2"
+VERSION="$(tr -d '\r\n' < Spotipw/version.txt)-alpha.2"
 OUT=""
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -48,7 +49,7 @@ while [ $# -gt 0 ]; do
     *) echo "unknown argument: $1" >&2; exit 1 ;;
   esac
 done
-OUT="${OUT:-dist/PwEevee_${VERSION}_iphoneos-arm.deb}"
+OUT="${OUT:-Spotipw/dist/PwEevee_${VERSION}_iphoneos-arm.deb}"
 
 need() { command -v "$1" >/dev/null 2>&1 || { echo "missing $1 -> $2" >&2; exit 1; }; }
 need gmake "gmake"
@@ -58,8 +59,8 @@ need perl "perl"
 
 THEOS="${THEOS:-$HOME/theos}"
 [ -d "$THEOS" ] || { echo "no Theos at $THEOS (set THEOS=...)" >&2; exit 1; }
-[ -f tweak/Sources/Shared/Flags/SGFlagList.m ] || {
-  echo "tweak/Sources/Shared/Flags/SGFlagList.m is missing; generate it from the Spotify IPA:" >&2
+[ -f Spotipw/tweak/Sources/Shared/Flags/SGFlagList.m ] || {
+  echo "Spotipw/tweak/Sources/Shared/Flags/SGFlagList.m is missing; generate it from the Spotify IPA:" >&2
   echo "  ./scripts/extract-flags.py <decrypted Spotify 9.1.76 .ipa>" >&2
   exit 1
 }
@@ -73,15 +74,15 @@ mkdir -p "$STAGE/DEBIAN" \
 
 # ---------------- 1. build the unified tweak ----------------
 echo "==> building the unified tweak (Theos)"
-MAKELEVEL=0 gmake -C tweak clean package FINALPACKAGE=1 > /dev/null
-TWEAK_DEB="$(ls -t tweak/packages/com.spotipw_*.deb 2>/dev/null | head -1 || true)"
+MAKELEVEL=0 gmake -C Spotipw/tweak clean package FINALPACKAGE=1 > /dev/null
+TWEAK_DEB="$(ls -t Spotipw/tweak/packages/com.spotipw_*.deb 2>/dev/null | head -1 || true)"
 [ -n "$TWEAK_DEB" ] || { echo "the tweak build produced no .deb in tweak/packages/" >&2; exit 1; }
 echo "    tweak deb: $TWEAK_DEB"
 
 # Take the built dylib and its filter out of Theos' deb. The tweak's own control is rootful
 # (bare /Library/MobileSubstrate paths), so find the members wherever this Theos scheme put them
 # instead of assuming the var/jb rootless prefix.
-perl scripts/ar-extract.pl "$TWEAK_DEB" data.tar.lzma "$WORK/data.tar.lzma"
+perl Spotipw/scripts/ar-extract.pl "$TWEAK_DEB" data.tar.lzma "$WORK/data.tar.lzma"
 xz -dc --format=lzma "$WORK/data.tar.lzma" > "$WORK/data.tar"
 DYLIB_PATH=$(tar tf "$WORK/data.tar" | grep '/spotifyglass\.dylib$' | head -1)
 PLIST_PATH=$(tar tf "$WORK/data.tar" | grep '/spotifyglass\.plist$' | head -1)
@@ -117,7 +118,7 @@ cp -a "$COMPONENT/bundles/EeveeSpotify.bundle/." \
 
 # ---------------- 3. control ----------------
 {
-  cat tweak/pweevee-control
+  cat Spotipw/tweak/pweevee-control
   echo "Installed-Size: $(du -sk "$STAGE" | cut -f1)"
 } > "$STAGE/DEBIAN/control"
 
