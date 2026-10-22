@@ -78,18 +78,20 @@ TWEAK_DEB="$(ls -t tweak/packages/com.spotipw_*.deb 2>/dev/null | head -1 || tru
 [ -n "$TWEAK_DEB" ] || { echo "the tweak build produced no .deb in tweak/packages/" >&2; exit 1; }
 echo "    tweak deb: $TWEAK_DEB"
 
-# Take the built dylib and its filter out of Theos' deb.
+# Take the built dylib and its filter out of Theos' deb. The tweak's own control is rootful
+# (bare /Library/MobileSubstrate paths), so find the members wherever this Theos scheme put them
+# instead of assuming the var/jb rootless prefix.
 perl scripts/ar-extract.pl "$TWEAK_DEB" data.tar.lzma "$WORK/data.tar.lzma"
 xz -dc --format=lzma "$WORK/data.tar.lzma" > "$WORK/data.tar"
-tar tf "$WORK/data.tar" | grep -q "DynamicLibraries/spotifyglass.dylib" \
-  || { echo "the tweak deb has no spotifyglass.dylib" >&2; exit 1; }
-tar xf "$WORK/data.tar" -C "$WORK" \
-    "var/jb/Library/MobileSubstrate/DynamicLibraries/spotifyglass.dylib" \
-    "var/jb/Library/MobileSubstrate/DynamicLibraries/spotifyglass.plist"
+DYLIB_PATH=$(tar tf "$WORK/data.tar" | grep '/spotifyglass\.dylib$' | head -1)
+PLIST_PATH=$(tar tf "$WORK/data.tar" | grep '/spotifyglass\.plist$' | head -1)
+[ -n "$DYLIB_PATH" ] || { echo "the tweak deb has no spotifyglass.dylib" >&2; exit 1; }
+[ -n "$PLIST_PATH" ] || { echo "the tweak deb has no spotifyglass.plist" >&2; exit 1; }
+tar xf "$WORK/data.tar" -C "$WORK" "$DYLIB_PATH" "$PLIST_PATH"
 rm "$WORK/data.tar" "$WORK/data.tar.lzma"
-mv "$WORK/var/jb/Library/MobileSubstrate/DynamicLibraries/spotifyglass.dylib" \
-   "$WORK/var/jb/Library/MobileSubstrate/DynamicLibraries/spotifyglass.plist" \
-   "$STAGE/var/jb/Library/MobileSubstrate/DynamicLibraries/"
+mkdir -p "$STAGE/var/jb/Library/MobileSubstrate/DynamicLibraries"
+mv "$WORK/$DYLIB_PATH" "$STAGE/var/jb/Library/MobileSubstrate/DynamicLibraries/spotifyglass.dylib"
+mv "$WORK/$PLIST_PATH" "$STAGE/var/jb/Library/MobileSubstrate/DynamicLibraries/spotifyglass.plist"
 
 # The unified dylib must carry the PwEevee integration: if the built binary lacks the page's symbol
 # the sources drifted and the package would ship two separate menus again.
