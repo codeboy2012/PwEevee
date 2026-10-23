@@ -73,7 +73,7 @@ static UIViewController *modSettingsPage(void) {
     spoofPremium.changed = ^(BOOL on) { SGPremiumSpoofSetOn(on); };
     // Spot.pw's gray-out: while Eevee's Spoofed Premium holds the exclusivity, this switch reads as
     // "Spoof Premium (grayed out)" and cannot move until Eevee's is switched off on its own page.
-    spoofPremium.enabled = ^{ return !SGEeveePremiumOn(); };
+    spoofPremium.enabled = ^BOOL(void) { return !SGEeveePremiumOn(); };
     SGModRow *eevee = pageRow(@"EeveeSpotify", @"heart.fill", ^UIViewController *{ return SGEeveeSpotifyPage(); });
     eevee.value = ^NSString *{ return SGEeveePremiumOn() ? @"On" : @"Off"; };
     [sections addObjectsFromArray:@[
