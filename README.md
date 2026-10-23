@@ -14,6 +14,8 @@
   <a href="#about">About</a> ·
   <a href="#v200">v2.0.0</a> ·
   <a href="#recommended-build">Recommended Build</a> ·
+  <a href="#v2200-pre">Unified Build (pre)</a> ·
+#recommended-build">Recommended Build</a> ·
   <a href="#combined-build">Combined Build</a> ·
   <a href="#base-ipa">Base IPA</a> ·
   <a href="#features">Features</a> ·
@@ -40,7 +42,7 @@
 ## Releases
 
 **Latest stable release:** [PwEevee v2.0.0 | SpoTi.pw v50.0 Integration](https://github.com/codeboy2012/PwEevee/releases/tag/v2.0.0) — released `2026-10-06`.
-**Download:** [EeveeSpotifyv7.0.0.ipa]((https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa)) (169 MB)
+**Download:** [com.spotify.client_9.1.78_No_Watch.ipa](https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa) (169 MB)
 
 All downloads belong to their GitHub release — this README links, never mirrors, them.
 <!-- releases:end -->
@@ -67,6 +69,73 @@ The goal is to make the resulting builds easier to understand, install, and dist
 > **PwEevee is an independent project and is not affiliated with Spotify or Apple.**
 
 ---
+
+
+# v2.2.0-pre — Unified SpoTi.pw + EeveeSpotify Build
+
+## PwEevee v2.2.0-pre (pre-release)
+
+**PwEevee v2.2.0-pre** is the first release produced by the unified, reproducible
+integration pipeline: **SpoTi.pw 0.22.0-alpha.2 rebuilt from source** and combined with
+**EeveeSpotify 6.6.8** into one package, with the **PwEevee** rebrand applied across the
+user-facing surface.
+
+### Features
+
+- **Exclusive premium settings.** `Spoof Premium` (SpoTi.pw) and `Eevee's Spoofed
+  Premium` (EeveeSpotify) are mutually exclusive. Turning one on grays out and disables the
+  other row immediately in the same settings view; turning the active one off re-enables the
+  other instantly; both may stay off; a legacy both-on state resolves deterministically.
+- **Change App Icons previews.** Every alternate-icon row now shows its real logo preview
+  instead of a placeholder. The alternate-icon dictionaries are valid for iPhone
+  (`CFBundleIcons`) and iPad (`CFBundleIcons~ipad`) — 42 icons each.
+- **Complete PwEevee rebrand.** Titles, preference labels, About and credits, the update
+  check, the donate row, lyrics provider identification and the user-facing URLs all name
+  PwEevee. Upstream attribution, licensing notices and compatibility-critical internal
+  identifiers are preserved unchanged.
+- **Discord banner removed** from the settings and onboarding surfaces, with no dead link
+  or reserved space left behind.
+- **Update check** now points at the PwEevee repository's GitHub Releases.
+
+### Release information
+
+| Component | Version / details |
+|---|---|
+| **PwEevee** | **v2.2.0-pre** (pre-release) |
+| **SpoTi.pw (spotifyglass)** | 0.22.0-alpha.2 — rebuilt from source in CI |
+| **EeveeSpotify** | 6.6.8-selfcontained.1 (upstream binary) |
+| **Spotify base (IPA route)** | 9.1.90 (build 919002269), minimum iOS 16.1 |
+| **Spotify host (deb route)** | 9.1.76 only |
+| **Unified IPA** | 287 MB, SHA-256 `a76b469a8291d665…` |
+| **Unified deb (jailbreak)** | 0.6 MB, SHA-256 `02448bf101b9ad88…` |
+
+> ⚠️ **Status: pre-release — device testing has not been performed yet.** All features
+> are verified by the test suites and the static binary/resource checks listed under
+> Building; no on-device click-through has been done. Do not treat this build as
+> device-validated.
+
+### Downloads
+
+[`PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa`](https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa) — 287 MB
+[`SHA-256SUMS.txt`](https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/SHA256SUMS.txt) ·
+[`validation report`](https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-v2.2.0-pre-validation-report.md)
+
+[`PwEevee_0.22.0-alpha.2_iphoneos-arm.deb`](https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee_0.22.0-alpha.2_iphoneos-arm.deb) — 0.6 MB, rootless-jailbreak route
+(host Spotify 9.1.76 only)
+
+[`PwEevee v2.2.0-pre` release](https://github.com/codeboy2012/PwEevee/releases/tag/v2.2.0-pre)
+
+### Compatibility
+
+- **IPA route:** decrypted **Spotify 9.1.90** base (minimum iOS 16.1, arm64). Install with
+  any sideload signer — the IPA is store-signed and is meant to be re-signed by your
+  signer during sideloading.
+- **deb route:** rootless jailbreak (Dopamine/roothide), host **Spotify 9.1.76 only**
+  (see `DEBIAN/control`). Bundles CydiaSubstrate, Orion, EeveeSwiftProtobuf and
+  EeveeSpotify.bundle — single copies, no duplicate injection.
+- Component compatibility mirrors the audited inputs: the Spot.pw legacy on-device data
+  paths (`spoti.pw/AdBlock`, `spoti.pw/Audio effects`, `spoti.pw/JamesDSP`,
+  `spoti.pw/LockArtwork`) are kept so existing installed users keep their libraries.
 
 # v2.0.0
 
@@ -300,6 +369,12 @@ This version is the primary base associated with the v2.0.0 release.
 
 ---
 
+## Unified build v2.2.0-pre
+
+The unified build ships on a decrypted **Spotify 9.1.90** base (minimum iOS 16.1).
+The deb route targets the rootless-jailbreak package layout and assumes a
+**Spotify 9.1.76** host. Other Spotify versions are not guaranteed.
+
 # Installation
 
 PwEevee distributes IPA files.
@@ -342,6 +417,14 @@ Some installation failures are caused by the signing environment rather than PwE
 
 Other Spotify modifications may conflict with PwEevee.
 
+### 5. Settings and icon previews
+
+A grayed-out premium row is intentional — the other premium spoof is active. Turn the
+active switch off to re-enable the grayed one immediately. If Change App Icons shows
+placeholders instead of logo previews, install the v2.2.0-pre unified build; older
+releases shipped unordered icon resources.
+
+### 6. Combined build
 ### 5. Combined build
 
 If you are using:
@@ -428,6 +511,30 @@ Depending on the component, building may require tools such as:
 - IPA extraction/repackaging tools
 - Required upstream dependencies
 
+Building the unified integration is reproducible end to end:
+
+```bash
+# 1. unified tweak deb (needs Theos and the SG_FLAG_LIST secret)
+cd Spotipw && ./scripts/build-deb.sh
+
+# 2. unified IPA (merges both components into a decrypted Spotify base IPA)
+PwEvevee/build-system/unified.sh <decrypted-spotify-base.ipa> -o dist/out.ipa
+
+# 3. full test battery
+perl PwEvevee/build-system/tests/build-tests.pl
+perl PwEvevee/build-system/tests/deb-format-test.pl
+perl PwEvevee/build-system/tests/pweevee-premium-exclusivity-tests.pl
+perl PwEvevee/build-system/tests/eevee-settings-tests.pl
+perl PwEvevee/build-system/tests/pweevee-rebrand-tests.pl
+perl PwEvevee/build-system/tests/pweevee-deb-tests.pl
+```
+
+CI (`.github/workflows/pweevee-deb.yml`) rebuilds the deb on macOS 15 with Theos every push
+to `main` that touches `Spotipw/tweak/**`; the unified IPA is packaged from the CI deb's
+dylib plus the pinned EeveeSpotify component by `unified.sh`.
+
+- Required upstream dependencies
+
 The build process can change when upstream projects change.
 
 PwEevee attempts to keep integration and packaging changes understandable and reproducible.
@@ -478,6 +585,19 @@ Please support the original EeveeSpotify project and its developers.
 PwEevee does not claim ownership of SpoTi.pw or its source code.
 
 The combined build uses **SpoTi.pw 0.50.0**.
+
+## Project and upstream links
+
+| Project | Where |
+|---|---|
+| **PwEevee** (this project) | <https://github.com/codeboy2012/PwEevee> |
+| **PwEevee website** | <https://pweevee.skytweak.dpdns.org/> |
+| **spoti.pw** (upstream) | <https://github.com/skopevoj/spoti.pw> |
+| **Chroma** (upstream premium tier) | <https://chroma.pw> |
+| **EeveeSpotify** (upstream) | <https://github.com/SideloadLabs/EeveeSpotifyReincarnated> |
+| **SideloadLabs AltSource** (upstream) | <https://github.com/SideloadLabs/SideloasLabs-AltSource> |
+
+Upstream links are kept unchanged for attribution and license compliance.
 
 ## Spotify
 
@@ -541,6 +661,33 @@ If an upstream project has specific attribution or redistribution requirements, 
 
 # Downloads
 
+##  Unified pre-release (v2.2.0-pre)
+
+**SpoTi.pw 0.22.0-alpha.2 + EeveeSpotify 6.6.8 — rebuilt from source**
+
+`PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa`
+
+**287 MB**
+
+SHA-256:
+
+```text
+a76b469a8291d6650026ef1355b77ead37efcc9250517aaf057a6e6b1dab3996
+```
+
+Jailbreak route (rootless, host Spotify 9.1.76 only):
+
+`PwEevee_0.22.0-alpha.2_iphoneos-arm.deb` — 0.6 MB
+
+SHA-256:
+
+```text
+02448bf101b9ad887982e6c9c5620c811577287e5aa89ce476222854ccb5153c
+```
+
+---
+
+##  Recommended
 ##  Recommended
 
 **EeveeSpotify 7.0.0**
@@ -589,6 +736,19 @@ b03c869e0811634d94f90fd66fa57d0d4ec0c839324381c5f89ee67e5a0b4db4
 
 ---
 
+# What's New in v2.2.0-pre
+
+### New
+
+- Unified SpoTi.pw + EeveeSpotify build produced by the reproducible unified pipeline
+- Exclusive premium settings with Spot.pw-style gray-out
+- Real logo previews in Change App Icons
+- Complete PwEevee rebrand of the user-facing surface
+- Discord promotional banner removed
+- Unified deb pipeline with CI builds (Theos)
+
+---
+
 # What's New in v2.0.0
 
 ### Major update
@@ -633,3 +793,5 @@ PwEevee v2.0.0 moves the project to the **EeveeSpotify 7.0.0** generation.
  **Recommended:** `EeveeSpotifyv7.0.0.ipa`
 
  **Optional:** `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`
+
+ **Unified pre-release:** [`PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa`]([https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa]) **Optional:** `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`
