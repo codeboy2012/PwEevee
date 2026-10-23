@@ -576,9 +576,15 @@ static const CGFloat kSliderTop = 12, kSliderLine = 18, kSliderSubtitle = 14, kS
         return cell;
     }
     UITableViewCell *cell = SGDequeueCell(table, @"row");
-    SGFillCell(cell, row.title, row.subtitle, row.color, row.symbol);
+    // Spot.pw's gray-out (SGModRow.enabled): a switched row it holds off reads as greyed out — its
+    // title carries " (grayed out)", the labels go grey and the switch below cannot take a touch.
+    BOOL rowEnabled = !row.enabled || row.enabled();
+    BOOL grayed = row.key && !rowEnabled;
+    SGFillCell(cell, grayed ? [row.title stringByAppendingString:@" (grayed out)"] : row.title,
+               row.subtitle, row.color, row.symbol);
     UIListContentConfiguration *content = (UIListContentConfiguration *)cell.contentConfiguration;
     if (row.color) content.secondaryTextProperties.color = row.color;
+    if (grayed) content.textProperties.color = SGGrey();   // the grey the subtitles already carry
     BOOL tile = row.symbol && !row.color;
     if (tile) content.image = SGTileImage(row.symbol);
     cell.contentConfiguration = content;
@@ -603,9 +609,9 @@ static const CGFloat kSliderTop = 12, kSliderLine = 18, kSliderSubtitle = 14, kS
             plain.on = on;
             toggle = plain;
         }
-        toggle.enabled = !locked;
+        toggle.enabled = !locked && !grayed;
         // A disabled switch would swallow the tap; letting it through is what gets the row asked.
-        toggle.userInteractionEnabled = !locked;
+        toggle.userInteractionEnabled = !locked && !grayed;
         [toggle addTarget:self action:@selector(toggled:) forControlEvents:UIControlEventValueChanged];
         cell.accessoryView = row.info ? [self infoButtonBeside:toggle] : toggle;
         cell.selectionStyle = locked ? UITableViewCellSelectionStyleDefault : UITableViewCellSelectionStyleNone;

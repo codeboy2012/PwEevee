@@ -112,6 +112,10 @@ UIViewController *SGEeveeSpotifyPage(void) {
     // Written through the exclusivity setter: when the Eevee spoof turns on, Spot.pw's Spoof
     // Premium is written off (and the other way, from that page's row).
     patching.changed = ^(BOOL on) { SGEeveePremiumSetOn(on); };
+    // Spot.pw's gray-out, the exclusivity the other way: while Spot.pw's Spoof Premium holds,
+    // this switch reads as "Eevee's Spoofed Premium (grayed out)" and cannot move until that one
+    // is switched off on the Mod page.
+    patching.enabled = ^{ return !SGFlag(SGKeyFakePremium, YES); };
 
     SGModRow *overwrite = SGOptionRow(@"Overwrite configuration", @"Replaces Spotify's remote configuration with a dumped Premium one. May cause issues.", kOverwriteConfig);
     overwrite.visible = ^BOOL { return eeveePatchingOn(); };
@@ -251,6 +255,46 @@ UIViewController *SGEeveeSpotifyPage(void) {
 static NSString *const kEeveeSelectedIcon = @"EeveeSelectedAppIconName";
 static NSString *const kEeveeDefaultIcon = @"__default__";
 
+// The preview of one alternate icon, out of the icon files the payload itself ships (the loose PNGs
+// at the app root, e.g. "Asta_Liebe(Green)@2x.png"; the default is the app's own AppIcon60x60). The
+// row's alternate is the file stem, so the file is looked up by hand — imageNamed: would take it,
+// but the scale is ambiguous with a stem carrying @ characters of its own, and picking the file
+// keeps the order @3x, @2x, base, then the ~ipad variants as a fallback — and the scale restored
+// from the suffix so the image points at the size the stem promises. SGAppIconPreviews of the
+// upstream in-scope builds follow the same look-a-file-up pattern, over its own folder.
+static UIImage *eeveeIconPreview(NSString *stem) {
+    static NSArray<NSString *> *suffixes;
+    if (!suffixes) suffixes = @[@"@3x.png", @"@2x.png", @"@2x~ipad.png", @"~ipad.png", @".png"];
+    NSString *root = NSBundle.mainBundle.resourcePath;
+    for (NSString *suffix in suffixes) {
+        NSString *path = [[root stringByAppendingPathComponent:stem] stringByAppendingString:suffix];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:path]) continue;
+        UIImage *raw = [UIImage imageWithContentsOfFile:path];
+        if (!raw) continue;
+        CGFloat scale = [suffix containsString:@"@3x"] ? 3 : ([suffix containsString:@"@2x"] ? 2 : 1);
+        return [[UIImage alloc] initWithCGImage:raw.CGImage scale:scale orientation:UIImageOrientationUp];
+    }
+    return [UIImage imageNamed:stem];   // a name whose file the roster missed is still worth a try
+}
+
+// The row draws its preview 40pt of a rounded square, the shape the icon itself carries.
+static UIImage *eeveeRoundedPreview(UIImage *icon, CGFloat side) {
+    if (!icon || side <= 0) return nil;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(side, side)];
+    return [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        CGContextRef c = context.CGContext;
+        CGFloat corner = side * 0.22;
+        CGRect rect = CGRectMake(0, 0, side, side);
+        CGPathRef path = CGPathCreateWithRoundedRect(rect, corner, corner, NULL);
+        CGContextAddPath(c, path);
+        CGContextClip(c);
+        CGPathRelease(path);
+        // The shipped icon files are square, so a straight side-draw fits the rounded clip.
+        CGFloat draw = side;
+        [icon drawInRect:CGRectMake((side - draw) / 2, (side - draw) / 2, draw, draw)];
+    }];
+}
+
 // What the payload's picker does with a raw plist key (prettifyIconKey(_:)): underscores, hyphens and
 // camelCase become spaces.
 static NSString *eeveePrettyIconName(NSString *key) {
@@ -283,6 +327,23 @@ static NSString *eeveePrettyIconName(NSString *key) {
     self.title = @"App icons";
     _selected = [NSUserDefaults.standardUserDefaults stringForKey:kEeveeSelectedIcon] ?: kEeveeDefaultIcon;
     return self;
+}
+
+// 42 rows × a PNG apiece get read once and kept under a small cache, so reloads (a select, a
+// prettify flip) do not re-decode every file.
++ (UIImage *)cachedPreviewForStem:(NSString *)stem {
+    static NSCache<NSString *, UIImage *> *cache;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        cache = NSCache.new;
+        cache.countLimit = 64;
+    });
+    UIImage *preview = [cache objectForKey:stem];
+    if (!preview) {
+        preview = eeveeRoundedPreview(eeveeIconPreview(stem), 40);
+        if (preview) [cache setObject:preview forKey:stem];
+    }
+    return preview;
 }
 
 - (void)loadIcons {
@@ -352,7 +413,18 @@ static NSString *eeveePrettyIconName(NSString *key) {
     }
     NSDictionary *icon = _icons[(NSUInteger)path.row];
     UITableViewCell *cell = SGDequeueCell(table, @"icon");
+    // The ?logo preview: the icon's own PNG from the app root, at 40pt of a rounded square, leading
+    // the name the way the system's own icon rows do.
+    NSString *stem = [icon[@"alternate"] isKindOfClass:NSString.class] ? icon[@"alternate"] : nil;
+    if (!stem) stem = @"AppIcon60x60";   // the default row previews the app's own icon
+    UIImage *preview = [self.class cachedPreviewForStem:stem];
     SGFillCell(cell, icon[@"name"], nil, nil, nil);
+    UIListContentConfiguration *content = (UIListContentConfiguration *)cell.contentConfiguration;
+    content.image = preview;
+    content.imageToTextPadding = 12;
+    content.imageProperties.maximumSize = CGSizeMake(40, 40);
+    content.imageProperties.reservedLayoutSize = CGSizeMake(40, 40);
+    cell.contentConfiguration = content;
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     if ([icon[@"key"] isEqualToString:_selected]) {
         UIImageView *tick = SGSymbolView(@"checkmark", 13, UIImageSymbolWeightSemibold, 16);

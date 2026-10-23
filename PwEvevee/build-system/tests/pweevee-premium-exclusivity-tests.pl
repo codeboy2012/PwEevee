@@ -16,6 +16,8 @@ my $ADBH = "$ROOT/Spotipw/tweak/Sources/Shared/AdBlock/AdBlock.h";
 my $ADNET = "$ROOT/Spotipw/tweak/Sources/Shared/AdBlock/AdNetwork.x";
 my $EEVEE = "$ROOT/Spotipw/tweak/Sources/App/Eevee/SGEevee.x";
 my $MOD = "$ROOT/Spotipw/tweak/Sources/App/ModSettings.x";
+my $MODPAGEH = "$ROOT/Spotipw/tweak/Sources/Settings/SGModPage.h";
+my $MODPAGEM = "$ROOT/Spotipw/tweak/Sources/Settings/SGModPage.m";
 
 my @failures;
 my $pass = 0;
@@ -23,7 +25,10 @@ sub ok { my ($cond, $what) = @_; if ($cond) { $pass++; } else { push @failures, 
 sub slurp { local $/; open my $f, '<', $_[0] or return undef; return <$f>; }
 
 my ($excl, $adbh, $adnet, $eevee, $mod) = (slurp($EXCL), slurp($ADBH), slurp($ADNET), slurp($EEVEE), slurp($MOD));
-ok(defined $excl && defined $adbh && defined $adnet && defined $eevee && defined $mod, "exclusivity sources are readable");
+my ($modpageh, $modpagem) = (slurp($MODPAGEH), slurp($MODPAGEM));
+ok(defined $excl && defined $adbh && defined $adnet && defined $eevee && defined $mod,
+   "exclusivity sources are readable");
+ok(defined $modpageh && defined $modpagem, "the settings-page sources are readable");
 
 # ---------- 1. the exclusivity policy is one module, with the documented legacy policy ----------
 ok($excl =~ /void SGPremiumSpoofSetOn\(BOOL on\)/ && $excl =~ /void SGEeveePremiumSetOn\(BOOL on\)/,
@@ -95,6 +100,36 @@ ok($eevee =~ /kPatchType = @"patchType"/, "the Eevee row still drives Eevee's ow
 ok($eevee =~ /eeveeResetData/, "patch changes still reset the payload's caches");
 ok($mod =~ /eevee\.value = \^NSString \* \{ return SGEeveePremiumOn\(\) \? @"On" : @"Off"; \};/,
    "the Mod Settings Eevee row reads the resolved state, not a stale mirror key");
+
+# ---------- 8. the gray-out UI (Spot.pw's established disabled-row treatment) ----------
+# The exclusion must not rest on the setters alone: whichever premium row the active one holds off
+# is DRAWM disabled — Spot.pw's " (grayed out)" title suffix, grey labels, an untouchable switch —
+# and re-enabled the moment the active one is flipped off, without matching the switch handlers.
+ok($modpageh =~ /\@property \(nonatomic, copy\) BOOL \(\^enabled\)\(void\);/,
+   "SGModRow carries an enabled block that grays and disables a switched row");
+ok($modpageh =~ /\(grayed out\)/, "the enabled property documents the gray-out convention");
+ok($modpagem =~ /BOOL rowEnabled = !row\.enabled \|\| row\.enabled\(\);/,
+   "the page asks every switched row for its enabled state when it draws it");
+ok($modpagem =~ /BOOL grayed = row\.key && !rowEnabled;/,
+   "only switched rows gray out; page and value rows keep their face");
+ok($modpagem =~ /grayed \? \[row\.title stringByAppendingString:@" \(grayed out\)"\]/,
+   "the grayed row's title carries Spot.pw's \" (grayed out)\" suffix");
+ok($modpagem =~ /if \(grayed\) content\.textProperties\.color = SGGrey\(\);/,
+   "the grayed row's title goes grey, not merely dimmed");
+ok($modpagem =~ /toggle\.enabled = !locked && !grayed;/
+   && $modpagem =~ /toggle\.userInteractionEnabled = !locked && !grayed;/,
+   "the grayed row's switch is disabled AND cannot take a tap"
+);
+ok($modpagem !~ /cell\.userInteractionEnabled/ || $modpagem =~ /toggle\.userInteractionEnabled/,
+   "the lock-out lands on the switch, not on the row (the row keeps its tap path)");
+ok($mod =~ /spoofPremium\.enabled = \^\{ return !SGEeveePremiumOn\(\); \};/,
+   "Spot.pw's row grays out while Eevee's Spoofed Premium holds");
+ok($eevee =~ /patching\.enabled = \^\{ return !SGFlag\(SGKeyFakePremium, YES\); \};/,
+   "Eevee's row grays out while Spot.pw's Spoof Premium holds");
+ok($modpagem =~ /\[self\.tableView reloadData\]/,
+   "the flip path reloads the table, so a switch-off re-enables the grayed row right away");
+ok($modpagem =~ /- \(void\)viewWillAppear.*\[self\.tableView reloadData\];/s,
+   "a page pushed after the other side was switched off reloads its rows on appearance");
 
 if (@failures) {
     printf STDERR "premium-exclusivity-tests: %d passed, %d FAILED\n", $pass, scalar(@failures);

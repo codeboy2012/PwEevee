@@ -24,6 +24,11 @@
 @property (nonatomic, copy) NSString *symbol;
 // A switch row that changes the whole app draws SGGlowSwitch instead of a UISwitch.
 @property (nonatomic) BOOL glows;
+// Spot.pw's gray-out: while this block answers NO the switch cannot move and the row reads as
+// Spot.pw draws a locked one — the title carries " (grayed out)" and the labels are grey — so a row
+// Unlock requires turning the row that holds it off first. Asked again whenever a switch on the
+// page is flipped, so the row that let this one through re-enables it the moment it is turned off.
+@property (nonatomic, copy) BOOL (^enabled)(void);
 // An ⓘ button beside the row's switch, whose tap reads this out under the row's title.
 @property (nonatomic, copy) NSString *info;
 // The row shows only while this answers YES, asked again whenever a switch on the page is flipped or the

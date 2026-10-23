@@ -83,6 +83,32 @@ ok($eevee =~ /setAlternateIconName/, 'the icon page applies icons through the sa
 ok($eevee =~ /CFBundleAlternateIcons/, 'the icon page lists the alternates the payload declares');
 ok($eevee =~ /iconNamePrettify/, 'the icon page drives the payload prettify setting');
 
+# ---------- 8b. the icon rows carry a REAL preview of each icon ----------
+# Each icon row leads its name with the icon's own image: read out of the icon file the payload ships
+# (the loose PNGs at the app root), scaled and rounded, not a placeholder and not a system symbol.
+ok($eevee =~ /static UIImage \*eeveeIconPreview\(NSString \*stem\)/, 'a preview loader exists beside the picker');
+ok($eevee =~ /@"\@3x\.png", @"\@2x\.png", @"\@2x~ipad\.png", @"~ipad\.png", @"\.png"/,
+   'the loader tries the scale variants in order: @3x, @2x, @2x~ipad, ~ipad, base');
+ok($eevee =~ /\[UIImage imageWithContentsOfFile:path\]/,
+   'the preview is loaded from the real file on disk (the upstream SGAppIconPreviews pattern)');
+ok($eevee =~ /scale:scale orientation:UIImageOrientationUp/,
+   'the scale suffix is restored so the image keeps the point size the filename promises');
+ok($eevee =~ /\[suffix containsString:@"\@3x"\] \? 3 : \(\[suffix containsString:@"\@2x"\] \? 2 : 1\)/,
+   '3x and 2x read their scales from the suffix, the base file reads 1x');
+ok($eevee =~ /\[UIImage imageNamed:stem\]/, 'a name whose file the roster missed still falls back to imageNamed');
+ok($eevee =~ /stem = @"AppIcon60x60"/, 'the Default row previews the app\'s own primary icon');
+ok($eevee =~ /\+ \(UIImage \*\)cachedPreviewForStem:/
+   && $eevee =~ /cache\.countLimit = 64;/,
+   'previews decode once and sit in a small cache across reloads');
+ok($eevee =~ /UIGraphicsImageRenderer.*rounded|eeveeRoundedPreview/s,
+   'the preview is drawn into a rounded square, the shape the app icon carries');
+ok($eevee =~ /side \* 0\.22/, 'the corner radius is proportional to the preview size');
+ok($eevee =~ /content\.image = preview;/, 'the icon row\'s leading image shows the real icon');
+ok($eevee =~ /content\.imageProperties\.maximumSize = CGSizeMake\(40, 40\);/
+   && $eevee =~ /content\.imageProperties\.reservedLayoutSize = CGSizeMake\(40, 40\);/,
+   'the preview keeps its 40pt slot next to the name');
+ok($eevee =~ /content\.imageToTextPadding = 12;/, 'preview and name keep a readable padding');
+
 # ---------- 9. no compiled payload was touched ----------
 my $dylib = "$ROOT/Evevee Spotify/component/package/dynamic-libraries/EeveeSpotify.dylib";
 my $manifest = slurp("$ROOT/Evevee Spotify/component/manifest.json");
