@@ -136,7 +136,7 @@ sub diag { printf "    [diag] %s\n", $_ for split /\n/, $_[0]; }
   ok(index($out2, 'VALIDATION PASSED') >= 0, 'validator emits PASSED line') or diag($out2);
 
   # explicit invariants on the fixed tree
-  sub read_id { my $p = shift; local $/; open my $f, '<', $p or return undef; my $d = <$f>; $d =~ /<key>CFBundleIdentifier<\/key><string>([^<]+)<\/string>/ ? $1 : undef }
+  sub read_id { my $p = shift; local $/; open my $f, '<', $p or return undef; my $d = <$f>; $d =~ /<key>CFBundleIdentifier<\/key>\s*<string>([^<]+)<\/string>/ ? $1 : undef }
   my $outer = read_id("$fapp/Info.plist");
   my $wid = read_id("$fapp/Watch/WatchApp.app/Info.plist");
   my $wxid = read_id("$fapp/Watch/WatchApp.app/PlugIns/WatchWidgetExtension.appex/Info.plist");
