@@ -40,7 +40,7 @@
 ## Releases
 
 **Latest stable release:** [PwEevee v2.0.0 | SpoTi.pw v50.0 Integration](https://github.com/codeboy2012/PwEevee/releases/tag/v2.0.0) — released `2026-10-06`.
-**Download:** [com.spotify.client_9.1.78_No_Watch.ipa](https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa) (169 MB)
+**Download:** [EeveeSpotifyv7.0.0.ipa]((https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa)) (169 MB)
 
 All downloads belong to their GitHub release — this README links, never mirrors, them.
 <!-- releases:end -->
