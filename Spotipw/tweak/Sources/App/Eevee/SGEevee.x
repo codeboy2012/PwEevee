@@ -115,7 +115,7 @@ UIViewController *SGEeveeSpotifyPage(void) {
     // Spot.pw's gray-out, the exclusivity the other way: while Spot.pw's Spoof Premium holds,
     // this switch reads as "Eevee's Spoofed Premium (grayed out)" and cannot move until that one
     // is switched off on the Mod page.
-    patching.enabled = ^{ return !SGFlag(SGKeyFakePremium, YES); };
+    patching.enabled = ^{ return [SGFlag(SGKeyFakePremium, YES) boolValue] ? NO : YES; };
 
     SGModRow *overwrite = SGOptionRow(@"Overwrite configuration", @"Replaces Spotify's remote configuration with a dumped Premium one. May cause issues.", kOverwriteConfig);
     overwrite.visible = ^BOOL { return eeveePatchingOn(); };

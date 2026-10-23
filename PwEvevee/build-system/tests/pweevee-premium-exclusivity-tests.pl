@@ -124,7 +124,7 @@ ok($modpagem !~ /cell\.userInteractionEnabled/ || $modpagem =~ /toggle\.userInte
    "the lock-out lands on the switch, not on the row (the row keeps its tap path)");
 ok($mod =~ /spoofPremium\.enabled = \^\{ return !SGEeveePremiumOn\(\); \};/,
    "Spot.pw's row grays out while Eevee's Spoofed Premium holds");
-ok($eevee =~ /patching\.enabled = \^\{ return !SGFlag\(SGKeyFakePremium, YES\); \};/,
+ok($eevee =~ /patching\.enabled = \^\{ return \[SGFlag\(SGKeyFakePremium, YES\) boolValue\] \? NO : YES; \};/,
    "Eevee's row grays out while Spot.pw's Spoof Premium holds");
 ok($modpagem =~ /\[self\.tableView reloadData\]/,
    "the flip path reloads the table, so a switch-off re-enables the grayed row right away");
