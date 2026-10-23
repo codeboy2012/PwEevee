@@ -353,7 +353,7 @@ static char kCardGlassKey;
     UIView *hero = [self hero];
     UILabel *eyebrow = [self label:@"A STUDENT PROJECT" font:[UIFont systemFontOfSize:12 weight:UIFontWeightBold] color:SGKofiColor()];
     eyebrow.attributedText = [[NSAttributedString alloc] initWithString:eyebrow.text attributes:@{NSKernAttributeName: @1.4}];
-    UILabel *title = [self label:@"Enjoying spoti.pw?" font:[UIFont systemFontOfSize:26 weight:UIFontWeightBold] color:UIColor.whiteColor];
+    UILabel *title = [self label:@"Enjoying PwEevee?" font:[UIFont systemFontOfSize:26 weight:UIFontWeightBold] color:UIColor.whiteColor];
     UILabel *body = [self label:@"I'm a student and I build it for free, in my spare time. If it made your music better, a coffee helps me keep going."
                            font:[UIFont systemFontOfSize:15] color:[UIColor colorWithWhite:1 alpha:0.72]];
 
@@ -468,7 +468,7 @@ void SGShowDonateSheet(void) {
 }
 
 SGModRow *SGDonateRow(void) {
-    SGModRow *row = SGWithSymbol(SGActionRow(@"Support spoti.pw", @"Buy the student behind it a coffee", ^{ SGShowDonateSheet(); }), @"cup.and.saucer.fill");
+    SGModRow *row = SGWithSymbol(SGActionRow(@"Support PwEevee", @"Buy the student behind it a coffee", ^{ SGShowDonateSheet(); }), @"cup.and.saucer.fill");
     row.color = SGKofiColor();
     return row;
 }

@@ -42,9 +42,7 @@ static UIViewController *modSettingsPage(void) {
     // that no switch can put right, and it is worth reading before anything else.
     SGModRow *signing = SGSigningWarningRow();
     if (signing) [sections addObject:SGSection(nil, @[signing])];
-    SGModRow *discord = SGWithSymbol(SGLinkRow(@"Join the Discord", @"Release pings, help and previews", SGDiscordURL), @"bubble.left.and.bubble.right.fill");
-    discord.color = SGDiscordColor();
-    [sections addObject:SGSection(nil, @[SGDonateRow(), discord])];
+    [sections addObject:SGSection(nil, @[SGDonateRow()])];
     SGModRow *mod = pageRow(@"Mod", @"info.circle", ^UIViewController *{ return SGAboutPage(); });
     mod.value = ^NSString *{ return @(SG_VERSION); };
     // The audio effects work on the sound, so both looks have them, with what they are doing beside the chevron.

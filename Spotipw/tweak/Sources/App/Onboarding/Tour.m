@@ -183,8 +183,7 @@ static UIButton *glassButton(NSString *title) {
         }]];
     };
     UIStackView *links = [[UIStackView alloc] initWithArrangedSubviews:@[
-        link(@"Report a bug", 32, [SGRepoURL stringByAppendingString:@"/issues"]),
-        link(@"Ask on Discord", 16, SGDiscordURL),
+        link(@"Report a bug", 0, [SGRepoURL stringByAppendingString:@"/issues"]),
     ]];
 
     UIStackView *note = [[UIStackView alloc] initWithArrangedSubviews:@[line, links]];
