@@ -48,6 +48,30 @@ fail() { printf '\n!! FAIL: %s\n' "$*" >&2; exit 1; }
 command -v perl >/dev/null || fail "perl is required"
 command -v xz    >/dev/null || fail "xz is required (apt/brew install xz)"
 command -v unzip >/dev/null || fail "unzip is required"
+command -v diff  >/dev/null || fail "diff is required"
+
+# merge_dir: copy a component DIRECTORY over the staged app. The merge runs on any
+# input IPA, including decrypt-day bases that already carry these directories, so an
+# already-supplied directory must not nest under the old name (what 'cp -a src dst/' does).
+# Three outcomes, all logged:
+#   * base provides the directory and it is byte-identical to our copy → collapsed;
+#   * base provides it and it DIFFERS → the base copy stays authoritative and our
+#     copy is skipped (the base's runtime pairing — its own app-group dylib, tweak
+#     and substrate — was shipped together, so the pipeline defers to it and
+#     records the decision; resolve-deps still enforces one-copy-per-dependency);
+#   * base provides nothing → ours is copied in.
+merge_dir() {
+  local src="${1:-}" dst="${2:-}"
+  if [ -d "$dst" ]; then
+    if diff -rq "$src" "$dst" >/dev/null 2>&1; then
+      echo "    merge: $dst already present and identical — collapsed"
+    else
+      echo "    merge: $dst differs from $src — BASE-SUPPLIED, keeping the base copy (repo copy skipped)"
+    fi
+    return 0
+  fi
+  cp -a "$src" "$dst"
+}
 
 # Per-invocation workspace: the legacy $BS/_work is a FIXED path, so parallel
 # builds or a crashed run would clobber/cross-del each other's trees. Move the
@@ -89,23 +113,23 @@ SPOTIFY_VERSION="$(perl "$BS/lib/plist-value.pl" "$STAGED/Info.plist" CFBundleSh
 echo "    Spotify version: $SPOTIFY_VERSION"
 
 step "2. merge components"
-# spotipw: tweak dylib → Frameworks/
+# spotipw: tweak dylib → Frameworks/ (a fresh replacement file simply overwrites)
 mkdir -p "$STAGED/Frameworks"
 cp -a "$BS/../components/spotipw/dylibs/spotifyglass.dylib" "$STAGED/Frameworks/"
 # eeveespotify: MobileSubstrate dylib → Frameworks/ (proven IPA layout)
 cp -a "Evevee Spotify/component/package/dynamic-libraries/EeveeSpotify.dylib" "$STAGED/Frameworks/"
 # frameworks (shared resolver below decides which)
-cp -a "Evevee Spotify/component/frameworks/Orion.framework"             "$STAGED/Frameworks/"
-cp -a "Evevee Spotify/component/frameworks/EeveeSwiftProtobuf.framework" "$STAGED/Frameworks/"
+merge_dir "Evevee Spotify/component/frameworks/Orion.framework"             "$STAGED/Frameworks/Orion.framework"
+merge_dir "Evevee Spotify/component/frameworks/EeveeSwiftProtobuf.framework" "$STAGED/Frameworks/EeveeSwiftProtobuf.framework"
 # Eevee resources: bundle + icon PNGs at app root (BundleHelper search order, audit §3)
-cp -a "Evevee Spotify/component/bundles/EeveeSpotify.bundle" "$STAGED/"
+merge_dir "Evevee Spotify/component/bundles/EeveeSpotify.bundle" "$STAGED/EeveeSpotify.bundle"
 find "Evevee Spotify/component/resources" -type f | while read -r r; do
   rel="${r#"Evevee Spotify/component/resources"/}"
   mkdir -p "$STAGED/$(dirname "$rel")"
   cp -a "$r" "$STAGED/$rel"
 done
 # shared dependency
-cp -a "$BS/../shared-dependencies/cydiasubstrate/CydiaSubstrate.framework" "$STAGED/Frameworks/"
+merge_dir "$BS/../shared-dependencies/cydiasubstrate/CydiaSubstrate.framework" "$STAGED/Frameworks/CydiaSubstrate.framework"
 echo "    merged: spotifyglass.dylib, EeveeSpotify.dylib, 3 frameworks, bundle + $(find "Evevee Spotify/component/resources" -type f | wc -l) resources"
 
 step "3. resolve dependencies"
