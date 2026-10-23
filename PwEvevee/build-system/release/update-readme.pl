@@ -63,6 +63,16 @@ while (@args) {
 
 # ----------------------------------------------------------- release source
 my ($rel, $src_label);
+
+# In a GitHub Actions run the release workflow exports GH_TOKEN. Anonymous
+# api.github.com traffic from Actions runners hits the shared-IP rate limit
+# (60 requests/hour per IP) and comes back 403; a bearer token raises the
+# primary limit to 1,000 requests/hour per repository, so pass it through to
+# PwHttp exactly like update-releases.pl does. The token only ever reaches
+# curl's 0600 config file — it is never printed, logged, or written to the
+# README.
+my $AUTH_TOKEN = $ENV{GITHUB_TOKEN} || $ENV{GH_TOKEN} || '';
+
 if ($OFFLINE) {
     # OFFLINE TESTS: the fixture file path arrives through --data (reused as
     # the releases source in offline mode). The fixture holds exactly one
@@ -101,9 +111,30 @@ if ($OFFLINE) {
     $pweevee ||= { repo => ($FORCE_REPO || 'codeboy2012/PwEevee') };
     my $repo = $FORCE_REPO || $pweevee->{repo} or die "no repo in $DATA; use --repo\n";
     http_init(user_agent => 'PwEevee-readme-updater');
-    my $body = http_get("https://api.github.com/repos/$repo/releases?per_page=30")
-        or die "cannot reach GitHub releases API for $repo\n";
+    my ($code, $body) = http_get("https://api.github.com/repos/$repo/releases?per_page=30",
+        headers => [ 'Accept: application/vnd.github+json',
+                     'X-GitHub-Api-Version: 2022-11-28' ],
+        ($AUTH_TOKEN ? (token => $AUTH_TOKEN) : ()),
+    );
     http_cleanup();
+    # PwHttp returns (status, body); status is undef when curl could not run
+    # at all. Distinguish the failure modes instead of collapsing them into
+    # one message, and always die before writing to the README (fail loud,
+    # write nothing — the policy at the top of this file).
+    if (!defined $code) {
+        die "cannot reach GitHub releases API for $repo (network error)\n";
+    }
+    if ($code == 403 || $code == 429) {
+        die "GitHub releases API for $repo returned $code — rate limited or access denied"
+          . ($AUTH_TOKEN ? " (likely secondary abuse detection; retry later)"
+                         : '; set GH_TOKEN/GITHUB_TOKEN to raise the anonymous limit') . "\n";
+    }
+    if ($code == 404) {
+        die "GitHub releases API for $repo returned 404 — repository not found or private\n";
+    }
+    if ($code != 200) {
+        die "GitHub releases API for $repo returned HTTP $code\n";
+    }
     my @rels = eval { @{ decode_json($body) } };
     @rels or die "no usable releases payload for $repo\n";
 
