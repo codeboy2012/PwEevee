@@ -26,6 +26,12 @@ my $dir = "$T/watchfix-test-$$";
 remove_tree($dir);
 make_path($dir);
 
+# resolve the plistlib-capable python interpreter once: some macOS boxes
+# ship only python3 (no `python` executable).
+my $PY = 'python3';
+$PY = 'python'  if (system('sh', '-c', 'command -v python >/dev/null 2>&1') / 256) == 0;
+$PY = 'python3' if (system('sh', '-c', 'command -v python3 >/dev/null 2>&1') / 256) == 0;
+
 my ($pass, $fail) = (0, 0);
 sub ok  { $pass++; printf "  ok  %s\n", $_[0]; }
 sub nok { $fail++; printf "  FAIL %s%s\n", $_[0], defined $_[1] ? " -- $_[1]" : ''; }
@@ -171,14 +177,14 @@ v = d.get('WKWatchKitApp')
 type_ = 'boolean' if isinstance(v, bool) else 'string' if isinstance(v, str) else ('absent' if v is None else 'other')
 print(json.dumps({'wkwatchkitapp': {'type': type_, 'value': v}, 'companion': d.get('WKCompanionAppBundleIdentifier'), 'id': d.get('CFBundleIdentifier')}))
 PYC
-    my $j = `python "$fapp/Watch/WatchApp.app/Info.plist" 2>&1 <<'PYX'
+    my $j = `$PY "$fapp/Watch/WatchApp.app/Info.plist" 2>&1 <<'PYX'
 $pycode
 PYX
 `;
     # python reads args after -c-less script; use a file instead for safety
     my $pyfile = "$dir/plistcheck.py";
     open my $pf, '>', $pyfile or die "write $pyfile: $!"; print $pf $pycode; close $pf;
-    $j = `python "$pyfile" "$fapp/Watch/WatchApp.app/Info.plist" 2>&1`;
+    $j = `$PY "$pyfile" "$fapp/Watch/WatchApp.app/Info.plist" 2>&1`;
     my $data = eval { JSON::PP::decode_json($j) };
     if ($data) {
       check(defined $data->{wkwatchkitapp} && $data->{wkwatchkitapp}{type} eq 'boolean' && $data->{wkwatchkitapp}{value}, 'plistlib: WKWatchKitApp is parsed Boolean true on Watch app', defined $data->{wkwatchkitapp} ? "$data->{wkwatchkitapp}{type}/$data->{wkwatchkitapp}{value}" : 'absent');
@@ -221,11 +227,11 @@ PYC
                 ["$bwatch/Info.plist", 'com.skywatch.spotify.watchkitapp'],
                 ["$bwidget/Info.plist", 'com.skywatch.spotify.watchkitapp.widget']) {
   }
-  my $rc1 = system('python', $pyfile, "$bapp/Info.plist", 'com.skywatch.spotify', 'WKWatchKitApp=<bool:false>');
+  my $rc1 = system($PY, $pyfile, "$bapp/Info.plist", 'com.skywatch.spotify', 'WKWatchKitApp=<bool:false>');
   check($rc1 == 0, 'binary fixture outer plist written') or diag();
-  my $rc2 = system('python', $pyfile, "$bwatch/Info.plist", 'com.skywatch.spotify.watchkitapp', 'WKCompanionAppBundleIdentifier=com.skywatch.spotify');
+  my $rc2 = system($PY, $pyfile, "$bwatch/Info.plist", 'com.skywatch.spotify.watchkitapp', 'WKCompanionAppBundleIdentifier=com.skywatch.spotify');
   check($rc2 == 0, 'binary fixture watch plist written') or diag();
-  my $rc3 = system('python', $pyfile, "$bwidget/Info.plist", 'com.skywatch.spotify.watchkitapp.widget');
+  my $rc3 = system($PY, $pyfile, "$bwidget/Info.plist", 'com.skywatch.spotify.watchkitapp.widget');
   check($rc3 == 0, 'binary fixture widget plist written') or diag();
 
   # sanity: the fixture watch plist must parse as binary with a real Boolean
@@ -239,7 +245,7 @@ with open(p, 'rb') as f: d = plistlib.load(f)
 v = d.get('WKWatchKitApp')
 print(json.dumps({'fmt': 'binary', 'wk': (v if isinstance(v, bool) else str(v)) if v is not None else None, 'is_bool': isinstance(v, bool)}))
 PYR
-  my $j0 = `python "$dir/readbin.py" "$bapp/Info.plist" 2>&1`;
+  my $j0 = `$PY "$dir/readbin.py" "$bapp/Info.plist" 2>&1`;
   my $d0 = eval { JSON::PP::decode_json($j0) };
   check($d0 && $d0->{is_bool} && !$d0->{wk}, 'binary fixture baseline: outer WKWatchKitApp is Boolean false (wrong-side key present)');
 
@@ -274,7 +280,7 @@ for k in keys:
     ok[k] = {'type': 'boolean' if isinstance(v, bool) else 'string' if isinstance(v, str) else ('absent' if v is None else 'other'), 'value': v if not isinstance(v, bool) else v}
 print(json.dumps(d.get('CFBundleIdentifier', None)) + '|' + json.dumps(ok))
 PYR2
-    my $raw = `python "$dir/readbin2.py" "$bf/Watch/WatchApp.app/Info.plist" WKWatchKitApp WKCompanionAppBundleIdentifier 2>&1`;
+    my $raw = `$PY "$dir/readbin2.py" "$bf/Watch/WatchApp.app/Info.plist" WKWatchKitApp WKCompanionAppBundleIdentifier 2>&1`;
     ($jq, $bz) = $raw =~ /^([^|]*)\|(.*)$/s ? ($1, $2) : (undef, undef);
     my $dz = eval { JSON::PP::decode_json($bz) };
     if ($dz) {
@@ -284,7 +290,7 @@ PYR2
       check(defined $comp && $comp->{type} eq 'string' && $comp->{value} eq 'com.pweevee.spotify', 'BINARY path: WKCompanionAppBundleIdentifier is the base id (string)', defined $comp ? "$comp->{type}=$comp->{value}" : 'absent');
     } else { nok('BINARY path plistlib read'); diag("raw: $raw"); }
 
-    my $raw2 = `python "$dir/readbin2.py" "$bf/Info.plist" WKWatchKitApp 2>&1`;
+    my $raw2 = `$PY "$dir/readbin2.py" "$bf/Info.plist" WKWatchKitApp 2>&1`;
     my (undef, $d2j) = $raw2 =~ /^([^|]*)\|(.*)$/s;
     my $d2 = eval { JSON::PP::decode_json($d2j) };
     if ($d2) {
