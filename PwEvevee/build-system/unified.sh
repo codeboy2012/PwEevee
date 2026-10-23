@@ -63,7 +63,13 @@ command -v diff  >/dev/null || fail "diff is required"
 merge_dir() {
   local src="${1:-}" dst="${2:-}"
   if [ -d "$dst" ]; then
-    if diff -rq "$src" "$dst" >/dev/null 2>&1; then
+    # An empty directory at the destination is a placeholder (a decrypt-day base
+    # or a fixture staging the bundle structure without contents), not a
+    # conflicting supply: fill it with the component's contents.
+    if [ -z "$(ls -A "$dst" 2>/dev/null)" ]; then
+      cp -a "$src"/. "$dst"/
+      echo "    merge: $dst was an empty placeholder — filled with $src"
+    elif diff -rq "$src" "$dst" >/dev/null 2>&1; then
       echo "    merge: $dst already present and identical — collapsed"
     else
       echo "    merge: $dst differs from $src — BASE-SUPPLIED, keeping the base copy (repo copy skipped)"
