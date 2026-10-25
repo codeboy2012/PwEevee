@@ -1,0 +1,14 @@
+{
+   "files" : [
+      {
+         "path" : "pweevee-icon.png",
+         "sha256" : "2fb04e22502c4c81ab1f2518e6695f907663819593f22b848749a4d9688a0ca3",
+         "size" : 24978
+      }
+   ],
+   "license" : "PwEevee project artwork; not derived from Spotify or any upstream project",
+   "name" : "pweevee-brand-icon",
+   "origin" : "generated_by PwEvevee/build-system/release/make-app-icon.pl (original PwEevee artwork, no upstream derivation)",
+   "staged_as" : "staged as Payload/Spotify.app/pweevee-icon.png and registered under CFBundleIcons.CFBundleAlternateIcons by package/patch-alternate-icon.pl"
+}
+

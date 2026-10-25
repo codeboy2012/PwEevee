@@ -6,9 +6,13 @@
 #   perl PwEvevee/build-system/release/make-brand-assets.pl
 #
 # Source of truth:
-#     website/assets/brand/pweevee-logo.png
+#     website/assets/brand/pweevee-1024.png   (the ORIGINAL PwEevee render by
+#                                              make-app-icon.pl; also copied to
+#                                              pweevee.png)
+# The Spotify-derived artwork (pweevee-app-icon.png) NEVER feeds these sizes:
+# it is third-party depiction used only in the "App icon" showcase.
 #
-# Writes, by DOWNSCALING ONLY:
+# Writes, by DOWNSCALING ONLY (from the original PwEevee artwork):
 #     website/assets/icon-32.png     favicon
 #     website/assets/icon-180.png    Apple touch icon
 #     website/assets/icon-512.png    large / installable icon
@@ -34,7 +38,7 @@ use PwPng qw(png_read png_write png_resize png_info);
 my $ROOT = $ENV{PWEEVEE_ROOT} || repo_root($FindBin::Bin);
 chdir $ROOT or die "cannot chdir to $ROOT: $!\n";
 
-my $SRC = 'website/assets/brand/pweevee-logo.png';
+my $SRC = 'website/assets/brand/pweevee-1024.png';
 my @SIZES = (32, 180, 512);
 
 unless (-f $SRC && -s $SRC) {

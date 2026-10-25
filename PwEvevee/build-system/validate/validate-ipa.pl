@@ -14,6 +14,8 @@
 use strict;
 use warnings;
 use File::Find;
+use File::Basename qw(dirname);
+use lib dirname($0) . '/../lib';
 
 my $app = $ARGV[0] or die "usage: validate-ipa.pl <staged Spotify.app> [watch-enabled]\n";
 my $watch_enabled = defined $ARGV[1] && $ARGV[1] ne '0' && $ARGV[1] ne '';
@@ -57,6 +59,43 @@ find({ wanted => sub {
 -f "$app/Spotify"     or push @fail, "MISSING: Spotify executable";
 -f "$app/PkgInfo"     or push @fail, "MISSING: PkgInfo";
 -d "$app/Frameworks"  or push @fail, "MISSING: Frameworks/";
+# ---------- referenced alternate icons must exist in the staged tree --------
+# iOS loads CFBundleAlternateIcons files from the app bundle root; a missing
+# file makes setAlternateIconName() silently fall back to the primary icon.
+# A referenced name n is satisfied by the first of (n, n.png) found at the
+# app root. Trees that reference no alternate-icon files pass unchanged.
+{
+  my $ok = eval {
+    require bplist;
+    my $tree = bplist::read_file("$app/Info.plist");
+    for my $icons_key ('CFBundleIcons', 'CFBundleIcons~ipad') {
+      my $alts = bplist::get_if($tree, $icons_key, 'CFBundleAlternateIcons') or next;
+      next unless $alts->[0] eq 'dict';
+      my $p = $alts->[1];
+      for (my $i = 0; $i < @$p; $i += 2) {
+        my ($prov, $entry) = ($p->[$i], $p->[$i + 1]);
+        next unless $entry->[0] eq 'dict';
+        my $q = $entry->[1];
+        my @names;
+        for (my $j = 0; $j < @$q; $j += 2) {
+          if ($q->[$j] eq 'CFBundleIconFiles' && $q->[$j + 1][0] eq 'array') {
+            push @names, map { $_->[1] } grep { $_->[0] eq 'str' } @{ $q->[$j + 1][1] };
+          }
+          elsif ($q->[$j] eq 'CFBundleIconFile' && $q->[$j + 1][0] eq 'str') {
+            push @names, $q->[$j + 1][1];
+          }
+        }
+        for my $nm (@names) {
+          next if -f "$app/$nm" || -f "$app/$nm.png";
+          push @fail, sprintf('ALTERNATE ICON MISSING: %s/%s', $prov, $nm);
+        }
+      }
+    }
+    1;
+  };
+  unless ($ok) { (my $e = $@) =~ s/\s+\z//; push @fail, "ALTERNATE ICON CHECK FAILED: $e" }
+}
+
 
 if (@fail) {
   print "STRUCTURE VALIDATION FAILED:\n";

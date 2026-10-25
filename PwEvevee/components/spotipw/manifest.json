@@ -4,8 +4,8 @@
    "files" : [
       {
          "path" : "dylibs/spotifyglass.dylib",
-         "sha256" : "512b729db93e8ac3287735c75700975128fb6a5efc5659a72b52949e7f7bb587",
-         "size" : 1747536
+         "sha256" : "e633f9244c239f40598d0ae4bb4c35cab86fed40d77fa2168f7c489947759046",
+         "size" : 1816144
       },
       {
          "path" : "package/control",
@@ -22,5 +22,6 @@
    "origin" : "Evevee Spotify/source-artifacts/com.spotipw_0.22.0_iphoneos-arm.deb",
    "origin_sha256" : "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
    "package" : "com.spotipw",
+   "spotifyglass_refresh" : "dylibs/spotifyglass.dylib was refreshed in commit db3ccd6 to the CI deb built by run 39952230740 from commit 94962d9; origin/origin_sha256 still describe the deb this component was first extracted from",
    "version" : "0.22.0"
 }

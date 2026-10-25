@@ -108,12 +108,17 @@ my $HOME_SLUG = 'pweevee';
 # recreated. The renderer only looks for a file and builds the lit environment
 # around it. Any of these names works, first match wins; drop the artwork in as
 # a square PNG (or WebP/SVG) with a transparent background.
+# The BARE "<slug>" name wins: PwEevee's brand slot is served by the ORIGINAL
+# render (website/assets/brand/pweevee.png from make-app-icon.pl), while the
+# Spotify-derived artwork that depicts the shipped app icon lives at
+# pweevee-app-icon.png and is only used below for the honest "App icon"
+# showcase. Nothing real was lost by that separation; both files stay.
 my %ART;
 for my $slug (qw(pweevee spotipw eeveespotify)) {
-    # "<slug>-logo" is the canonical name; the bare "<slug>" forms are accepted
-    # so an existing drop-in keeps working. Candidates are listed explicitly
-    # rather than globbed, so a stray file in the folder is never picked up.
-    CANDIDATE: for my $base ("$slug-logo", $slug) {
+    # Candidates are listed explicitly rather than globbed, so a stray file in
+    # the folder is never picked up. The bare name is preferred; "<slug>-logo"
+    # is kept as the legacy drop-in.
+    CANDIDATE: for my $base ($slug, "$slug-logo") {
         for my $ext (qw(png webp svg jpg)) {
             my $rel = "assets/brand/$base.$ext";
             if (-f "$OUT/$rel" && -s "$OUT/$rel") { $ART{$slug} = "/$rel"; last CANDIDATE }
@@ -127,6 +132,17 @@ my $HAS_ART = keys %ART ? 1 : 0;
 # full-resolution logo would be wasteful.
 my %ICON = map { $_ => (-f "$OUT/assets/icon-$_.png" ? "/assets/icon-$_.png" : undef) }
            qw(32 180 512);
+
+# The artwork that HONESTLY DEPICTS the app icon inside PwEevee IPAs: a restyle
+# derived from the Spotify icon (Spotify's mark — third-party artwork, shown
+# only where the page says "App icon"). Never used as the PwEevee brand mark.
+my %APPICON;
+for my $slug (qw(pweevee)) {
+    for my $ext (qw(png webp)) {
+        my $rel = "assets/brand/$slug-app-icon.$ext";
+        if (-f "$OUT/$rel" && -s "$OUT/$rel") { $APPICON{$slug} = "/$rel"; last }
+    }
+}
 
 # If the logo has been replaced since the icons were derived, say so — otherwise
 # the favicon would silently keep showing the previous artwork.
@@ -488,7 +504,9 @@ sub starfield {
 # a hairline rule and a factual caption — no halo, no floor rings, no mirrored
 # reflection, no drifting specks. The artwork carries the image on its own.
 sub c_brand_showcase {
-    my $art = $ART{pweevee};
+    # the showcase figure is the "App icon" slot: prefer the artwork that
+    # actually depicts the shipped icon; brand art only as a fallback
+    my $art = $APPICON{pweevee} // $ART{pweevee};
     my $inner;
 
     if ($art) {

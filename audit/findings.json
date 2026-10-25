@@ -1,0 +1,201 @@
+{
+  "$schema": "audit-findings",
+  "audit": {
+    "date": "2026-10-24",
+    "repository": "github.com/codeboy2012/PwEevee",
+    "branch": "main",
+    "head_commit": "43a92ce",
+    "scope": "four local IPAs + full repository/build-system/CI audit for v3.1.0",
+    "location_of_evidence": "audit/ipas/evidence/{stock,pweevee,taurus,chroma}/",
+    "mode": "audit-only through Phase 5; Phase 6 limited to confirmed repo defects with regression tests"
+  },
+
+  "artifacts": [
+    {
+      "name": "com.spotify.client_9.1.90_und3fined.ipa",
+      "size": 153481523,
+      "sha256": "409601a58953818eea17edb92963d10256ae6fcf00c69954105e5becc08ec296",
+      "role": "stock baseline"
+    },
+    {
+      "name": "PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
+      "size": 300634848,
+      "sha256": "a76b469a8291d6650026ef1355b77ead37efcc9250517aaf057a6e6b1dab3996",
+      "role": "audited PwEevee unified artifact (not committed to git)"
+    },
+    {
+      "name": "Taurus-0.60.4.ipa",
+      "size": 137901231,
+      "sha256": "6e1e367b7710822207a3f36d30c35790075af1c8c541a18ef4af04ec900e03f1",
+      "role": "competitor fork (base reference for injection model)"
+    },
+    {
+      "name": "chroma-1.0.0-beta.3.ipa",
+      "size": 155786119,
+      "sha256": "8e051f44d4d55eaa377d62d518f1c2222a0bf43f47a1e40c2e12ad2144c84ddc",
+      "role": "competitor fork (weak-load model, unchanged stock binary size)"
+    }
+  ],
+
+  "confirmed_defects": [
+    {
+      "id": "D-1",
+      "severity": "P0",
+      "title": "Tautological ZIP determinism assertion in build tests",
+      "location": "PwEvevee/build-system/tests/build-tests.pl",
+      "evidence": "`ok($ha eq $ha, 'zip writer is deterministic for identical input')` compared a value to itself, so the test could never fail; the same suite runs in CI-less pipeline currently",
+      "impact": "a non-deterministic ZIP writer would pass the suite silently",
+      "confidence": "certain",
+      "status": "FIXED in this audit",
+      "fix": "writes the same entry list twice and asserts identical output; asserts reverse-order input differs",
+      "regression_test": "PwEvevee/build-system/tests/build-tests.pl (block 1)"
+    },
+    {
+      "id": "D-2",
+      "severity": "P0",
+      "title": "Stale component manifest after dylib pin refresh",
+      "location": "PwEvevee/components/spotipw/manifest.json",
+      "evidence": "manifest recorded sha256 512b729db93e8ac3287735c75700975128fb6a5efc5659a72b52949e7f7bb587 / size 1747536 for dylibs/spotifyglass.dylib; HEAD blob (after commit db3ccd6 'refresh the pinned spotifyglass component to the rebrand CI build') is e633f9244c239f40598d0ae4bb4c35cab86fed40d77fa2168f7c489947759046 / 1816144",
+      "impact": "pin-and-verify pipeline had no truthful record; drift undetectable by any existing test",
+      "confidence": "certain",
+      "status": "FIXED in this audit",
+      "fix": "manifest updated to blob values; provenance note 'spotifyglass_refresh' added",
+      "regression_test": "PwEvevee/build-system/tests/component-manifest-test.pl (383 checks)"
+    },
+    {
+      "id": "D-3",
+      "severity": "P1",
+      "title": "Shipped CydiaSubstrate in released IPA differs from repo pin; manifest recorded no hash",
+      "location": "PwEvevee/shared-dependencies/cydiasubstrate/",
+      "evidence": "shipped PwEevee-0.22.0-alpha.2-unified IPA contains Frameworks/CydiaSubstrate.framework/CydiaSubstrate with sha256 748d129f68a3a262e8908d5748d185dec301c737acb496db36ab9497ce3c794d size 377952, byte-identical to Taurus-0.60.4's; repo HEAD blob is 3c691ec7339a760d12080974c13ad45db6a3e25df42f7689b760ff76a211ea8a size 403200; manifest.json contained no binary hash",
+      "impact": "released artifact is not reproducible from the repo; substrate origin (Taurus stack) undocumented",
+      "confidence": "certain (byte comparison)",
+      "status": "PARTIALLY FIXED (pin recorded + enforced by test; artifact reconciliation is a release-engineering decision)",
+      "fix": "binary_sha256 + binary_size added to shared-dependencies/cydiasubstrate/manifest.json",
+      "regression_test": "component-manifest-test.pl verifies CydiaSubstrate binary hash/size"
+    },
+    {
+      "id": "D-4",
+      "severity": "P2",
+      "title": "dependencies.json $comment sizeofcmds drift",
+      "location": "PwEvevee/dependencies.json",
+      "evidence": "comment states audited ncmds 153 / sizeofcmds 16680; shipped unified main binary has ncmds 153 / sizeofcmds 16824",
+      "impact": "misleading provenance note",
+      "confidence": "high (comment drift certain; which artifact the comment describes is unverified)",
+      "status": "OPEN (needs the proven com.spotipw_0.22.0.ipa, not present in working tree)",
+      "fix": null,
+      "regression_test": null
+    },
+    {
+      "id": "D-5",
+      "severity": "P2",
+      "title": "Weak @rpath load-command injections are undeclared and unvalidated",
+      "location": "PwEvevee/dependencies.json (expected_load_commands), PwEvevee/build-system/validate/validate-macho.pl",
+      "evidence": "shipped main binary carries weak loads @rpath/SpotifyGlassAppGroups.dylib and @rpath/spotifyglass.dylib (cmd 145/146) not present in expected_load_commands and not checked by validate-macho.pl; Taurus shows the same pattern plus SpotifyAudioProbe, chroma the same two",
+      "impact": "injector leftovers invisible to the validator; weak/strong duplicate dylib loads unresolved by policy",
+      "confidence": "certain (values from audit tooling tools/macho-lcs.pl)",
+      "status": "OPEN (design decision)",
+      "fix": "declare the weak set in dependencies.json and validate both strong + weak sets, or document as upstream-injector constraint",
+      "regression_test": null
+    },
+    {
+      "id": "D-6",
+      "severity": "P1",
+      "title": "No CI workflow runs any build-system test suite",
+      "location": ".github/workflows/ (pweevee-deb.yml, readme-updater.yml only)",
+      "evidence": "grep for perl invocation of tests/ in workflows matches nothing",
+      "impact": "defects like D-1/D-2 ship without any gate",
+      "confidence": "certain",
+      "status": "OPEN (recommended P1 action)",
+      "fix": "add a CI job running all test suites with fail-fast",
+      "regression_test": null
+    }
+  ],
+
+  "package_findings": [
+    {
+      "id": "P-1",
+      "title": "Main-app code signature cleared but not rebuilt in all four IPAs",
+      "evidence": "LC_CODE_SIGNATURE with implausible off=3240283899 size=222174078 in all four main binaries",
+      "impact": "install routes must re-sign (expected for decrypted redistributions)",
+      "confidence": "certain",
+      "status": "documented"
+    },
+    {
+      "id": "P-2",
+      "title": "Watch app absent from all three forks",
+      "evidence": "stock has Watch/WatchApp.app tree; PwEevee/Taurus/chroma do not",
+      "impact": "watch features unavailable (expected; unchanged from pin evidence in dependencies.json comment)",
+      "confidence": "certain",
+      "status": "documented"
+    },
+    {
+      "id": "P-3",
+      "title": "chroma keeps stock Spotify build metadata and sets CFBundleIconName=SGPrimaryIcon",
+      "evidence": "info.flat.txt values (SpotifyBuildTimestamp 1791216420, CFBundleIconName SGPrimaryIcon only in chroma)",
+      "impact": "interpretation: chroma likely uses the alternate-icon API rather than asset replacement",
+      "confidence": "high for the plist values; the interpretation is inferred",
+      "status": "documented"
+    },
+    {
+      "id": "P-4",
+      "title": "PwEevee α.2 ships two 'extra' weak injections vs Taurus (SpotifyGlassLiveActivity.appex aligns)",
+      "evidence": "PlugIns listing + LC diff",
+      "impact": "comparable surface",
+      "confidence": "certain",
+      "status": "documented"
+    }
+  ],
+
+  "issues_investigated": [
+    {
+      "issue": 1,
+      "title": "Crash When Changing the App Icon in LiveContainer",
+      "state": "open",
+      "source_of_truth": "https://api.github.com/repos/codeboy2012/PwEevee/issues/1",
+      "code_trace": "Spotipw/tweak/Sources/App/Eevee/SGEevee.x — loadIcons/choose use filename-stem keys for sideload safety; setAlternateIconName with rollback on completion-error",
+      "verdict": "upstream environment limitation (LiveContainer host): the icon-change API needs a real imageRef inside the app bundle; the crash happens before PwEevee's completion handler runs. Not a PwEevee regression.",
+      "mitigation_recommendation": "detect LiveContainer-style host and show an explicit unsupported notice instead of attempting the icon change"
+    },
+    {
+      "issue": 2,
+      "title": "Cant download songs",
+      "state": "open",
+      "source_of_truth": "https://api.github.com/repos/codeboy2012/PwEevee/issues/2",
+      "code_trace": "spotipw/EeveeSpotify stack provides UI/audio-path tweaks; no code path in Spotipw/ claims to enable offline downloads on stock iOS 18",
+      "verdict": "platform limitation: Spotify offline downloads are server-enforced; non-jailbroken sideload cannot fabricate attestation. Not owned by PwEevee.",
+      "mitigation_recommendation": "document prominently in README/website as an expected limitation"
+    }
+  ],
+
+  "regression_runs": {
+    "suites_total": 11,
+    "results": [
+      { "suite": "component-manifest-test.pl", "result": "PASSED (383 checks)", "note": "new in this audit" },
+      { "suite": "build-tests.pl", "result": "PASSED (8 checks)", "note": "input IPA absent → injector/plist sub-tests skip" },
+      { "suite": "deb-format-test.pl", "result": "PASSED (30 checks)" },
+      { "suite": "readme-updater-tests.pl", "result": "PASSED (29 checks)" },
+      { "suite": "website-tests.pl", "result": "OK (2887 checks)" },
+      { "suite": "eevee-settings-tests.pl", "result": "PASSED (67 checks)" },
+      { "suite": "pweevee-deb-tests.pl", "result": "PASSED (6 checks)" },
+      { "suite": "pweevee-rebrand-tests.pl", "result": "PASSED (30 checks)" },
+      { "suite": "pweevee-premium-exclusivity-tests.pl", "result": "PASSED (47 checks)" },
+      { "suite": "pweevee-1.1.0-beta-tests.pl", "result": "ENVIRONMENTAL SKIP", "note": "requires dist/PwEevee_1.1.0-beta_iphoneos-arm64.deb, not tracked in git; exit 2 recorded honestly, not masked" }
+    ]
+  },
+
+  "repository_changes_by_this_audit": [
+    "PwEvevee/build-system/tests/build-tests.pl (D-1 fix, comment typo)",
+    "PwEvevee/components/spotipw/manifest.json (D-2 fix + provenance note)",
+    "PwEvevee/shared-dependencies/cydiasubstrate/manifest.json (D-3 pin: binary_sha256 + binary_size)",
+    "PwEvevee/build-system/tests/component-manifest-test.pl (new regression suite)",
+    "audit/* (this report, comparison doc, findings.json, v3.1.0 plan, audit tooling)"
+  ],
+
+  "limitations": [
+    "no runtime/dynamic analysis (binaries never executed)",
+    "pweevee-1.1.0-beta-tests needs a dist/ artifact not present",
+    "partial com.spotipw provenance not in the working tree (D-4 unresolved)",
+    "Windows CRLF checkout complicates byte-exact verification; mitigated by LF-normalized dual comparisons in the new test"
+  ]
+}

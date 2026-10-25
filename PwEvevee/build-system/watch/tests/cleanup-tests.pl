@@ -39,11 +39,22 @@ my $repo = "$T/repo";
 my $work = "$bs/_work";
 make_path($bs);
 copy("$BS_SRC/unified.sh", "$bs/unified.sh") or die "copy unified.sh: $!";
-make_path("$bs/watch", "$bs/validate", "$bs/package", "$bs/inject", "$bs/lib", "$work");
+make_path("$bs/watch", "$bs/validate", "$bs/package", "$bs/inject", "$bs/lib", "$bs/tests", "$work");
 for my $f ('watch/watchfix-stage.sh', 'watch/watchfix.sh', 'watch/validate-watchfix.pl',
            'validate/validate-ipa.pl', 'validate/validate-macho.pl', 'package/make-ipa.pl',
-           'package/resolve-deps.pl', 'inject/inject-dylib.pl', 'lib/plist-value.pl', 'lib/macho.pm', 'lib/zip.pm') {
+           'package/resolve-deps.pl', 'inject/inject-dylib.pl', 'lib/plist-value.pl', 'lib/macho.pm', 'lib/zip.pm',
+           'package/patch-alternate-icon.pl', 'lib/bplist.pm') {
   copy("$BS_SRC/$f", "$bs/$f") or die "copy $f: $!";
+}
+# the patcher resolves brand-icons as $BS/../../<real-repo-last-dir>/brand-icons;
+# derive that top-level name from $ROOT instead of spelling it (spelling-proof):
+my $repo_name = ($ROOT =~ m{([^/\\]+$)})[0];
+make_path("$T/repo/$repo_name/brand-icons", "$bs/tests");
+for my $b ('manifest.json', 'pweevee-icon.png') {
+  copy("$BS_SRC/../brand-icons/$b", "$T/repo/$repo_name/brand-icons/$b") or die "copy $b: $!";
+}
+for my $f ('deb-format-test.pl', 'build-tests.pl') {
+  copy("$BS_SRC/tests/$f", "$bs/tests/$f") or die "copy $f: $!";
 }
 chmod 0755, "$bs/watch/watchfix-stage.sh", "$bs/watch/watchfix.sh";
 # unrelated sentinel inside _work that cleanup must NEVER remove

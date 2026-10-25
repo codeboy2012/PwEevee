@@ -114,10 +114,16 @@ my $dylib = "$ROOT/Evevee Spotify/component/package/dynamic-libraries/EeveeSpoti
 my $manifest = slurp("$ROOT/Evevee Spotify/component/manifest.json");
 ok(-f $dylib, 'the compiled Eevee payload is still in place');
 if ($manifest) {
-    ok($manifest =~ /631d4f17cb5e6d3cd90e67f3043f723e1cb28e11dfca475d67f63657c979de70/,
-       "the payload dylib hash in the manifest is untouched (631d4f17...)");
+    ok($manifest =~ /8997e5c946d702b062b4b2482e37e9675ef013e8fae951b8b0871f55a856cdb4/,
+       "the payload dylib hash in the manifest is untouched (8997e5c9...)");
+    ok($manifest =~ /513a50b197aa558c34b02b87bff9f46e6cad3b2e462ee8622fc72fd939e83a9b/,
+       "the origin deb hash in the manifest is the refreshed v7.0.0 package");
+    ok($manifest =~ /"version"\s*:\s*"7\.0\.0"/,
+       "the component manifest is refreshed to upstream v7.0.0");
+    ok(-f "$ROOT/Evevee Spotify/component/package/dynamic-libraries/KaraokeBackgroundShader.metallib",
+       "the v7.0.0 karaoke shader ships with the refreshed payload");
     my $sha = qx(sha256sum "$dylib");
-    ok($sha =~ /^631d4f17cb5e6d3cd90e67f3043f723e1cb28e11dfca475d67f63657c979de70/,
+    ok($sha =~ /^8997e5c946d702b062b4b2482e37e9675ef013e8fae951b8b0871f55a856cdb4/,
        'the payload dylib on disk still matches the audited hash');
 } else {
     ok(0, 'component manifest readable');

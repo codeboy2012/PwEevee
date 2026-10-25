@@ -124,6 +124,12 @@ mkdir -p "$STAGED/Frameworks"
 cp -a "$BS/../components/spotipw/dylibs/spotifyglass.dylib" "$STAGED/Frameworks/"
 # eeveespotify: MobileSubstrate dylib → Frameworks/ (proven IPA layout)
 cp -a "Evevee Spotify/component/package/dynamic-libraries/EeveeSpotify.dylib" "$STAGED/Frameworks/"
+# eeveespotify v7.0.0: the karaoke music-video shader rides beside the dylib upstream
+# (inert data for dyld — validate-macho only parses the main binary — but it is a
+# manifest-pinned component, so it is staged like every other payload file)
+if [ -f "Evevee Spotify/component/package/dynamic-libraries/KaraokeBackgroundShader.metallib" ]; then
+  cp -a "Evevee Spotify/component/package/dynamic-libraries/KaraokeBackgroundShader.metallib" "$STAGED/Frameworks/"
+fi
 # frameworks (shared resolver below decides which)
 merge_dir "Evevee Spotify/component/frameworks/Orion.framework"             "$STAGED/Frameworks/Orion.framework"
 merge_dir "Evevee Spotify/component/frameworks/EeveeSwiftProtobuf.framework" "$STAGED/Frameworks/EeveeSwiftProtobuf.framework"
@@ -136,7 +142,7 @@ find "Evevee Spotify/component/resources" -type f | while read -r r; do
 done
 # shared dependency
 merge_dir "$BS/../shared-dependencies/cydiasubstrate/CydiaSubstrate.framework" "$STAGED/Frameworks/CydiaSubstrate.framework"
-echo "    merged: spotifyglass.dylib, EeveeSpotify.dylib, 3 frameworks, bundle + $(find "Evevee Spotify/component/resources" -type f | wc -l) resources"
+echo "    merged: spotifyglass.dylib, EeveeSpotify.dylib, karaoke shader, 3 frameworks, bundle + $(find "Evevee Spotify/component/resources" -type f | wc -l) resources"
 
 step "3. resolve dependencies"
 perl "$BS/package/resolve-deps.pl" "$STAGED" || fail "dependency resolution failed"
@@ -171,6 +177,12 @@ else
   echo "    (--watch not given; any embedded Watch/ tree will fail structure validation)"
   WATCH_ENABLED=0
 fi
+
+step "6b. register PwEevee brand icon (CFBundleAlternateIcons)"
+# Idempotent: stages the committed brand icon at the app root and registers it
+# under CFBundleIcons (plus CFBundleIcons~ipad when the host declares it).
+# A failure hard-fails the build - a half-registered icon must not ship.
+perl "$BS/package/patch-alternate-icon.pl" "$STAGED" || fail "alternate icon registration failed"
 
 step "7. validate filesystem structure"
 perl "$BS/validate/validate-ipa.pl" "$STAGED" "$WATCH_ENABLED" || fail "structure validation failed"
@@ -216,6 +228,7 @@ cat > "$MANIFEST" <<EOF
   "dylibs": ["spotifyglass.dylib", "EeveeSpotify.dylib"],
   "frameworks": ["CydiaSubstrate.framework", "EeveeSwiftProtobuf.framework", "Orion.framework"],
   "bundles": ["EeveeSpotify.bundle"],
+  "brand_icon": "pweevee-icon.png (CFBundleAlternateIcons; original PwEevee artwork, see PwEvevee/brand-icons/manifest.json)",
   "resources": {
     "eevee_icons": $(find "Evevee Spotify/component/resources" -type f | wc -l),
     "load_commands": $(perl -MJSON::PP -e 'local $/; my $d=decode_json(<>); print scalar @{$d->{expected_load_commands}}' < "$BS/../dependencies.json")

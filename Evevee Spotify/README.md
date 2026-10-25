@@ -11,13 +11,16 @@ them. The known-good file hashes recorded during the audit are preserved byte-fo
 |---|---|
 | `component/` | the extracted Eevee payload: `package/dynamic-libraries/EeveeSpotify.dylib` (+ plist filter), `frameworks/{Orion,EeveeSwiftProtobuf}.framework`, `bundles/EeveeSpotify.bundle`, `resources/` (142 icon PNGs), `manifest.json` with per-file SHA-256 and origin deb hash |
 | `component/extract-components.pl` | rebuilds `component/` **and** `PwEvevee/components/spotipw/` from the source artifacts; deterministic, `--force` re-extracts |
-| `source-artifacts/` | the audited upstream packages: `EeveeSpotify-6.6.8-SelfContained-v2.deb`, `com.spotipw_0.22.0_iphoneos-arm.deb`, the decrypted Spotify input IPA (`Sptoify-No_Watch_App.ipa`, gitignored), and the legacy Perl audit tools |
+| `source-artifacts/` | the audited upstream packages: `com.eevee.spotify_7.0.0_iphoneos-arm64.deb` (current payload origin, jb-style, + its `v7.0.0-release-notes.txt`), `EeveeSpotify-6.6.8-SelfContained-v2.deb` (historical origin), `com.spotipw_0.22.0_iphoneos-arm.deb`, the decrypted Spotify input IPA (`Sptoify-No_Watch_App.ipa`, gitignored), and the legacy Perl audit tools |
 
-## Key hashes (audit-verified, unchanged by the move)
+## Key hashes (audit-verified, maintained by `component/extract-components.pl`)
 
 | File | SHA-256 (prefix) |
 |---|---|
-| `component/package/dynamic-libraries/EeveeSpotify.dylib` | `631d4f17cb5e6d3cd90e67f3043f723e1cb28e11dfca475d67f63657c979de70` |
+| `component/package/dynamic-libraries/EeveeSpotify.dylib` | `8997e5c946d702b062b4b2482e37e9675ef013e8fae951b8b0871f55a856cdb4` (upstream v7.0.0 refresh) |
+| `component/package/dynamic-libraries/KaraokeBackgroundShader.metallib` | `95ee5f0c0bcbad1ff2f5a0e4aea1d3c21035fa77b7653d74a671aacc3a0cb1b6` |
+| `com.eevee.spotify_7.0.0_iphoneos-arm64.deb` (payload origin) | `513a50b197aa558c34b02b87bff9f46e6cad3b2e462ee8622fc72fd939e83a9b` |
+| previous v6.6.8 dylib (inside the historical deb only) | `631d4f17cb5e6d3cd90e67f3043f723e1cb28e11dfca475d67f63657c979de70` |
 | bundle `Localizable.strings`, 142 icons, frameworks | verified per-file in `component/manifest.json` |
 
 ## Rules

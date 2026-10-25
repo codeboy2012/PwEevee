@@ -39,7 +39,7 @@ only via the host IPA — see above.)
 **Provided by the host IPA (customization workflow places them; the audited components under
 `PwEvevee/components/` and `Evevee Spotify/component/` are the source):**
 
-- `EeveeSpotify.dylib` — EeveeSpotify v6.6.8, SHA-256 `631d4f17…79de70`, byte-audited
+- `EeveeSpotify.dylib` — EeveeSpotify v7.0.0, SHA-256 `8997e5c9…cdb4`, extracted from upstream `com.eevee.spotify_7.0.0` by `Evevee Spotify/component/extract-components.pl` and hash-pinned in `Evevee Spotify/component/manifest.json`
 - `Orion.framework`, `EeveeSwiftProtobuf.framework` — Eevee's Swift runtime
 - `CydiaSubstrate.framework` — shared
 - `EeveeSpotify.bundle` + 142 icon PNGs **inside the app** (the IPA route's locations; the deb's

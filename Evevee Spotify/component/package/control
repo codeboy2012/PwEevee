@@ -1,10 +1,10 @@
-Package: com.eevee.spotify.selfcontained
-Name: EeveeSpotify Self-Contained
-Description: Self-contained EeveeSpotify v6.6.8 (dylib + Orion + EeveeSwiftProtobuf + resource bundle + all custom icons) for IPA injection. No external Orion dependency.
+Package: com.eevee.spotify
+Name: EeveeSpotify
+Description: A tweak to get Spotify Premium for free, just like Spotilife
 Maintainer: jaydenjcpy
 Author: Eevee
 Section: Tweaks
+Depends: dev.theos.orion (>= 1.0.0), firmware (>= 16.1)
 Architecture: iphoneos-arm64
-Version: 6.6.8-selfcontained.1
-Installed-Size: 29212
-Depends: firmware (>= 14.0)
+Version: 7.0.0
+Installed-Size: 26480

@@ -16,9 +16,9 @@
    Section 02 is the whole switch. Components only ever use the semantic tokens,
    so nothing below section 03 knows which theme is running.
 
-   The accent is the blue sampled from the official logo artwork
-   (website/assets/brand/pweevee-logo.png — #2A3762, lifted to #90A0D5 where it
-   has to sit on near-black). It is used sparingly and only where it means
+   The accent is the blue sampled from the official PwEevee artwork (the
+   original render in website/assets/brand/pweevee.png — #2A3762, lifted to
+   #90A0D5 where it has to sit on near-black). It is used sparingly and only where it means
    something: focus rings, the "latest release" marker, and PwEevee's own
    material as distinct from upstream material. Upstream material is graphite.
    There is no third hue, no gradient blob and no rainbow.

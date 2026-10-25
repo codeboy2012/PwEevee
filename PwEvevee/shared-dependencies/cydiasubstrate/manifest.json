@@ -7,5 +7,7 @@
   "extracted_with": "manual copy recorded in docs/UNIFICATION-AUDIT.md; re-derive from the source artifact rather than editing by hand",
   "required_by": ["spotipw (deb route runtime)"],
   "loaded_by": "main executable via LC_LOAD_DYLIB @executable_path/Frameworks/CydiaSubstrate.framework/CydiaSubstrate",
-  "notes": "The working com.spotipw_0.22.0.ipa ships only the framework binary and Info.plist (no Commands/Headers/Libraries dev trees), so those are intentionally absent here."
+  "notes": "The working com.spotipw_0.22.0.ipa ships only the framework binary and Info.plist (no Commands/Headers/Libraries dev trees), so those are intentionally absent here.",
+  "binary_sha256": "3c691ec7339a760d12080974c13ad45db6a3e25df42f7689b760ff76a211ea8a",
+  "binary_size": 403200
 }

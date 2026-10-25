@@ -27,9 +27,19 @@ sub ok { my ($cond, $what) = @_; if ($cond) { $pass++; } else { push @failures, 
     { name => 'Payload/Spotify.app/Info.plist', data => "<?xml version=\"1.0\"?><plist/>" },
   ];
   zip::write_zip("$T/a.ipa", $entries);
-  zip::write_zip("$T/b.ipa", [reverse @$entries]);   # caller order wins, but reverse gives different archive
-  my ($ha, $hb) = (sha256_hex(scalar _slurp("$T/a.ipa")), sha256_hex(scalar _slurp("$T/b.ipa")));
-  ok($ha eq $ha, 'zip writer is deterministic for identical input');
+  zip::write_zip("$T/b.ipa", [reverse @$entries]);   # caller order wins, so a reversed list is expected to differ
+
+  # -- regression: the ZIP writer must be deterministic for identical input --
+  # (a previous version of this suite asserted `$ha eq $ha` — comparing a hash
+  # to itself — so this check could never fail regardless of zip.pm behaviour.
+  # Writing the SAME entry list twice and comparing the bytes is the true test.)
+  zip::write_zip("$T/a2.ipa", $entries);
+  my $ha  = sha256_hex(scalar _slurp("$T/a.ipa"));
+  my $ha2 = sha256_hex(scalar _slurp("$T/a2.ipa"));
+  ok($ha eq $ha2, 'zip writer is byte-for-byte deterministic for identical input');
+  my $hb = sha256_hex(scalar _slurp("$T/b.ipa"));
+  ok($hb ne $ha, 'entry order changes the archive (reverse gave different bytes)');
+
   my $listing = zip::read_zip_listing("$T/a.ipa");
   ok(scalar(keys %$listing) == 4, 'zip listing sees all 4 entries');
   ok($listing->{'Payload/Spotify.app/one.bin'} == 500, 'zip stores sizes correctly');

@@ -109,9 +109,11 @@ printf "Wrote %s (%dx%d, %.1f KB)\n", $OUT, $W, $H, length($png) / 1024;
 
 # ============================================================ the mark
 
-# The official logo, by its canonical name first. Only PNG is decodable here.
+# The official BRAND artwork (the original PwEevee render), by its canonical
+# name. Only PNG is decodable here. The Spotify-derived app-icon depiction is
+# deliberately NOT a brand source.
 sub find_art {
-    for my $base (qw(pweevee-logo pweevee)) {
+    for my $base (qw(pweevee)) {
         my $p = "website/assets/brand/$base.png";
         return $p if -f $p && -s $p;
     }

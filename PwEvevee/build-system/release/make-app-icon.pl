@@ -1,19 +1,19 @@
 #!/usr/bin/env perl
 # ============================================================================
-# make-app-icon.pl — a procedurally drawn app icon (SUPERSEDED)
+# make-app-icon.pl — the ORIGINAL PwEevee brand artwork, procedurally drawn
 # ============================================================================
 #
-# ****  NOT THE BRAND ARTWORK ANY MORE  **************************************
-# The official PwEevee logo is the supplied file:
+# This script GENERATES the official PwEevee brand artwork:
 #
-#     website/assets/brand/pweevee-logo.png
+#     website/assets/brand/pweevee.png      (and the pweevee-<size>.png set,
+#     website/assets/brand/pweevee-1024.png  with pweevee-1024.png also read
+#                                             by make-brand-assets.pl to
+#                                             derive the favicon-size icons)
 #
-# The website uses that file everywhere, and the icon sizes the site serves are
-# downscales of it produced by make-brand-assets.pl. This script is kept for
-# reference only. It writes website/assets/brand/pweevee-*.png, which the
-# renderer deliberately ranks BELOW "pweevee-logo.png", so running it cannot
-# take over the branding — but it will leave unused files in that folder.
-# ****************************************************************************
+# The renderer prefers the bare "pweevee.png" name for brand slots, so running
+# this refreshes the official mark. A separate file, pweevee-app-icon.png, is
+# the Spotify-derived artwork that HONESTLY DEPICTS the app icon inside the
+# shipped IPA; it is third-party depiction and is never a brand source.
 #
 #   perl PwEvevee/build-system/release/make-app-icon.pl            # all sizes
 #   perl PwEvevee/build-system/release/make-app-icon.pl --preview  # fast 96px look-dev
@@ -93,16 +93,26 @@ sub sd_round_rect {
 }
 
 sub sd_hex {
-    # flat-top hexagon (points left/right): max over three face planes
+    # iq's canonical flat-top hexagon SDF (points left/right), negative inside.
+    # r is the circumradius (the horizontal half-width), apothem = r*sqrt(3)/2.
+    # The old hand-rolled "max over three face planes" was NOT a valid SDF:
+    # points far above/below the shape evaluated negative ("inside"), which
+    # extruded the node into a full-height beam and rendered the bottom as
+    # a spade/arrowhead.
     my ($px, $py, $cx, $cy, $r) = @_;
-    $px -= $cx; $py -= $cy;
-    my $k = 0.8660254038;   # sqrt(3)/2
-    my $d1 = $k * abs($px) + 0.5 * $py - $r;        # top/bottom faces
-    my $d2 = abs($px) - $r;                          # left/right points
-    my $d3 = 0.5 * abs($px) - $k * abs($py) - $r * 0.7320508;  # diagonal faces
-    my $max = $d1 > $d2 ? $d1 : $d2;
-    $max = $d3 if $d3 > $max;
-    return $max;
+    $px = abs($px - $cx); $py = abs($py - $cy);
+    my $a  = $r * 0.8660254038;             # apothem
+    my $dot = -0.8660254038 * $px + 0.5 * $py;   # k.xy . p,  k = (-0.866, 0.5)
+    if ($dot < 0) {                         # p -= 2*min(dot,0)*k.xy
+        $px += 1.7320508076 * $dot;
+        $py -= $dot;
+    }
+    my $cz = 0.5773502692 * $a;
+    my $cl = $px > $cz ? $cz : $px;
+    $px -= $cl;
+    $py -= $a;
+    my $len = sqrt($px * $px + $py * $py);
+    return $py > 0 ? $len : -$len;
 }
 
 # ---- painting ----------------------------------------------------------------
@@ -174,7 +184,9 @@ sub paint {
         for my $ix (0 .. $SS - 1) {
             my $x = ($ix + 0.5) / $SS;
             my $d = $slab_d->[ $iy * $SS + $ix ];
-            my $cov = coverage(-$d, 0.0016);
+            # sd_round_rect is NEGATIVE inside — coverage(d) is the inside mask.
+            # The old coverage(-$d) inverted it and blanked the whole interior.
+            my $cov = coverage($d, 0.0016);
             next unless $cov > 0;
 
             my $i = ($iy * $SS + $ix) * 4;
@@ -258,7 +270,7 @@ sub paint {
             for my $ix (0 .. $SS - 1) {
                 my $i = ($iy * $SS + $ix) * 4;
                 my $d = $slab_d->[ $iy * $SS + $ix ];
-                my $edge = coverage(-$d - 0.0005, 0.0022);
+                my $edge = coverage($d + 0.0005, 0.0022);   # 1 inside, 0 outside (see interior note)
                 if ($edge < 1) {
                     $buf[$i + 3] *= $edge;
                     $buf[$i]     *= $edge;
@@ -547,15 +559,19 @@ my $final = downsample();
     for (my $k = 3; $k < @$final; $k += 4) { $lit++ if $final->[$k] > 0.01 }
     die "self-check failed: paint() produced an empty buffer\n" unless $lit > $S * $S * 0.04;
     print "self-check: $lit/$S opaque\n";
-}my $brand_dir = 'website/assets/brand';
+}
+
+my $brand_dir = 'website/assets/brand';
 unless (-d $brand_dir) {
     require File::Path;
     File::Path::make_path($brand_dir);
 }
 
-# preview mode: quick look-dev output only
+# preview mode: quick look-dev output only — into its own filename. Writing
+# the small preview onto pweevee-1024.png used to quietly destroy the only
+# master render.
 if ($preview) {
-    write_png_rgba('website/assets/brand/pweevee-1024.png', $final, $S, $S);
+    write_png_rgba('website/assets/brand/pweevee-look-dev.png', $final, $S, $S);
     print "preview done\n";
     exit 0;
 }
@@ -568,6 +584,37 @@ write_png_rgba("$brand_dir/pweevee.png",      $final, $S, $S);
 for my $size (512, 256, 180, 64, 48, 32, 16) {
     my $small = resize_box($final, $S, $size);
     write_png_rgba("$brand_dir/pweevee-$size.png", $small, $size, $size);
+}
+
+# ---- IPA icon family -------------------------------------------------------
+# The one PwEevee-owned alternate app icon that ships inside builds. It is
+# written to PwEvevee/brand-icons/ with a small SHA-256 manifest so the build
+# (unified.sh + package/patch-alternate-icon.pl) stages it from a pinned,
+# committed file instead of depending on website assets at build time.
+{
+    use Digest::SHA qw(sha256_hex);
+    use JSON::PP ();
+    my $icons_dir = 'PwEvevee/brand-icons';
+    unless (-d $icons_dir) { require File::Path; File::Path::make_path($icons_dir) }
+    my $ipa_icon = "$icons_dir/pweevee-icon.png";
+    write_png_rgba($ipa_icon, resize_box($final, $S, 180), 180, 180);
+    {
+        local $/;
+        open my $fh, '<:raw', $ipa_icon or die "reopen $ipa_icon: $!\n";
+        my $bytes = <$fh>;
+        close $fh;
+        my $sha = sha256_hex($bytes);
+        my $out = JSON::PP->new->canonical->pretty;
+        spew("$icons_dir/manifest.json", $out->encode({
+            license => 'PwEevee project artwork; not derived from Spotify or any upstream project',
+            name    => 'pweevee-brand-icon',
+            origin  => 'generated_by PwEvevee/build-system/release/make-app-icon.pl (original PwEevee artwork, no upstream derivation)',
+            staged_as => 'staged as Payload/Spotify.app/pweevee-icon.png and registered under CFBundleIcons.CFBundleAlternateIcons by package/patch-alternate-icon.pl',
+            files   => [ { path   => 'pweevee-icon.png',
+                           sha256 => $sha,
+                           size   => length $bytes, } ],
+        }) . "\n");
+    }
 }
 
 print "app icon done\n";

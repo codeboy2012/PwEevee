@@ -1,0 +1,27 @@
+{
+  "project": "pweevee-unified (spoti.pw + EeveeSpotify integration build)",
+  "spotify_version": "9.1.90",
+  "spotipw_version": "0.22.0",
+  "spotipw_commit": "43a92ce",
+  "eevee_version": "7.0.0",
+  "eevee_commit": "unknown (binary release 6.6.8-selfcontained.1)",
+  "build_date": "2026-10-25T05:51:30Z",
+  "ipa_path": "release-candidate/PwEevee-0.22.0-rc1-unified-Spotify-9.1.90.ipa",
+  "ipa_sha256": "9845b1c325ac0b042e129bb892103975daed80becea0122c4977ce743ed55415",
+  "ipa_size": 338031911,
+  "dylibs": ["spotifyglass.dylib", "EeveeSpotify.dylib"],
+  "frameworks": ["CydiaSubstrate.framework", "EeveeSwiftProtobuf.framework", "Orion.framework"],
+  "bundles": ["EeveeSpotify.bundle"],
+  "brand_icon": "pweevee-icon.png (CFBundleAlternateIcons; original PwEevee artwork, see PwEvevee/brand-icons/manifest.json)",
+  "resources": {
+    "eevee_icons": 142,
+    "load_commands": 5
+  },
+  "validation": {
+    "archive": true,
+    "mach_o": true,
+    "dependencies": true,
+    "resources": true,
+    "ipa": true
+  }
+}
