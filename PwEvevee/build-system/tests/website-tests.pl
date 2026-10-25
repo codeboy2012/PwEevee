@@ -2140,12 +2140,18 @@ my $srv = IO::Socket::INET->new(
 ) or die "bind: $!\n";
 open my $pf, '>', "$dir/port.txt" or die "port.txt: $!\n";
 print {$pf} $srv->sockport; close $pf;
+unlink "$dir/requests.log";                 # stale log from an aborted run
 alarm 120;                       # never linger if the suite dies mid-run
 my $n = 0;
 while ($n < @convo) {
     my $c = $srv->accept or last;
     my $req = '';
     while (defined(my $line = <$c>)) { $req .= $line; last if $line =~ /^\r?$/; }
+    # Raw request log: assertions that the wire format is right (e.g. the
+    # If-None-Match ETag survived curl's config escaping) read back this file.
+    open my $lf, '>>', "$dir/requests.log" or die "requests.log: $!\n";
+    print {$lf} $req;
+    close $lf;
     my $hit  = $convo[$n];
     my $body = $hit->{body} // '';
     print {$c} "HTTP/1.0 $hit->{status} Mock\r\n";
@@ -2252,6 +2258,11 @@ SERVER_SRC
             ok(($r->{fetched_at} // '') eq '2026-10-24T00:00:00Z',
                'fetched_at still describes the last verification with actual numbers');
             ok($r->{available} && !$r->{stale}, 'a 304 is a success path, not a stale path');
+            my $log = '';
+            if (open my $f, '<', "$FIX/requests.log") { local $/; $log = <$f>; close $f; }
+            ok($log =~ /If-None-Match: W\/"ennn"/,
+               'the stored quoted ETag reaches the server intact (curl config escaping)',
+               "request log: " . ($log =~ /If-None-Match[^\r\n]*/ ? $& : '(no If-None-Match seen)'));
         }
     }
 
