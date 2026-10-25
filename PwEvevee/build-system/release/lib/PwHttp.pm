@@ -81,14 +81,14 @@ sub http_get {
 
     if ($CLIENT eq 'curl') {
         my $hdr_file = "$TMP/response-headers.txt";
-        my $cfg = qq{url = "$url"\n};
-        $cfg .= qq{header = "$_"\n} for @headers;
-        $cfg .= qq{user-agent = "$UA"\n}
+        my $cfg = 'url = "' . cfg_escape($url) . qq{"\n};
+        $cfg .= 'header = "' . cfg_escape($_) . qq{"\n} for @headers;
+        $cfg .= 'user-agent = "' . cfg_escape($UA) . qq{"\n}
               . "silent\nshow-error\nlocation\n"
               . "max-time = $timeout\nretry = 2\n"
               . qq{write-out = "\\n%{http_code}"\n};
         $cfg .= qq{dump-header = "$hdr_file"\n} if $want_headers;
-        $cfg .= qq{header = "Authorization: Bearer $opt{token}"\n} if $opt{token};
+        $cfg .= 'header = "Authorization: Bearer ' . cfg_escape($opt{token}) . qq{"\n} if $opt{token};
         my $out = run_curl($cfg);
         if ($want_headers) {
             return (undef, '', {}) unless defined $out;
@@ -119,6 +119,22 @@ sub http_get {
     return ($code, $r->{stdout});
 }
 
+# curl reads its config as `option = "value"` lines and treats a bare double
+# quote inside the value as the end of the parameter, so every value written
+# into the config file must have backslashes and quotes escaped in curl's own
+# config syntax. This is what lets a quoted GitHub ETag (W/"abc123gzip")
+# survive the If-None-Match line: without escaping, curl silently drops the
+# header (or aborts the request) and the conditional request degrades to a
+# full 200 refetch on every run.
+sub cfg_escape {
+    my ($v) = @_;
+    $v //= '';
+    $v =~ s/\\/\\\\/g;
+    $v =~ s/"/\\"/g;
+    $v =~ s/[\r\n]+//g;
+    return $v;
+}
+
 # Parse a curl dump-header file into a lowercase-keyed hash. Best-effort: an
 # unreadable or missing file yields an empty hash, never an error.
 sub parse_headers {
@@ -144,8 +160,9 @@ sub http_head {
     my $timeout = $opt{timeout} || 30;
 
     if ($CLIENT eq 'curl') {
+        my $u = cfg_escape($url);
         my $out = run_curl(<<"CFG");
-url = "$url"
+url = "$u"
 head
 silent
 show-error
