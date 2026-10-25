@@ -1,0 +1,149 @@
+{
+   "downloads": {
+      "aggregate_label": "total of available GitHub release asset download_count sums (not unique users or installs)",
+      "per_project": {
+         "eeveespotify": {
+            "latest": {
+               "asset_downloads": [
+                  {
+                     "download_count": 5827,
+                     "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb"
+                  },
+                  {
+                     "download_count": 1269,
+                     "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb"
+                  },
+                  {
+                     "download_count": 2391,
+                     "name": "txt.txt"
+                  }
+               ],
+               "downloads": 9487,
+               "version": "v7.0.0"
+            },
+            "release_downloads": 52262,
+            "releases_summed": 8
+         },
+         "pweevee": {
+            "latest": {
+               "asset_downloads": [
+                  {
+                     "download_count": 114,
+                     "name": "com.spotify.client_9.1.78_No_Watch.ipa"
+                  },
+                  {
+                     "download_count": 121,
+                     "name": "EeveeSpotifyv7.0.0.ipa"
+                  },
+                  {
+                     "download_count": 125,
+                     "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa"
+                  }
+               ],
+               "downloads": 360,
+               "version": "v2.0.0"
+            },
+            "release_downloads": 648,
+            "releases_summed": 8
+         },
+         "spotipw": {
+            "latest": {
+               "asset_downloads": [
+                  {
+                     "download_count": 0,
+                     "name": "spoti.pw-0.50.0.deb"
+                  },
+                  {
+                     "download_count": 0,
+                     "name": "spoti.pw-0.50.0-kit.zip"
+                  }
+               ],
+               "downloads": 0,
+               "version": "v0.50.0"
+            },
+            "release_downloads": 0,
+            "releases_summed": 9
+         }
+      },
+      "release_data_found": 3,
+      "release_data_generated_at": "2026-10-25T20:40:01Z",
+      "total": 52910
+   },
+   "generated_at": "2026-10-25T21:58:44Z",
+   "generator": "PwEevee/build-system/release/update-stats.pl",
+   "metric_notes": {
+      "downloads": "sum of per-asset download_count over the release history tracked in website/data/releases.json",
+      "forks": "forks_count",
+      "open_issues": "open_issues_count (includes pull requests)",
+      "stars": "stargazers_count",
+      "watchers": "subscribers_count (NOT watchers_count, which GitHub documents as equal to stars)"
+   },
+   "repos": [
+      {
+         "available": true,
+         "etag": "W/\"231672e421cb7551dda4babdb029b753575492e7f375ed9b62d131ecd574daaf\"",
+         "fetched_at": "2026-10-25T21:58:44Z",
+         "forks": 2,
+         "homepage": "https://pweevee.skytweak.dpdns.org/",
+         "name": "PwEevee",
+         "open_issues": 1,
+         "pushed_at": "2026-10-25T08:00:36Z",
+         "repo": "codeboy2012/spoti.pw-builds",
+         "repo_url": "https://github.com/codeboy2012/spoti.pw-builds",
+         "slug": "pweevee",
+         "stale": false,
+         "stars": 12,
+         "subscribers": 2,
+         "topics": [
+            "altstore",
+            "feather",
+            "ios",
+            "ios-26",
+            "ios-27",
+            "ipa",
+            "liquid-glass",
+            "pweevee",
+            "sideloading",
+            "sidestore",
+            "spoti-pw",
+            "spotify",
+            "spotify-ios"
+         ]
+      },
+      {
+         "available": false,
+         "error": "Repository https://github.com/skopevoj/spoti.pw was not found (HTTP 404).",
+         "etag": "",
+         "fetched_at": "2026-10-25T20:39:12Z",
+         "forks": 0,
+         "name": "spoti.pw",
+         "open_issues": 0,
+         "repo": "skopevoj/spoti.pw",
+         "repo_url": "https://github.com/skopevoj/spoti.pw",
+         "slug": "spotipw",
+         "stale": true,
+         "stale_since": "2026-10-25T21:58:44Z",
+         "stars": 0,
+         "subscribers": 0
+      },
+      {
+         "available": true,
+         "etag": "W/\"6997f0aef4bbd1ed9b9134e32413ca394c6b5253ac04489634a9b43afd1472d8\"",
+         "fetched_at": "2026-10-25T21:58:44Z",
+         "forks": 4802,
+         "homepage": "https://github.com/SideloadLabs/Eevee-Alt-Source/raw/refs/heads/main/apps.json",
+         "name": "EeveeSpotify",
+         "open_issues": 33,
+         "pushed_at": "2026-10-21T13:12:48Z",
+         "repo": "SideloadLabs/EeveeSpotifyReincarnated",
+         "repo_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated",
+         "slug": "eeveespotify",
+         "stale": false,
+         "stars": 1390,
+         "subscribers": 16,
+         "topics": []
+      }
+   ],
+   "schema": 1,
+   "source": "GitHub REST API (api.github.com) — public repository and release data only"
+}

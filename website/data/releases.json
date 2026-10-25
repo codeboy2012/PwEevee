@@ -1,15 +1,76 @@
 {
-   "generated_at": "2026-10-11T05:32:41Z",
+   "generated_at": "2026-10-25T20:40:01Z",
    "generator": "PwEvevee/build-system/release/update-releases.pl",
    "projects": [
       {
          "available": true,
          "history": [
             {
+               "asset_count": 4,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_count": 22,
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
+                     "kind": "ipa",
+                     "name": "PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
+                     "sha256": "a76b469a8291d6650026ef1355b77ead37efcc9250517aaf057a6e6b1dab3996",
+                     "size": 300634848,
+                     "size_label": "287 MB",
+                     "updated_at": "2026-10-23T19:28:16Z"
+                  },
+                  {
+                     "content_type": "application/x-debian-package",
+                     "download_count": 0,
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee_0.22.0-alpha.2_iphoneos-arm.deb",
+                     "kind": "deb",
+                     "name": "PwEevee_0.22.0-alpha.2_iphoneos-arm.deb",
+                     "sha256": "02448bf101b9ad887982e6c9c5620c811577287e5aa89ce476222854ccb5153c",
+                     "size": 611900,
+                     "size_label": "598 KB",
+                     "updated_at": "2026-10-23T19:27:49Z"
+                  },
+                  {
+                     "content_type": "application/octet-stream",
+                     "download_count": 0,
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-v2.2.0-pre-validation-report.md",
+                     "kind": "other",
+                     "name": "PwEevee-v2.2.0-pre-validation-report.md",
+                     "sha256": "095b43d9b724cd6ebd296b4f2a0a46ca277b3f805b4335142ada88a96d177b8e",
+                     "size": 4500,
+                     "size_label": "4.4 KB",
+                     "updated_at": "2026-10-23T19:27:48Z"
+                  },
+                  {
+                     "content_type": "text/plain; charset=utf-8",
+                     "download_count": 0,
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/SHA256SUMS.txt",
+                     "kind": "other",
+                     "name": "SHA256SUMS.txt",
+                     "sha256": "613594b87872a5b590a8784a7a77af03910fb62fbeb05f28d2d7fe53299d1cdd",
+                     "size": 328,
+                     "size_label": "328 bytes",
+                     "updated_at": "2026-10-23T19:27:48Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v2.2.0-pre | Unified SpoTi.pw 0.22.0-alpha.2 + EeveeSpotify 6.6.8",
+               "notes": "# PwEevee v2.2.0-pre\r\n\r\n### Unified SpoTi.pw + EeveeSpotify integration — pre-release\r\n\r\n**Release channel:** Pre-release (device testing pending — please report issues, do not assume everything works)\r\n\r\n---\r\n\r\n## Overview\r\n\r\nThe first PwEevee build produced entirely by the unified, reproducible integration pipeline:\r\n\r\n- **SpoTi.pw 0.22.0-alpha.2, rebuilt from source** in CI (macOS 15 + Theos, commit `94962d9`, run 39952230740) — not just a prebuilt binary pass-through.\r\n- Combined with **EeveeSpotify 6.6.8-selfcontained.1** (upstream binary, byte-verified) into one package.\r\n- **Complete PwEevee rebrand** of the user-facing surface, with upstream attribution preserved.\r\n\r\n## What's new\r\n\r\n### Exclusive premium settings\r\n- `Spoof Premium` (SpoTi.pw) and `Eevee's Spoofed Premium` (EeveeSpotify) are mutually exclusive.\r\n- Turning one on **grays out and disables** the other row immediately in the same settings view (Spot.pw-style UI behavior).\r\n- Turning the active one off re-enables the other instantly; both may stay off; a legacy both-on state resolves deterministically.\r\n\r\n### Change App Icons previews\r\n- Every alternate-icon row now shows its **real logo preview** instead of a placeholder.\r\n- Alternate-icon dictionaries validated for iPhone (`CFBundleIcons`) and iPad (`CFBundleIcons~ipad`) — 42 icons each.\r\n\r\n### PwEevee rebrand & banner removal\r\n- Titles, preference labels, About/credits, update check, donate row (\"Support PwEevee\"), lyrics provider identification and all user-facing URLs now name PwEevee (`github.com/codeboy2012/PwEevee`, `https://pweevee.skytweak.dpdns.org/`).\r\n- The **Discord promotional banner** is gone from Mod Settings, About and onboarding — no dead link, no reserved space.\r\n- Update checks now query the PwEevee repository's GitHub Releases.\r\n- Preserved on purpose: upstream attribution and license notices, on-device data paths (`spoti.pw/AdBlock`, `spoti.pw/Audio effects`, `spoti.pw/JamesDSP`, `spoti.pw/LockArtwork`) so installed users keep their libraries, and internal `spotifyglass` identifiers.\r\n\r\n## Components\r\n\r\n| Component | Version |\r\n|---|---|\r\n| PwEevee | v2.2.0-pre (pre-release) |\r\n| SpoTi.pw (spotifyglass) | 0.22.0-alpha.2 — from source |\r\n| EeveeSpotify | 6.6.8-selfcontained.1 |\r\n| Spotify base (IPA route) | 9.1.90, minimum iOS 16.1 |\r\n| Spotify host (deb route) | 9.1.76 only |\r\n| Bundled frameworks | CydiaSubstrate, Orion 1.0.2, EeveeSwiftProtobuf |\r\n\r\n## Downloads\r\n\r\n| Asset | Size | SHA-256 |\r\n|---|---|---|\r\n| `PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa` | 287 MB | `a76b469a8291d6650026ef1355b77ead37efcc9250517aaf057a6e6b1dab3996` |\r\n| `PwEevee_0.22.0-alpha.2_iphoneos-arm.deb` | 0.6 MB | `02448bf101b9ad887982e6c9c5620c811577287e5aa89ce476222854ccb5153c` |\r\n| `PwEevee-v2.2.0-pre-validation-report.md` | — | `095b43d9b724cd6ebd296b4f2a0a46ca277b3f805b4335142ada88a96d177b8e` |\r\n\r\n`SHA256SUMS.txt` covers every asset; full details are in the validation report.\r\n\r\n## Installation\r\n\r\n- **IPA route:** install with any sideload signer (IPA re-signs during install). Requires iOS 16.1 or newer.\r\n- **deb route:** rootless jailbreak (Dopamine/roothide); host Spotify **9.1.76 only**.\r\n\r\n## What is verified — and what is not\r\n\r\n- Verified: the full test battery (build 7, deb-format 30, premium-exclusivity 47, eevee-settings 67, rebrand 30, deb 6, readme-updater 29 — 216 checks, all passing), pipeline Mach-O/structure validation, and end-to-end static probes of the shipped IPA and deb (33/33).\r\n- **Not verified:** installation, app launch, playback, the settings UI on a real device, and the icon previews on screen. No device or simulator run was available for this build. Please file issues with device model, iOS version and signing method.\r\n\r\n## Credits\r\n\r\nPwEevee integrates the work of the upstream projects: **spoti.pw** (us) by Vojtěch Škopek — [github.com/skopevoj/spoti.pw](https://github.com/skopevoj/spoti.pw), **Chroma** — [chroma.pw](https://chroma.pw), and **EeveeSpotify** — [github.com/SideloadLabs/EeveeSpotifyReincarnated](https://github.com/SideloadLabs/EeveeSpotifyReincarnated). Spotify and Apple trademarks belong to their owners; PwEevee is an independent project and is not affiliated with or endorsed by Spotify or Apple.\r\n",
+               "prerelease": false,
+               "published_at": "2026-10-23T19:28:17Z",
+               "published_epoch": 1792783697,
+               "published_label": "23 October 2026",
+               "summary": "Release channel: Pre-release (device testing pending — please report issues, do not assume everything works) --- The first PwEevee build produced entirely by the unified, reproducible…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v2.2.0-pre",
+               "version": "v2.2.0-pre",
+               "version_label": "v2.2.0-pre"
+            },
+            {
                "asset_count": 3,
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 14,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/com.spotify.client_9.1.88_und3fined.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.88_und3fined.ipa",
@@ -20,6 +81,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 16,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/skywatch-spotify-9.1.88-watchfix.ipa",
                      "kind": "ipa",
                      "name": "skywatch-spotify-9.1.88-watchfix.ipa",
@@ -30,6 +92,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 5,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/com.eevee.spotify_7.0.0_iphoneos-arm64.1.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.1.deb",
@@ -42,7 +105,7 @@
                "author": "codeboy2012",
                "name": "PwEevee v2.1.0-pre",
                "notes": "# PwEevee v2.1.0-pre\r\n### EeveeSpotify 7.0.0 Integration — Experimental Pre-release\r\n\r\n**Release channel:** Pre-release  \r\n**Project:** PwEevee  \r\n**Version:** v2.1.0-pre  \r\n**Integrated tweak:** EeveeSpotify 7.0.0  \r\n**Base Spotify version:** 9.1.88  \r\n**Build identifier:** `com.skywatch.spotify`  \r\n**Status:** Testing and compatibility verification pending\r\n\r\n---\r\n\r\n## Overview\r\n\r\nPwEevee v2.1.0-pre is an experimental release focused on integrating EeveeSpotify 7.0.0 into a customized Spotify iOS build, with additional work aimed at improving Apple Watch compatibility.\r\n\r\nThis release uses Spotify 9.1.88 as its base and includes the EeveeSpotify 7.0.0 tweak package. It introduces a custom bundle identifier to accommodate the signing limitations encountered during development.\r\n\r\nThis build is being published as a pre-release to support testing, identify compatibility issues, and gather useful feedback before a verified release is made available.\r\n\r\n**Important:** Successful installation, launch behavior, playback, EeveeSpotify functionality, free-account compatibility, and Apple Watch integration have not yet been fully verified. Do not assume these features are working until testing has been completed.\r\n\r\n## What's Included\r\n\r\n- Spotify 9.1.88 base IPA\r\n- EeveeSpotify 7.0.0 integration\r\n- Custom bundle identifier: `com.skywatch.spotify`\r\n- Experimental Apple Watch compatibility work\r\n- Updated build intended for further installation and compatibility testing\r\n\r\nThe final feature set and compatibility will be documented as testing progresses.\r\n\r\n---\r\n\r\n## ⚠️ Important Notice — Apple App ID Registration Limit\r\n\r\nDuring development, the available App ID registrations on the signing account were exhausted.\r\n\r\nThe developer's reported account limit and usage are:\r\n\r\n- **Reported App ID limit:** 10\r\n- **Previously used registrations:** 3\r\n- **Initially available registrations:** 7\r\n- **Current status:** Available registrations exhausted during development\r\n\r\nThe previously used registrations were associated with SideStore, Spotify, and LiveContainer.\r\n\r\nBecause Apple signing could not register the original Spotify bundle identifier, `com.spotify.client`, this build uses the alternative identifier:\r\n\r\n`com.skywatch.spotify`\r\n\r\n### What This Means\r\n\r\nChanging the bundle identifier can affect how iOS treats the app and how it interacts with other components.\r\n\r\n- The modified app may install separately from the official Spotify app rather than replace it.\r\n- Existing Spotify app data, settings, and Keychain items may not carry over.\r\n- Features that depend on Spotify's original bundle identifier may behave differently.\r\n- Apple Watch integration may require additional configuration and compatibility testing.\r\n- Installation and launch behavior remain unverified.\r\n\r\nThe custom bundle identifier is a development workaround for the current signing limitation. It does not guarantee compatibility or successful operation.\r\n\r\n---\r\n\r\n## Build Information\r\n\r\n| Component | Version / Details |\r\n|---|---|\r\n| PwEevee | v2.1.0-pre |\r\n| EeveeSpotify | v7.0.0 |\r\n| Base Spotify | v9.1.88 |\r\n| Bundle identifier | `com.skywatch.spotify` |\r\n| Release type | Experimental pre-release |\r\n\r\n---\r\n\r\n## Downloadable Assets\r\n\r\n### 1. Original Spotify IPA\r\n\r\n**Filename:** `com.spotify.client_9.1.88_und3fined.ipa`  \r\n**Size:** 149.01 MB\r\n\r\nThe original decrypted Spotify 9.1.88 IPA used as the base for this build. This asset is provided as the unmodified base according to the development notes.\r\n\r\n### 2. EeveeSpotify Tweak Package\r\n\r\n**Filename:** `com.eevee.spotify_7.0.0_iphoneos-arm64.deb`  \r\n**Size:** 2.42 MB\r\n\r\nThe EeveeSpotify 7.0.0 package used for the integration.\r\n\r\n### 3. PwEevee / SkyWatch Build\r\n\r\n**Filename:** `skywatch-spotify-9.1.88-watchfix.ipa`  \r\n**Size:** 149.02 MB\r\n\r\nThe resulting custom IPA, built from the Spotify 9.1.88 base with EeveeSpotify 7.0.0.\r\n\r\nThe `watchfix` filename reflects the intended Apple Watch compatibility work. It should not be interpreted as confirmation that Apple Watch functionality has been successfully verified.\r\n\r\n---\r\n\r\n## Testing Status\r\n\r\nAll testing items below remain pending verification.\r\n\r\n- [ ] IPA installation\r\n- [ ] Successful app launch\r\n- [ ] Playback functionality\r\n- [ ] EeveeSpotify settings and features\r\n- [ ] Apple Watch compatibility\r\n- [ ] Stability and crash testing\r\n- [ ] Compatibility with the custom bundle identifier\r\n\r\nNo feature should be considered verified until the corresponding test has been completed.\r\n\r\n---\r\n\r\n## Planned Verification\r\n\r\nThe next phase will focus on structured testing using Apple's development tools.\r\n\r\nPlanned testing includes:\r\n\r\n- **Xcode iOS Simulator:** Initial compatibility investigation using an iPhone 18 Pro simulator configuration, where supported.\r\n- **Apple Watch testing:** Investigation using an Apple Watch SE (3rd generation), 44 mm, with a compatible watchOS environment.\r\n- **Installation and launch:** Confirming whether the build installs, opens, and remains stable.\r\n- **Playback:** Checking basic playback and player behavior.\r\n- **EeveeSpotify integration:** Testing settings and available customization features.\r\n- **Free-account behavior:** Determining which features function with a free Spotify account.\r\n- **Apple Watch integration:** Checking pairing, playback controls, and communication between the iPhone and Watch.\r\n\r\nSimulator testing may not reproduce all behavior of a physical device. Features involving signing, provisioning, audio playback, Spotify services, or real Apple Watch connectivity may require additional testing on supported hardware.\r\n\r\nA verified release will be published when sufficient testing has been completed and the results support the compatibility claims made in its release notes.\r\n\r\n---\r\n\r\n## Compatibility\r\n\r\nCompatibility may vary depending on:\r\n\r\n- iOS version\r\n- Spotify base version\r\n- Device and operating system configuration\r\n- Signing and provisioning method\r\n- Bundle identifier and entitlements\r\n- Installed tweaks or other modifications\r\n- Apple Watch and watchOS configuration\r\n\r\nAt this stage, compatibility with specific devices and software versions should be considered unconfirmed.\r\n\r\n---\r\n\r\n## Reporting Issues\r\n\r\nBug reports are welcome and can help identify issues before the verified release.\r\n\r\nWhen submitting an issue, please include:\r\n\r\n1. Device model\r\n2. iOS version\r\n3. Spotify base version\r\n4. PwEevee release version\r\n5. Signing or sideloading method\r\n6. Whether the app installs and launches\r\n7. Steps to reproduce the issue\r\n8. Relevant crash logs, diagnostic output, or screenshots\r\n\r\nPlease avoid including personal information, account credentials, signing certificates, or provisioning profile secrets in public reports.\r\n\r\n---\r\n\r\n## Roadmap\r\n\r\nPlanned development priorities include:\r\n\r\n- Completing initial installation and launch testing\r\n- Investigating playback and feature compatibility\r\n- Evaluating free-account behavior\r\n- Testing Apple Watch compatibility\r\n- Addressing reproducible bugs\r\n- Improving compatibility documentation\r\n- Publishing a verified release when testing is sufficient\r\n- Continuing development and adding further improvements in future versions\r\n\r\nAdditional updates and builds may follow as development and testing progress.\r\n\r\n---\r\n\r\n## Disclaimer\r\n\r\nPwEevee is an unofficial community project and is not affiliated with, endorsed by, or supported by Spotify or Apple.\r\n\r\nThis is an experimental pre-release provided for testing and development purposes. Compatibility and functionality are not guaranteed.\r\n\r\nUse only software and accounts you are authorized to use, and review the relevant project licenses and service terms before distributing or installing modified builds.\r\n\r\n**Current recommendation:** Treat v2.1.0-pre as an unverified testing build. A verified release will be announced separately after the planned testing has been completed.",
-               "prerelease": false,
+               "prerelease": true,
                "published_at": "2026-10-10T20:11:58Z",
                "published_epoch": 1791663118,
                "published_label": "10 October 2026",
@@ -56,6 +119,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 114,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.78_No_Watch.ipa",
@@ -66,6 +130,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 121,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
                      "kind": "ipa",
                      "name": "EeveeSpotifyv7.0.0.ipa",
@@ -76,6 +141,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 125,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
                      "kind": "ipa",
                      "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
@@ -102,6 +168,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 52,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/PwEevee.v1.0.2.ipa",
                      "kind": "ipa",
                      "name": "PwEevee.v1.0.2.ipa",
@@ -112,6 +179,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 15,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/Spotpw.v0.23.0.PRE.ipa",
                      "kind": "ipa",
                      "name": "Spotpw.v0.23.0.PRE.ipa",
@@ -122,6 +190,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 7,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.8_iphoneos-arm64.1.deb",
@@ -132,6 +201,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 5,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/com.spotipw_0.23.0-beta_iphoneos-arm.deb",
                      "kind": "deb",
                      "name": "com.spotipw_0.23.0-beta_iphoneos-arm.deb",
@@ -158,6 +228,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 30,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/PwEeveeBeta2.ipa",
                      "kind": "ipa",
                      "name": "PwEeveeBeta2.ipa",
@@ -168,6 +239,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 6,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/com.eevee.spotify_6.6.8.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.8.deb",
@@ -178,6 +250,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 2,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/com.spotipw_0.22.0.deb",
                      "kind": "deb",
                      "name": "com.spotipw_0.22.0.deb",
@@ -204,6 +277,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 69,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/PwEvevee.ipa",
                      "kind": "ipa",
                      "name": "PwEvevee.ipa",
@@ -214,6 +288,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 0,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/com.spotipw_0.22.0.deb",
                      "kind": "deb",
                      "name": "com.spotipw_0.22.0.deb",
@@ -224,6 +299,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 4,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/EeveeSpotify-6.6.8.deb",
                      "kind": "deb",
                      "name": "EeveeSpotify-6.6.8.deb",
@@ -250,6 +326,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 13,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/com.spotipw_0.22.0-fixed-bundle-id.ipa",
                      "kind": "ipa",
                      "name": "com.spotipw_0.22.0-fixed-bundle-id.ipa",
@@ -260,6 +337,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 8,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/Spotify-Decrypted.ipa",
                      "kind": "ipa",
                      "name": "Spotify-Decrypted.ipa",
@@ -270,6 +348,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 3,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/com.spotipw_0.22.0_iphoneos-arm.deb",
                      "kind": "deb",
                      "name": "com.spotipw_0.22.0_iphoneos-arm.deb",
@@ -296,6 +375,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 13,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/com.spotipw_0.21.1.ipa",
                      "kind": "ipa",
                      "name": "com.spotipw_0.21.1.ipa",
@@ -306,6 +386,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
+                     "download_count": 3,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/Spotify-Decrypted.ipa",
                      "kind": "ipa",
                      "name": "Spotify-Decrypted.ipa",
@@ -316,6 +397,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 1,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/spoti.pw-v0.21.1.deb",
                      "kind": "deb",
                      "name": "spoti.pw-v0.21.1.deb",
@@ -344,6 +426,7 @@
             "assets": [
                {
                   "content_type": "application/x-itunes-ipa",
+                  "download_count": 114,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
                   "kind": "ipa",
                   "name": "com.spotify.client_9.1.78_No_Watch.ipa",
@@ -354,6 +437,7 @@
                },
                {
                   "content_type": "application/x-itunes-ipa",
+                  "download_count": 121,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
                   "kind": "ipa",
                   "name": "EeveeSpotifyv7.0.0.ipa",
@@ -364,6 +448,7 @@
                },
                {
                   "content_type": "application/x-itunes-ipa",
+                  "download_count": 125,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
                   "kind": "ipa",
                   "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
@@ -394,6 +479,7 @@
       },
       {
          "available": true,
+         "error": "GitHub returned 404 — the repository does not exist or is not public.",
          "history": [
             {
                "asset_count": 2,
@@ -722,7 +808,8 @@
          "repo": "skopevoj/spoti.pw",
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
-         "stale": false
+         "stale": true,
+         "stale_since": "2026-10-25T20:40:01Z"
       },
       {
          "available": true,
@@ -732,6 +819,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 5827,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -742,6 +830,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 1269,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
@@ -752,6 +841,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 2391,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -778,6 +868,7 @@
                "assets": [
                   {
                      "content_type": "application/vnd.debian.binary-package",
+                     "download_count": 8087,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.8/com.eevee.spotify_6.6.8_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.8_iphoneos-arm64.deb",
@@ -788,6 +879,7 @@
                   },
                   {
                      "content_type": "application/vnd.debian.binary-package",
+                     "download_count": 2716,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.8/com.eevee.spotify_6.6.8_iphoneos-arm64e-roothide.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.8_iphoneos-arm64e-roothide.deb",
@@ -798,6 +890,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 3750,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.8/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -824,6 +917,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 4240,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.7/com.eevee.spotify_6.6.7_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.7_iphoneos-arm64.deb",
@@ -834,6 +928,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 2306,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.7/com.eevee.spotify_6.6.7_iphoneos-arm64e-roothide.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.7_iphoneos-arm64e-roothide.deb",
@@ -844,6 +939,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 1526,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.7/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -870,6 +966,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 6045,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.6/com.eevee.spotify_6.6.6_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.6_iphoneos-arm64.deb",
@@ -880,6 +977,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 2387,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.6/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -906,6 +1004,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 2729,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.5/com.eevee.spotify_6.6.5_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.5_iphoneos-arm64.deb",
@@ -916,6 +1015,7 @@
                   },
                   {
                      "content_type": "application/zip",
+                     "download_count": 1359,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.5/EeveeSpotify_6.6.5_TrollFools.zip",
                      "kind": "archive",
                      "name": "EeveeSpotify_6.6.5_TrollFools.zip",
@@ -926,6 +1026,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 1240,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.5/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -952,6 +1053,7 @@
                "assets": [
                   {
                      "content_type": "application/vnd.debian.binary-package",
+                     "download_count": 1294,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.4/com.eevee.spotify_6.6.4_iphoneos-arm_arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.4_iphoneos-arm_arm64.deb",
@@ -962,6 +1064,7 @@
                   },
                   {
                      "content_type": "application/zip",
+                     "download_count": 310,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.4/Orion.zip",
                      "kind": "archive",
                      "name": "Orion.zip",
@@ -972,6 +1075,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
+                     "download_count": 467,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.4/EeveeSpotify.dylib",
                      "kind": "other",
                      "name": "EeveeSpotify.dylib",
@@ -982,6 +1086,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 409,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.4/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -1008,6 +1113,7 @@
                "assets": [
                   {
                      "content_type": "application/x-debian-package",
+                     "download_count": 791,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.3.1/com.eevee.spotify_6.6.3.1_arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.3.1_arm64.deb",
@@ -1018,6 +1124,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 779,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.3.1/text.txt",
                      "kind": "other",
                      "name": "text.txt",
@@ -1044,6 +1151,7 @@
                "assets": [
                   {
                      "content_type": "application/x-debian-package",
+                     "download_count": 844,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.3/com.eevee.spotify_6.6.3_arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_6.6.3_arm64.deb",
@@ -1054,6 +1162,7 @@
                   },
                   {
                      "content_type": "text/plain",
+                     "download_count": 1496,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.3/Download_Links.txt",
                      "kind": "other",
                      "name": "Download_Links.txt",
@@ -1082,6 +1191,7 @@
             "assets": [
                {
                   "content_type": "application/octet-stream",
+                  "download_count": 5827,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -1092,6 +1202,7 @@
                },
                {
                   "content_type": "application/octet-stream",
+                  "download_count": 1269,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
@@ -1102,6 +1213,7 @@
                },
                {
                   "content_type": "text/plain",
+                  "download_count": 2391,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                   "kind": "other",
                   "name": "txt.txt",

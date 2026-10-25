@@ -90,7 +90,7 @@
       {{theme_control}}
       <a class="nav__icon" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener"
          aria-label="PwEevee on GitHub">{{github_icon}}</a>
-      <a class="btn btn--primary btn--sm nav__cta" href="/downloads">Download</a>
+      <a class="btn btn--primary btn--sm nav__cta" href="/install" aria-label="Download PwEevee and install it with AltStore or SideStore">Install</a>
       <button class="nav__toggle" type="button" data-nav-toggle
               aria-expanded="false" aria-controls="nav-drawer" aria-label="Open menu">
         <span class="nav__burger" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -102,6 +102,8 @@
       <a class="nav__link" href="/projects"{{cur:projects}}>Projects</a>
       <a class="nav__link" href="/releases"{{cur:releases}}>Releases</a>
       <a class="nav__link" href="/downloads"{{cur:downloads}}>Downloads</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link" href="/install"{{cur:install}}>Install guide</a>
       <span class="nav__drawer-sep" aria-hidden="true"></span>
       <a class="nav__link" href="/credits"{{cur:credits}}>Credits</a>
       <a class="nav__link" href="/development"{{cur:development}}>Development</a>
@@ -116,7 +118,7 @@
       <a class="nav__link icon-link" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">
         {{github_icon}}<span>GitHub repository</span>
       </a>
-      <a class="btn btn--primary" href="/downloads">Download</a>
+      <a class="btn btn--primary" href="/install">Install</a>
     </div>
   </nav>
 </header>
@@ -157,6 +159,7 @@
         <h3>Releases</h3>
         <ul>
           <li><a href="/downloads">Downloads</a></li>
+          <li><a href="/install">Install guide — AltStore &amp; SideStore</a></li>
           <li><a href="/releases">Release history</a></li>
           <li><a href="https://github.com/codeboy2012/spoti.pw-builds/releases" rel="noopener">GitHub releases</a></li>
         </ul>

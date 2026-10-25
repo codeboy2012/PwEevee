@@ -1136,6 +1136,61 @@ p { max-width: 74ch; }
    min-content width of the facts strip on a narrow screen */
 .hero__stat dd { font-size: 0.95rem; font-weight: 500; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
 
+/* ---- the live repository statistics band ([component:project-stats]) ---- */
+
+/* A second, tighter facts strip: the numbers GitHub publishes about the
+   repository itself, refreshed hourly by a scheduled job that writes a shared
+   snapshot. The page loads that snapshot already rendered — the browser never
+   calls GitHub, so nothing reflows while loading and the band needs no
+   skeleton state. font-variant-numeric keeps the digit widths fixed so the
+   paint is identical when the same band is re-rendered with new counts. */
+.stats-band {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0;
+  margin-top: var(--s-6);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+}
+.stats-band__item {
+  padding: var(--s-4) var(--s-5);
+  border-right: 1px solid var(--rule);
+  display: grid;
+  gap: 0.25em;
+  align-content: start;
+}
+.stats-band__item:last-child { border-right: 0; }
+.stats-band__item dt {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.stats-band__num {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* a missing or degraded dataset renders as one explanatory full-width cell,
+   never a row of fabricated zeroes */
+.stats-band__missing {
+  padding: var(--s-4) var(--s-5);
+  color: var(--ink-2);
+}
+.stats-band__fresh {
+  margin: var(--s-3) 0 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
 /* ---- the app icon, presented as an app icon ---------------------------- */
 
 .showcase {
@@ -1806,6 +1861,11 @@ a.feature:hover .small { color: var(--ink); }
   .hero__stats { grid-template-columns: 1fr; }
   .hero__stat { border-right: 0; border-bottom: 1px solid var(--rule); }
   .hero__stat:last-child { border-bottom: 0; }
+
+  /* the live-stats band follows the same rule: a list, not squeezed columns */
+  .stats-band { grid-template-columns: 1fr; }
+  .stats-band__item { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .stats-band__item:last-child { border-bottom: 0; }
 }
 
 /* The navigation collapses before the content does, and on its own breakpoint.

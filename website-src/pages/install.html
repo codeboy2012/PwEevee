@@ -1,0 +1,221 @@
+<!--PwEevee
+route: /install
+nav: install
+title: Install — PwEevee
+og_title: Install PwEevee on iPhone (AltStore Classic, SideStore and friends)
+description: How to download the newest PwEevee IPA from GitHub, verify its SHA-256, sign it with your own certificate and install it with AltStore Classic, SideStore, Feather or Sideloadly. Includes the SideloadLabs AltSource link for EeveeSpotify IPA variants.
+-->
+
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Install guide</p>
+      <h1>Download, verify, sign, install.</h1>
+      <p class="lead">
+        PwEevee ships as an <strong>unsigned IPA</strong> published through its own GitHub release.
+        The three steps below — download the release, verify its SHA-256, sign it with your own
+        certificate — are the same for every signing tool, because the file is the same file.
+        Nothing is claimed as installed-and-tested unless it was tested; compatibility notes on
+        this page are labelled by where they came from.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Step 1 &middot; Download</p>
+      <h2>Get the release file from GitHub.</h2>
+      <p class="lead">
+        The current release, its file size and its checksum are read straight from the GitHub
+        release the file is published in. If the release data cannot be read right now, the
+        download and the checksum are hidden rather than guessed.
+      </p>
+    </div>
+    <div class="reveal">[[component:hero-download]]</div>
+    <p class="note mt-6">
+      Release history and previous builds: the <a href="/releases">release history page</a> and the
+      upstream <a href="https://github.com/codeboy2012/spoti.pw-builds/releases" rel="noopener">GitHub
+      releases list</a>. The notes on the release panel above are the release&rsquo;s own.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Step 2 &middot; Verify</p>
+      <h2>Check the SHA-256 before you sign.</h2>
+      <p class="lead">
+        The site shows the checksum that GitHub publishes with the release asset (full value on the
+        panel above, first 16 characters on asset lists). Compute the file&rsquo;s checksum locally
+        and compare — if they differ, you do not have the release file.
+      </p>
+    </div>
+    <div class="split">
+      <div class="panel pad">
+        <h3>How to compute it</h3>
+        <ul class="checklist mt-4">
+          <li><strong>macOS / Linux</strong> — <span class="mono break">shasum -a 256 FILE.ipa</span></li>
+          <li><strong>Windows (PowerShell)</strong> — <span class="mono break">Get-FileHash -Algorithm SHA256 FILE.ipa</span></li>
+          <li><strong>Windows (cmd)</strong> — <span class="mono break">certutil -hashfile FILE.ipa SHA256</span></li>
+        </ul>
+        <p class="small dim mt-4 mb-0">
+          Compare against the value shown on this page or on the GitHub release itself. Both are
+          read from the same release data; nothing here invents a checksum.
+        </p>
+      </div>
+      <div class="panel pad">
+        <h3>Why it matters</h3>
+        <p>
+          It confirms the file you downloaded is the file the release published — a real
+          integrity check, not proof the build is safe to run against Apple&rsquo;s policies. You
+          are still side-loading Spotify software that the App Store does not distribute; treat
+          any third-party IPA with the usual caution and use your own signing identity.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Step 3 &middot; Sign &amp; install</p>
+      <h2>Sign with your own certificate.</h2>
+      <p class="lead">
+        Pick one tool and follow its docs for signing an existing IPA. These tools are
+        third-party applications with their own requirements (accounts, certificates, refresh
+        scheduling); their installation steps live in their documentation, and PwEevee does not
+        mirror or certify any of them.
+      </p>
+    </div>
+    <div class="grid grid--3">
+      <div class="panel pad">
+        <h3>AltStore Classic</h3>
+        <p>
+          Uses your Apple ID&rsquo;s free-provisioning certificate. Installs from a computer running
+          the <a href="https://altstore.io/" rel="noopener">AltServer</a> companion; on a free
+          Apple account apps are limited to three and must be refreshed inside 7 days.
+        </p>
+        <p class="small dim mt-4">
+          Source: <a class="mono break" href="https://altstore.io/" rel="noopener">altstore.io</a>
+        </p>
+      </div>
+      <div class="panel pad">
+        <h3>SideStore</h3>
+        <p>
+          AltStore-style sideloading that can refresh on-device. Import the signed IPA into the
+          SideStore app to install it, or install over the network from the paired computer by
+          opting in.
+        </p>
+        <p class="small dim mt-4">
+          Source: <a class="mono break" href="https://sidestore.io/" rel="noopener">sidestore.io</a>
+        </p>
+      </div>
+      <div class="panel pad">
+        <h3>Other known-good signers</h3>
+        <ul class="checklist mt-4">
+          <li><strong>Feather</strong> — on-device signing and install</li>
+          <li><strong>Sideloadly</strong> — computer-based signing with a free or paid certificate</li>
+          <li><strong>AltStore on-device</strong> — same app, installed copy of AltServer, no Mac required</li>
+        </ul>
+        <p class="small dim mt-4 mb-0">
+          Any signer that accepts a plain IPA works; what changes between tools is how the
+          certificate is obtained and kept alive.
+        </p>
+      </div>
+    </div>
+    <p class="note mt-6">
+      The app inside a PwEevee IPA is Spotify; the <strong>spoti.pw</strong> and
+      <strong>EeveeSpotify</strong> tweaks are already inside the build — there is nothing else to
+      install afterwards. Logo and Apple-ID DataStream setup belong in the signing tool you choose.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">EeveeSpotify &middot; standalone IPA variants</p>
+      <h2>Installing from the SideloadLabs AltSource</h2>
+      <p class="lead">
+        AltStore and SideStore can also talk to an installed AltStore-format <em>source</em>: a
+        JSON manifest that lists ready-made IPA variants so the app can fetch them in-app. These
+        independent builds are published by <strong>SideloadLabs</strong>, not by PwEevee; PwEevee
+        reads that manifest and links it, and does not mirror it.
+      </p>
+    </div>
+    <div class="split">
+      [[component:altsource-source eeveespotify]]
+      <div class="panel pad">
+        <h3>Add the source in your installer</h3>
+        <p class="measure">
+          In AltStore or SideStore open <strong>Sources → +</strong> and paste the manifest URL
+          shown on this panel. Each listed variant names its upstream Spotify version, its
+          Eevee version and which certificate the build suits.
+        </p>
+        <ul class="checklist mt-4">
+          <li><strong>Unpatched</strong> — for use with a free certificate in AltStore or SideStore</li>
+          <li><strong>Patched</strong> — for a paid certificate, a jailbreak, or TrollStore</li>
+          <li><strong>ESR Liquid Glass</strong> — the same tweak with the Liquid Glass interface</li>
+        </ul>
+        <p class="small dim mt-4 mb-0">
+          The current URL is read live from the manifest, so what you see here is the URL you
+          should paste. If the panel above says the source is unavailable, install with a manual
+          IPA from the <a href="/downloads">downloads page</a> instead.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">What to try, in order</p>
+      <h2>Troubleshooting.</h2>
+    </div>
+    <div class="grid grid--2">
+      <div class="panel pad">
+        <h3>The installer refuses the IPA</h3>
+        <ul class="checklist mt-4">
+          <li>verify the SHA-256 first — a truncated download is the most common cause</li>
+          <li>your free Apple account already signs three apps (free-provisioning limit)</li>
+          <li>the IPA targets a newer Spotify than your certificate or the signer allows</li>
+        </ul>
+      </div>
+      <div class="panel pad">
+        <h3>Install works, app then crashes or the tweak is missing</h3>
+        <ul class="checklist mt-4">
+          <li>check whether the signer ships its injection mechanism needed by the tweaked build</li>
+          <li>re-sign freshly: reusing a stale provisioning profile is a known source of launch crashes</li>
+          <li>report it on <a href="https://github.com/codeboy2012/spoti.pw-builds/issues" rel="noopener">GitHub issues</a> with your exact iOS version, signing tool and PwEevee version</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note mt-6">
+      Known limits are stated, not papered over: PwEevee builds are <strong>unsigned</strong> and
+      <strong>no physical-device install is tested by this site&rsquo;s maintainer in every environment</strong>.
+      Where a compatibility claim has not been verified, this site says so on the
+      <a href="/projects/pweevee">project page</a> rather than claiming success.
+    </p>
+
+    <div class="callout mt-6">
+      <p class="mb-0">
+        <strong>Platform check.</strong> PwEevee is currently available for iOS only.
+        Android is not supported at this time: no Android build exists, no Android download is
+        offered anywhere on this site, and this notice would appear again anywhere the site
+        detects an Android device. You can follow the project on
+        <a href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">GitHub</a>
+        for future announcements.
+      </p>
+    </div>
+    <p class="small dim mt-5 mb-0">
+      Browsing from <strong>Windows, macOS, or Linux</strong>? Those are platforms this
+      <em>website</em> supports, not platforms PwEevee runs on — there is no desktop build, only
+      the browser pages you are reading now.
+    </p>
+  </div>
+</section>
