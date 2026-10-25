@@ -272,10 +272,11 @@ sub read_bplist {
       return mkarray(@v);
     }
     if ($t == 0xD) {
-      my $cnt = $count->($o, $n);
-      die "dict with odd entry count$label\n" if $cnt % 2;
-      die "truncated dict refs at $o$label\n" if $o + $hdr + $cnt * $rsize > length($d);
-      my $npairs = $cnt / 2;
+      my $npairs = $count->($o, $n);
+      # Apple wbplist: the marker count is the NUMBER OF ENTRIES (keys),
+      # not keys+values; the ref table is entries key refs then the same
+      # number of value refs (2*entries refs total).
+      die "truncated dict refs at $o$label\n" if $o + $hdr + 2 * $npairs * $rsize > length($d);
       my @pairs;
       for my $i (0 .. $npairs - 1) {
         my $k = $read->(_ube($d, $o + $hdr + $i * $rsize, $rsize));
@@ -307,7 +308,11 @@ sub _be {                                          # big-endian, n bytes
 
 sub _hdr {
   my ($tag, $len) = @_;
-  return pack('C', ($tag << 4) | $len) if $len <= 0x0F;
+  # Nibble 0x0F is the extended-length ESCAPE (reader + Apple agree): inline
+  # counts are 0x00..0x0E only. A 15-element/15-char object must use the
+  # extended form (found via the staged-app patcher round-trip on
+  # 'CFBundleVersion', exactly 15 chars).
+  return pack('C', ($tag << 4) | $len) if $len <= 0x0E;
   my $power = 16; my $enc = 0;
   while ($len > $power) { $power *= 256; $enc++; die "extended length too large\n" if $enc > 3 }
   return pack('C', ($tag << 4) | 0x0F) . pack('C', 0x10 | $enc) . _be($len, 1 << $enc);
@@ -412,7 +417,7 @@ sub write_bplist {
       }
       # the dict marker counts OBJECT REFERENCES, i.e. two per pair
       # (all key refs followed by all value refs) — one table.
-      $payload = _hdr(0xD, 2 * $npairs)
+      $payload = _hdr(0xD, $npairs)
                . join('', map { _be($_, $rsize) } @krefs)
                . join('', map { _be($_, $rsize) } @vrefs);
     }
@@ -495,7 +500,12 @@ sub _xml_node {
     $pos += length($&);
     return (mkbool($tag eq 'true' ? 1 : 0), $pos);
   }
-  die "malformed plist XML$label: <$tag> must not be self-closing\n" if $selfclose;
+  # Apple plutil emits self-closing <dict/> and <array/> for EMPTY collections
+  # (verified from plutil -convert xml1 of our own empty fixtures).
+  return (mkdict(),  $pos) if $selfclose && $tag eq 'dict';
+  return (mkarray(), $pos) if $selfclose && $tag eq 'array';
+  die "malformed plist XML$label: <$tag> must not be self-closing\n"
+    if $selfclose;
 
   if ($tag eq 'dict') {
     my @pairs;
