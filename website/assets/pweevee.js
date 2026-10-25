@@ -224,6 +224,182 @@
     });
   }());
 
+  /* ------------------------------------------------ 3b. statistics count-up */
+
+  /* The stats band is server-rendered with final values, so this is decoration on
+     top of real data, never a source of it:
+
+       - only non-negative integers the renderer already displays animate; the
+         unavailable state (.stats-band__missing) renders no numbers at all, so
+         nothing is ever invented here;
+       - roughly 700 ms, ease-out cubic, no bounce; intermediates are clamped at
+         zero so a downward correction can never display a negative;
+       - unchanged values never re-animate (a per-element "settled value" guards
+         replays), and each page load is a deliberate first appearance, not a
+         session-persisted state — the band animates when it scrolls into view,
+         then keeps still;
+       - prefers-reduced-motion, a hidden tab, missing IntersectionObserver or
+         missing requestAnimationFrame all fall through to the final value
+         immediately, which was the server-rendered state anyway;
+       - the final string is written last and written once, so screen-reader
+         output sees only meaningful amounts: the announcing paragraph below is
+         created lazily and only after a value GENUINELY CHANGES, never on first
+         paint, and it exists outside the <dl> because a <dl> only holds dt/dd
+         groups.
+
+     The tiny window.PwEeveeStats surface is deliberate: the site is static, so
+     "data arrives mid-session" only happens if a later update path (like the
+     hydration fallback) asks for it — update(el, to) animates from the value
+     currently displayed to the new one, marks a genuine change, and does the
+     one-time announcement. IT performs no fetching of its own. */
+  (function statCount() {
+    var STATS = all('.stats-band .stats-band__num');
+    if (!STATS.length) return;
+
+    var announcer = null;   // created lazily, on the first genuine change only
+    var DURATION = 700;     // brief on purpose
+    var flights = [];       // one entry per in-flight number; the shared driver below
+                            // steps them all, exactly like the star field pattern: ONE
+                            // animation loop per concern, not one per element.
+    var rafId = 0;
+
+    // Same formatting fmt_count() renders server-side: thousands separators,
+    // no decimal point, no compact notation — so the mid-animation value and
+    // the settled value are the same shape.
+    function group(n) {
+      var s = String(Math.round(n));
+      return s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function parseStat(el) {
+      var raw = (el.textContent || '').replace(/,/g, '').trim();
+      return /^\d+$/.test(raw) ? parseInt(raw, 10) : null;
+    }
+
+    function setFinal(flight) {
+      var el = flight.el;
+      el.textContent = group(flight.to);
+      el.setAttribute('data-stat-value', String(flight.to));
+      el.__statSettled = flight.to;
+      el.classList.remove('stats-band__num--changed');
+      if (flight.changed) {
+        announceOne(flight.label, group(flight.to));
+        // Add the highlight on the next frame so re-adding it after a previous
+        // change genuinely restarts the CSS animation instead of no-opping.
+        // The rAF guard matters: a fallback caller may have arrived here because
+        // requestAnimationFrame does not exist at all.
+        if (window.requestAnimationFrame) {
+          requestAnimationFrame(function () {
+            el.classList.add('stats-band__num--changed');
+            el.addEventListener('animationend', function () {
+              el.classList.remove('stats-band__num--changed');
+            }, { once: true });
+          });
+        } else {
+          el.classList.add('stats-band__num--changed');
+        }
+      }
+    }
+
+    /* One driver for every number on the band. Timestamp-based, so a hidden tab
+       pauses rAF and a returning tab simply finds the flight done — no timer, no
+       per-element callback. */
+    function driver(t) {
+      rafId = 0;
+      var keep = [];
+      for (var i = 0; i < flights.length; i++) {
+        var f = flights[i];
+        if (f.start === null) {
+          if (t < f.notBefore) { keep.push(f); continue; }  // stagger window not open yet
+          f.start = t;
+        }
+        var p = Math.min(Math.max((t - f.start) / DURATION, 0), 1);
+        var v = f.from + (f.to - f.from) * (1 - Math.pow(1 - p, 3));  // ease-out cubic
+        if (v < 0) v = 0;   // never below zero mid-flight
+        f.el.textContent = group(v);
+        if (p < 1) keep.push(f);
+        else setFinal(f);
+      }
+      flights = keep;
+      if (flights.length && window.requestAnimationFrame) rafId = requestAnimationFrame(driver);
+    }
+
+    function ensureDriver() {
+      if (!rafId && flights.length && window.requestAnimationFrame) {
+        rafId = requestAnimationFrame(driver);
+      }
+    }
+
+    function animate(el, from, to, changed, staggerMs) {
+      if (el.__statSettled === to) return;   // identical target: no replay, nothing to update
+
+      // rapid updates: drop any in-flight entry for the same element first, so the
+      // newest target always wins and there is never a doubled number
+      flights = flights.filter(function (f) { return f.el !== el; });
+
+      var issuer = el.closest ? el.closest('.stats-band__item') : null;
+      var dt = issuer && issuer.querySelector ? issuer.querySelector('dt') : null;
+      var label = dt && dt.textContent ? dt.textContent.replace(/\s+/g, ' ').trim() : '';
+
+      if (reduceMotion.matches || !window.requestAnimationFrame || doc.hidden || from === to) {
+        setFinal({ el: el, to: to, changed: changed, label: label });
+        return;
+      }
+
+      flights.push({
+        el: el, from: from, to: to, changed: changed, label: label,
+        start: null,
+        notBefore: staggerMs ? (window.performance && performance.now ? performance.now() + staggerMs : 0) : 0
+      });
+      ensureDriver();
+    }
+
+    function announceOne(label, value) {
+      if (!announcer) {
+        announcer = doc.createElement('p');
+        announcer.className = 'visually-hidden';
+        announcer.setAttribute('aria-live', 'polite');
+        var band = one('.stats-band');
+        if (band && band.insertAdjacentElement) band.insertAdjacentElement('afterend', announcer);
+        else return;
+      }
+      announcer.textContent = label ? label + ': ' + value : value;
+    }
+
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+      // final value was already in the markup; nothing to start, nothing to store
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        io.unobserve(el);
+        var to = parseStat(el);
+        if (to === null || el.__statSettled === to) return; // unreadable or already settled — never invent
+        animate(el, 0, to, false, (STATS.indexOf ? STATS.indexOf(el) : 0) * 60);
+      });
+    }, { rootMargin: '0px 0px -4% 0px', threshold: 0.35 });
+
+    STATS.forEach(function (el, i) {
+      // a hair of stagger so the band counts as one motion, not five
+      el.style.transitionDelay = Math.min(i, 5) * 60 + 'ms';
+      io.observe(el);
+    });
+
+    // The one hook a future data-refresh path uses. Guards are identical —
+    // updates are only ever driven by values from the generated snapshot.
+    window.PwEeveeStats = {
+      update: function (el, to) {
+        if (!el || typeof to !== 'number' || to < 0 || !isFinite(to)) return;
+        var from = parseStat(el);
+        if (from === null) from = 0;
+        animate(el, from, Math.round(to), from !== Math.round(to), 0);
+      }
+    };
+  }());
+
   /* ------------------------------------------------- 4. falling-star field */
 
   /* Restraint is the whole point. Tiny specks, very low opacity, a slow

@@ -1268,6 +1268,19 @@ p { max-width: 74ch; }
 }
 /* a missing or degraded dataset renders as one explanatory full-width cell,
    never a row of fabricated zeroes */
+/* Fires ONLY when a displayed value genuinely changed to a different one
+   (window.PwEeveeStats.update with from ≠ to) — never on first paint, which is
+   the server-rendered settled state. A brief surface tint plus a small glow,
+   then it leaves no residue. */
+@keyframes stats-emphasize {
+  0%   { background-color: var(--accent-wash); box-shadow: 0 0 16px -6px var(--accent-wash); }
+  100% { background-color: transparent;         box-shadow: none; }
+}
+.stats-band__num--changed {
+  border-radius: var(--r-xs);
+  animation: stats-emphasize 1.15s ease-out 1;
+}
+
 .stats-band__missing {
   padding: var(--s-4) var(--s-5);
   color: var(--ink-2);
@@ -2034,6 +2047,10 @@ a.feature:hover .small { color: var(--ink); }
   .inverted > .starfield { display: none !important; }
   .js .reveal { opacity: 1; transform: none; }
   .skeleton { animation: none; opacity: 0.7; }
+  /* the changed-value highlight never animates under reduced motion — and the
+     JS module skips the whole animation anyway, so this is the belt to its
+     braces. */
+  .stats-band__num--changed { animation: none; }
 }
 
 /* Windows high-contrast: keep every boundary, drop every decoration. */

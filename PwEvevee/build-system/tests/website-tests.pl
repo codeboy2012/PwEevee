@@ -2407,6 +2407,41 @@ ok($home_page =~ m{href="/install"[^>]*>Install PwEevee</a>},
 my $inst_css = slurp("$OUT/assets/pweevee.css");
 ok(index($inst_css, '.inst-badge') >= 0 && index($inst_css, '.inst-stage') >= 0,
    'the installer workshop has its stylesheet section');
+# ---------------------------- 8b. statistics count-up (animated, restrained)
+
+section('8b. statistics count-up animation');
+
+{
+    my $c_start = index($js, '3b. statistics count-up');
+    my $c_end   = index($js, '4. falling-star field');
+    ok($c_start > 0 && $c_end > $c_start,
+       'the count-up module lives in its own section of pweevee.js');
+    if ($c_start > 0 && $c_end > $c_start) {
+        my $counter = substr($js, $c_start, $c_end - $c_start);
+        ok($counter =~ /window\.PwEeveeStats/,
+           'a stats-update hook exists for a future data-refresh path');
+        # the single-driver invariant, stated properly:
+        my $driver_calls = () = $counter =~ /requestAnimationFrame\(driver\)/g;
+        ok($driver_calls == 2, 'the count-up uses ONE shared driver loop, not one per number',
+           'driver call sites: ' . $driver_calls);
+        ok($counter =~ /reduceMotion\.matches/,
+           'the count-up checks prefers-reduced-motion before animating');
+        ok($counter =~ /doc\.hidden/, 'a hidden tab never starts or restarts a flight');
+        ok($counter =~ /IntersectionObserver/, 'the count-up waits for the band to scroll into view');
+        ok($counter =~ /__statSettled/, 'unchanged values never re-animate (settled-value guard)');
+        ok(index($counter, q{/^\d+$/}) >= 0,
+           'only non-negative integers from the snapshot animate; unavailable is not zero');
+        ok($counter =~ /aria-live/ && $counter =~ /afterend/,
+           'a genuine change announces once, politely, from outside the dt/dd list');
+        ok($counter !~ /fetch\(|XMLHttpRequest|setInterval|WebSocket/,
+           'the count-up fetches nothing and polls on no timer');
+    }
+    ok($inst_css =~ /\Q.stats-band__num--changed\E\s*\{/,
+       'the changed-value highlight has a stylesheet rule');
+    ok($inst_css =~ /\@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.stats-band__num--changed \{ animation: none;/,
+       'the reduced-motion block explicitly disarms the highlight');
+}
+
 # ---------------------------------------------------------------- summary
 
 printf "\n%s\n", '-' x 62;
