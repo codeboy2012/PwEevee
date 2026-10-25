@@ -199,11 +199,238 @@
   </div>
 </section>
 
+<!-- =====================================================================
+     The browser workshop. Everything here runs inside this tab — the validation
+     engine lives in /assets/installer.js, which contains no networking and no
+     storage APIs at all (asserted by the site's own test suite). File bytes are
+     read with File slices; nothing is uploaded, stored or decrypted here.
+     ===================================================================== -->
+<section class="section section--seam" id="workshop">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Step 2½ &middot; Local workshop</p>
+      <h2>Validate an IPA, a profile and a certificate — in your browser.</h2>
+      <p class="lead">
+        Pick up to three files below: the IPA you downloaded, your
+        <span class="mono">.mobileprovision</span> and (optionally) your <span class="mono">.p12</span>.
+        Everything is parsed <strong>inside this tab</strong> by code that belongs to this page —
+        the workshop performs no network requests of any kind, and the site's test suite proves it.
+      </p>
+    </div>
+
+    <div class="panel pad inst-privacy">
+      <h3>Where your files go: nowhere.</h3>
+      <ul class="checklist mt-4">
+        <li><strong>Nothing is uploaded.</strong> The validation engine includes no networking code
+            at all — no HTTP, no WebSocket, no analytics, no third-party scripts. Your browser's
+            dev-tools Network tab stays empty on this page, and that is asserted by the site's tests.</li>
+        <li><strong>Nothing is stored.</strong> No localStorage, no IndexedDB, no cookies — the file
+            references live in tab memory only and are dropped when you clear the session or close
+            the tab.</li>
+        <li><strong>Memory clearing is not deletion.</strong> We will not claim browser memory is
+            forensically erased. The honest guarantee is different and stronger: <em>the bytes never
+            left your device</em>, so there is no server-side copy to worry about.</li>
+        <li><strong>Signing is not attempted in the tab.</strong> Reproducing Apple's code-signing
+            pipeline (Mach-O signature revision, entitlements, profile embedding) reliably inside a
+            web tab is not supported by any browser engine; instead of pretending to sign, this page
+            validates what it can read truthfully, explains what it cannot, and leaves the actual
+            signing to the on-device tool you choose — which keeps the credentials local too.
+            Supported signers are listed in the section below.</li>
+      </ul>
+    </div>
+
+    <div class="grid grid--2 mt-6">
+      <div class="panel pad inst-stage" id="stp-ipa">
+        <h3 class="inst-workshop__h"><span class="inst-workshop__num" aria-hidden="true">1</span> The IPA</h3>
+        <p class="small dim">
+          Reads the ZIP structure, the main app's bundle ID and version, its embedded frameworks,
+          dylibs and extension bundles, and computes the SHA-256 of exactly the bytes you picked so
+          you can compare against the release checksum above.
+        </p>
+        <div class="inst-pick">
+          <label class="btn btn--outline btn--sm" for="file-ipa">Choose .ipa file</label>
+          <input type="file" id="file-ipa" accept=".ipa,application/octet-stream"
+                 class="visually-hidden">
+          <span class="small dim" data-file-name="file-ipa">no file chosen</span>
+        </div>
+        <div class="inst-progress" id="ipa-progress" hidden>
+          <div class="inst-progress__track"><div class="inst-bar"></div></div>
+          <p class="small dim inst-progress-label mb-0"></p>
+        </div>
+        <div class="inst-results mt-4" id="ipa-results" aria-live="polite"></div>
+      </div>
+
+      <div class="panel pad inst-stage" id="stp-cred">
+        <h3 class="inst-workshop__h"><span class="inst-workshop__num" aria-hidden="true">2</span> Provisioning profile</h3>
+        <p class="small dim">
+          Reads team, App ID wildcard, expiration, device binding, App Groups and push entitlements
+          directly out of the CMS envelope, and cross-checks the profile's bundle ID against the
+          IPA you analyzed. A mismatch is called <em>unsupported</em>, not “probably fine”.
+        </p>
+        <div class="inst-pick">
+          <label class="btn btn--outline btn--sm" for="file-profile">Choose .mobileprovision</label>
+          <input type="file" id="file-profile" accept=".mobileprovision,application/octet-stream"
+                 class="visually-hidden">
+          <span class="small dim" data-file-name="file-profile">no file chosen</span>
+        </div>
+        <div class="inst-progress" id="profile-progress" hidden>
+          <div class="inst-progress__track"><div class="inst-bar"></div></div>
+          <p class="small dim inst-progress-label mb-0"></p>
+        </div>
+        <div class="inst-results mt-4" id="profile-results" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="panel pad inst-stage mt-6" id="stp-p12">
+      <h3 class="inst-workshop__h"><span class="inst-workshop__num" aria-hidden="true">3</span> Certificate file (.p12) — optional, structural only</h3>
+      <p class="small dim">
+        Confirms the container is a real PKCS#12 envelope before you hand it to a signer. The
+        certificate and key inside an Apple-exported .p12 are PBE-encrypted; this page deliberately
+        does <strong>not</strong> decrypt them, so no plaintext private key ever exists in the tab.
+        Expiry, identity and key/pair correspondence are determined by the signer after you enter
+        the password on your own device.
+      </p>
+      <div class="inst-pick">
+        <label class="btn btn--outline btn--sm" for="file-p12">Choose .p12 (optional)</label>
+        <input type="file" id="file-p12" accept=".p12,.pfx,application/x-pkcs12,application/octet-stream"
+               class="visually-hidden">
+        <span class="small dim" data-file-name="file-p12">no file chosen</span>
+      </div>
+      <div class="inst-progress" id="p12-progress" hidden>
+        <div class="inst-progress__track"><div class="inst-bar"></div></div>
+        <p class="small dim inst-progress-label mb-0"></p>
+      </div>
+      <div class="inst-results mt-4" id="p12-results" aria-live="polite"></div>
+    </div>
+
+    <div class="panel pad mt-6" id="summary" hidden aria-live="polite"></div>
+
+    <div class="btn-row mt-6">
+      <button class="btn btn--outline btn--sm" id="installer-clear" type="button">
+        Clear files and results
+      </button>
+      <button class="btn btn--outline btn--sm" id="selftest-btn" type="button" aria-controls="selftest">
+        Run the engine self-test
+      </button>
+    </div>
+    <p class="small dim mt-4">
+      The self-test builds throwaway IPA, profile and PKCS#12 fixtures in memory — including ones
+      that must <em>fail</em> (an expired profile, a bundle-ID mismatch, non-profile junk) — and
+      pushes them through the exact same code paths the file pickers use. It runs it before you
+      trust the engine with a real certificate file. It also never touches the network.
+    </p>
+    <div class="inst-results mt-4" id="selftest" aria-live="polite"></div>
+
+    <div class="callout mt-6">
+      <p class="mb-0" id="android-notice" hidden>
+        <strong>PwEevee is currently available for iPhone and iPad only. Android is not supported
+        at this time.</strong> You can still load files for inspection here — there is just nothing
+        installable on the device you are reading this on.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam" id="certificates">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Certificates</p>
+      <h2>What each signing method is validated for.</h2>
+      <p class="lead">
+        This matrix is what has actually been examined here, not marketing; where a cell says it
+        was not verified, it was not. It is re-derived from the architecture notes rather than
+        asserted per page.
+      </p>
+    </div>
+    <div class="panel pad inst-matrix-wrap">
+      <table class="inst-matrix">
+        <caption class="visually-hidden">Certificate types against what the browser workshop validated vs. defers to the signing tool</caption>
+        <thead>
+          <tr><th scope="col">Certificate family</th><th scope="col">Workshop can read</th><th scope="col">Signs with</th><th scope="col">Notes the tool adds</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Free Apple ID</th>
+              <td><span class="inst-badge inst-badge--ok">validated</span> profile facts fully readable here</td>
+              <td>AltStore / SideStore / Feather / Sideloadly</td>
+              <td>7-day refresh, 3-app limit, no push, no App Groups. Bundle ID must match exactly — wildcards are not issued to free accounts</td></tr>
+          <tr><th scope="row">Paid developer (development profile)</th>
+              <td><span class="inst-badge inst-badge--ok">validated</span> profile facts fully readable here</td>
+              <td>Xcode / Sideloadly / Feather</td>
+              <td>get&#8209;task&#8209;allow shows as “development” here; year expiry</td></tr>
+          <tr><th scope="row">Paid developer (ad hoc profile)</th>
+              <td><span class="inst-badge inst-badge--ok">validated</span>; device list, if present, is shown as a count only</td>
+              <td>Sideloadly / Feather / Xcode</td>
+              <td>works only on registered devices — count shown here, membership checked by the signer</td></tr>
+          <tr><th scope="row">Enterprise / In-House</th>
+              <td><span class="inst-badge inst-badge--ok">validated</span>; ProvisionsAllDevices flag detected</td>
+              <td>Sideloadly / Feather</td>
+              <td>needs explicit enterprise trust on device, never assumed here</td></tr>
+          <tr><th scope="row">TrollStore (no signing)</th>
+              <td><span class="inst-badge inst-badge--warn">unable to verify</span> installability from a browser</td>
+              <td>TrollStore itself</td>
+              <td>undocumented Apple policies; not validated by this site</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small dim mt-4">
+      Full rationale and test coverage: <a href="https://github.com/codeboy2012/spoti.pw-builds/blob/main/docs/installer/architecture.md">docs/installer/architecture.md</a> and
+      <a href="https://github.com/codeboy2012/spoti.pw-builds/blob/main/docs/installer/compatibility-matrix.md">docs/installer/compatibility-matrix.md</a>.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">FAQ</p>
+      <h2>Questions people asked.</h2>
+    </div>
+    <div class="grid grid--2">
+      <div class="panel pad">
+        <h3 id="faq-upload">Does my certificate or password leave my device?</h3>
+        <p class="mt-4">No. The engine performs zero network I/O — not HTTP to this site, not telemetry,
+        nothing. What is received by the browser stays in the browser. Password entry isn't even taken
+        here: the .p12 is never decrypted at all.</p>
+      </div>
+      <div class="panel pad">
+        <h3 id="faq-sign">Why does this page not just sign the IPA for me?</h3>
+        <p class="mt-4">Because a browser cannot honestly recreate Apple's pipeline — code signature blob
+        formats, Mach-O revision, provisioning-profile embedding, resource sealing — and a fake
+        success would be worse than an honest gap. Any claim the page could not back up technologically
+        is a hard “not claimable” row, and the signer tool of your choice does it properly.</p>
+      </div>
+      <div class="panel pad">
+        <h3 id="faq-export">Where does the signed IPA go once the signer has it?</h3>
+        <p class="mt-4">Wherever the signer's own flow puts it: AltStore installs the file, SideStore can
+        re-sign and install it on-device, Xcode can push it to a connected device. Nothing on this page
+        can observe those outcomes, so nothing here claims them as done.</p>
+      </div>
+      <div class="panel pad">
+        <h3 id="faq-host">Do you host my signed build anywhere?</h3>
+        <p class="mt-4">There is no hosting flow on this page at all — no upload exists to turn into a
+        hosted build. If you want to hand an IPA to another person, do it over your own channel;
+        this site does not host user-signed artifacts.</p>
+      </div>
+      <div class="panel pad">
+        <h3 id="faq-android">What about Android?</h3>
+        <p class="mt-4">PwEevee is an iOS IPA — bundled. Reading this on Android? The workshop still runs
+        (its checks are browser-level), but there is no build of this self-hosted app for Android</p>
+      </div>
+      <div class="panel pad">
+        <h3 id="faq-cert-types">I have a free Apple ID. Does that work?</h3>
+        <p class="mt-4">Yes: free-provisioning (personal team) profiles are the common path, and the
+        workshop reads them fully. Note the 7-day refresh and 3-app limit, and that the profile's
+        bundle ID must equal the IPA's — the workshop detects a mismatch for you before signing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section section--seam">
   <div class="wrap">
     <div class="section__head">
-      <p class="eyebrow">Step 3 &middot; Sign &amp; install</p>
-      <h2>Sign with your own certificate.</h2>
+      <p class="eyebrow">Sign &amp; install tools</p>
+      <h2>Which tool signs it for you.</h2>
       <p class="lead">
         Pick one tool and follow its docs for signing an existing IPA. These tools are
         third-party applications with their own requirements (accounts, certificates, refresh
@@ -434,5 +661,6 @@
 </div>
 
 <script src="/assets/pweevee.js" defer></script>
+<script src="/assets/installer.js" defer></script>
 </body>
 </html>

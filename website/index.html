@@ -139,7 +139,8 @@
         </p>
 
         <div class="btn-row hero__actions">
-          <a class="btn btn--primary btn--lg" href="/downloads">Download latest</a>
+          <a class="btn btn--primary btn--lg" href="/install">Install PwEevee</a>
+          <a class="btn btn--outline btn--lg" href="/downloads">Download latest</a>
           <a class="btn btn--outline btn--lg" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">
             <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg><span>View GitHub</span>
           </a>
@@ -214,8 +215,10 @@
           version, size and checksum read straight from the release.</li>
       <li><strong>Download the IPA.</strong> One file. The download button only appears when the
           file behind it actually exists.</li>
-      <li><strong>Sign it.</strong> PwEevee builds are unsigned, so sign with your own certificate
-          using SideStore, AltStore, Feather, Sideloadly or an equivalent.</li>
+      <li><strong>Sign it.</strong> PwEevee builds are unsigned, so sign with your own <a href="/install#certificates">certificate</a>
+          using SideStore, AltStore, Feather, Sideloadly or an equivalent — or run the
+          <a href="/install">browser workshop</a> to validate a certificate and a provisioning
+          profile against a downloaded IPA before you commit to signing it.</li>
       <li><strong>Install it.</strong> Your signing tool sideloads the signed IPA onto the
           device.</li>
       <li><strong>Open it and use it.</strong> The tweaks are already inside the build — there is
@@ -446,5 +449,6 @@
 </div>
 
 <script src="/assets/pweevee.js" defer></script>
+<script src="/assets/installer.js" defer></script>
 </body>
 </html>

@@ -2333,6 +2333,80 @@ SERVER_SRC
     File::Path::remove_tree($FIX);
 }
 
+# ---------------------------------------------------------------- 8. installer workshop
+
+section('8. installer workshop (browser-local, no-network validation engine)');
+
+# The engine is a SOURCE asset in website-src/assets/ and is copied verbatim by
+# the renderer. Both halves are checked, because shipping one without the other
+# means either the page loads nothing or tests verify stale bytes.
+ok(-f 'website-src/assets/installer.js', 'installer.js exists in website-src/assets/ (source of truth)');
+ok(-f "$OUT/assets/installer.js" && -s "$OUT/assets/installer.js",
+   'installer.js is rendered into website/assets/');
+
+my $inst = slurp("$OUT/assets/installer.js");
+
+# --- the no-network guarantee: enforced by grep, not promised in prose -------
+my @net_hits;
+push @net_hits, 'fetch()'          if $inst =~ /\bfetch\s*\(/;
+push @net_hits, 'XMLHttpRequest'   if $inst =~ /\bXMLHttpRequest\b/;
+push @net_hits, 'WebSocket'        if $inst =~ /\bWebSocket\b/;
+push @net_hits, 'EventSource'      if $inst =~ /\bEventSource\b/;
+push @net_hits, 'sendBeacon'       if $inst =~ /\bsendBeacon\b/;
+push @net_hits, 'dynamic import()' if $inst =~ /\bimport\s*\(/;
+push @net_hits, 'window.location assignment'
+    if $inst =~ /window\.location\s*(?:=|\.href\s*=)/;
+ok(!@net_hits, 'installer.js contains no networking APIs', join('; ', @net_hits));
+
+# --- the no-storage guarantee ------------------------------------------------
+my @store_hits;
+push @store_hits, 'localStorage'    if $inst =~ /\blocalStorage\b/;
+push @store_hits, 'sessionStorage'  if $inst =~ /\bsessionStorage\b/;
+push @store_hits, 'indexedDB'       if $inst =~ /\bindexedDB\b/;
+push @store_hits, 'document.cookie' if $inst =~ /document\s*\.\s*cookie\b/;
+push @store_hits, 'Cache API'       if $inst =~ /\bcaches\s*\./;
+push @store_hits, 'serviceWorker'   if $inst =~ /\bserviceWorker\b/;
+ok(!@store_hits, 'installer.js contains no storage APIs', join('; ', @store_hits));
+
+# --- no third-party code, no code execution generators -----------------------
+ok($inst !~ /\s(?:src|href)\s*=\s*['"]https?:/i,
+   'installer.js references no external files (fully vendored)');
+ok($inst !~ /\beval\s*\(/ && $inst !~ /\bnew\s+Function\b/,
+   'installer.js does not eval or construct Functions');
+
+# --- the workshop page carries the engine and its elements -------------------
+my $install_page = slurp("$OUT/install/index.html");
+my @ids = qw(installer-clear file-ipa file-profile file-p12
+             ipa-results profile-results p12-results summary
+             ipa-progress profile-progress p12-progress
+             selftest-btn selftest android-notice);
+for my $id (@ids) {
+    ok(index($install_page, qq{id="$id"}) >= 0, "workshop element present on /install: #$id");
+}
+ok($install_page =~ m{<script src="/assets/installer\.js" defer></script>},
+   '/install loads the local-only engine with defer');
+ok(index($install_page, 'aria-live="polite"') >= 0,
+   'workshop result regions are announced to screen readers');
+
+# --- the privacy copy is present and honest ----------------------------------
+for my $needle ('Nothing is uploaded',
+                'Nothing is stored',
+                'Memory clearing is not deletion',
+                'does <strong>not</strong> decrypt') {  # p12 is never decrypted
+    my $pretty = $needle;
+    $pretty =~ s/<[^>]+>//g;
+    ok(index($install_page, $needle) >= 0, "privacy statement on /install: “$pretty”");
+}
+ok(index($install_page, 'Android is not supported') >= 0,
+   'the platform notice on /install covers Android explicitly');
+
+# --- the homepage leads with the installer -----------------------------------
+my $home_page = slurp("$OUT/index.html");
+ok($home_page =~ m{href="/install"[^>]*>Install PwEevee</a>},
+   'the homepage hero carries an Install PwEevee call-to-action');
+my $inst_css = slurp("$OUT/assets/pweevee.css");
+ok(index($inst_css, '.inst-badge') >= 0 && index($inst_css, '.inst-stage') >= 0,
+   'the installer workshop has its stylesheet section');
 # ---------------------------------------------------------------- summary
 
 printf "\n%s\n", '-' x 62;
