@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FAQ — PwEevee</title>
+<meta name="description" content="Straight answers about the PwEevee project — what it is and is not, why builds are unsigned, what a checksum proves, where statistics come from, and which platforms are supported.">
+<!-- Both themes are supported; dark is listed first because it is the default
+     when the device expresses no preference. -->
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pweevee.skytweak.dpdns.org/faq">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PwEevee">
+<meta property="og:title" content="PwEevee frequently asked questions">
+<meta property="og:description" content="Straight answers about the PwEevee project — what it is and is not, why builds are unsigned, what a checksum proves, where statistics come from, and which platforms are supported.">
+<meta property="og:url" content="https://pweevee.skytweak.dpdns.org/faq">
+<meta property="og:image" content="https://pweevee.skytweak.dpdns.org/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The PwEevee logo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PwEevee frequently asked questions">
+<meta name="twitter:description" content="Straight answers about the PwEevee project — what it is and is not, why builds are unsigned, what a checksum proves, where statistics come from, and which platforms are supported.">
+<meta name="twitter:image" content="https://pweevee.skytweak.dpdns.org/assets/social-card.png">
+
+<!-- Icons are the official PwEevee logo. The small sizes are downscales of the
+     same file, produced by make-brand-assets.pl; the artwork is not altered. -->
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
+
+<!-- Applies a stored theme override before the first paint. Blocking and placed
+     ahead of the stylesheet on purpose: a deferred script would run too late and
+     the wrong theme would flash. It is an external same-origin file so the strict
+     Content-Security-Policy needs no 'unsafe-inline'. With JavaScript off the
+     theme still follows prefers-color-scheme, defaulting to dark. -->
+<script src="/assets/theme.js"></script>
+
+<link rel="stylesheet" href="/assets/pweevee.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- icon sprite: defined once, referenced with <use> wherever an icon is needed,
+     so the GitHub glyph is not repeated a dozen times per page -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-github" viewBox="0 0 16 16">
+    <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-2.91-.88-2.91-2.84 0-.61.22-1.15.58-1.58-.05-.15-.25-.75.05-1.55 0 0 .61-.19 2 .75a5.1 5.1 0 0 1 1.32-.18c.45 0 .9.06 1.32.18 1.39-.95 2-.75 2-.75.3.8.1 1.4.05 1.55.36.43.58.96.58 1.58 0 1.97-1.14 2.64-2.92 2.84.3.26.56.76.56 1.54 0 1.11-.01 2.01-.01 2.28 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+  </symbol>
+  <!-- theme control: follow the device, light, dark -->
+  <symbol id="i-auto" viewBox="0 0 16 16">
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"
+          d="M2.4 3.2h11.2v7.2H2.4z"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+          d="M5.6 13.2h4.8"/>
+    <path fill="currentColor" d="M8 3.9v5.8a2.9 2.9 0 0 1 0-5.8Z"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+          d="M8 1.3v1.5M8 13.2v1.5M1.3 8h1.5M13.2 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M12.6 3.4l-1 1M4.4 11.6l-1 1"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 16 16">
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"
+          d="M13.2 9.8A5.6 5.6 0 0 1 6.2 2.8a5.6 5.6 0 1 0 7 7Z"/>
+  </symbol>
+</svg>
+
+<div class="page">
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="/" aria-label="PwEevee — home">
+      <img class="brand__mark" src="/assets/icon-32.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+      <span class="brand__name">PwEevee</span>
+    </a>
+
+    <div class="nav__links">
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link" href="/projects">Projects</a>
+      <a class="nav__link" href="/releases">Releases</a>
+      <a class="nav__link" href="/downloads">Downloads</a>
+      <a class="nav__link" href="/credits">Credits</a>
+    </div>
+
+    <div class="nav__end">
+      <div class="theme" role="group" aria-label="Colour theme" data-theme-control><button class="theme__btn" type="button" data-theme-set="system" aria-pressed="true" title="Match the system theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-auto"></use></svg><span class="visually-hidden">Match the system theme</span></button><button class="theme__btn" type="button" data-theme-set="light" aria-pressed="false" title="Light theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-sun"></use></svg><span class="visually-hidden">Light theme</span></button><button class="theme__btn" type="button" data-theme-set="dark" aria-pressed="false" title="Dark theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-moon"></use></svg><span class="visually-hidden">Dark theme</span></button></div>
+      <a class="nav__icon" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener"
+         aria-label="PwEevee on GitHub"><svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg></a>
+      <a class="btn btn--primary btn--sm nav__cta" href="/install" aria-label="Download PwEevee and install it with AltStore or SideStore">Install</a>
+      <button class="nav__toggle" type="button" data-nav-toggle
+              aria-expanded="false" aria-controls="nav-drawer" aria-label="Open menu">
+        <span class="nav__burger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+
+    <div class="nav__drawer" id="nav-drawer" data-nav-drawer>
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link" href="/projects">Projects</a>
+      <a class="nav__link" href="/releases">Releases</a>
+      <a class="nav__link" href="/downloads">Downloads</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link" href="/install">Install guide</a>
+      <a class="nav__link" href="/compatibility">Compatibility</a>
+      <a class="nav__link" href="/docs">Documentation</a>
+      <a class="nav__link" href="/faq" aria-current="page">FAQ</a>
+      <a class="nav__link" href="/support">Support</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link" href="/credits">Credits</a>
+      <a class="nav__link" href="/development">Development</a>
+      <a class="nav__link" href="/legal">Legal</a>
+      <a class="nav__link" href="/contact">Contact</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <div class="nav__drawer-row">
+        <span class="nav__drawer-label" id="theme-label-drawer">Theme</span>
+        <div class="theme" role="group" aria-labelledby="theme-label-drawer" data-theme-control><button class="theme__btn" type="button" data-theme-set="system" aria-pressed="true" title="Match the system theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-auto"></use></svg><span class="visually-hidden">Match the system theme</span></button><button class="theme__btn" type="button" data-theme-set="light" aria-pressed="false" title="Light theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-sun"></use></svg><span class="visually-hidden">Light theme</span></button><button class="theme__btn" type="button" data-theme-set="dark" aria-pressed="false" title="Dark theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-moon"></use></svg><span class="visually-hidden">Dark theme</span></button></div>
+      </div>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link icon-link" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">
+        <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg><span>GitHub repository</span>
+      </a>
+      <a class="btn btn--primary" href="/install">Install</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">FAQ</p>
+      <h1>The questions this project actually gets.</h1>
+      <p class="lead">
+        Every answer here is backed by a page or document on this site — nothing is answered with
+        a promise. If your question is not here, <a href="/support">support</a> has next steps.
+      </p>
+    </div>
+
+    <div class="prose stack-lg mt-6">
+      <h2 id="what-is-pweevee">What is PwEevee?</h2>
+      <p>
+        An independent integration, build and distribution project. It takes Spotify's iOS app,
+        integrates two upstream tweaks — <a href="/projects/spotipw">spoti.pw</a> and
+        <a href="/projects/eeveespotify">EeveeSpotify</a> — validates the result structurally, and
+        publishes it as an unsigned IPA through <a href="/releases">GitHub releases</a> with the
+        exact SHA-256 of every published file. It did not create Spotify or either tweak.
+      </p>
+
+      <h2 id="affiliation">Is PwEevee affiliated with Spotify, Apple, or the upstream projects?</h2>
+      <p>
+        No. PwEevee is not affiliated with, endorsed by or connected to Spotify AB, Apple Inc.,
+        spoti.pw, EeveeSpotify or SideloadLabs. Spotify and Apple trademarks belong to their
+        owners. The upstream tweaks are separate projects with their own authors and licenses —
+        see <a href="/credits">Credits</a> and <a href="/legal">Legal</a>.
+      </p>
+
+      <h2 id="platforms">Which platforms does it run on?</h2>
+      <p>
+        iPhone and iPad — iOS and iPadOS only. The <strong>website</strong> itself works in any
+        modern browser on Windows, macOS, Linux, Android, iPhone and iPad, but a browser is not a
+        place an IPA can run.
+      </p>
+      <p class="android-notice">
+        <strong>PwEevee is currently available for iPhone and iPad only. Android is not supported
+        at this time.</strong>
+      </p>
+
+      <h2 id="unsigned">Why is the build unsigned?</h2>
+      <p>
+        A signed app is tied to whoever signed it. PwEevee publishes the build unsigned so that
+        <em>you</em> sign it with your own Apple certificate: the identity your device will trust
+        belongs to you, not to this project, and requires no permission from it. The
+        <a href="/install">install guide</a> walks through the signing step with the tool that
+        holds your credentials. This is also why the site has no enterprise distribution: an
+        unsigned IPA cannot be installed over a network without a distribution mechanism the
+        project deliberately does not operate.
+      </p>
+
+      <h2 id="checksum-safety">Does a SHA-256 checksum mean the app is safe?</h2>
+      <p>
+        No. A checksum proves the file you received is byte-for-byte the file the release
+        published — nothing more and nothing less. It says nothing about whether the app does what
+        you expect, does not contain bugs, or will pass Apple's review. Verify the checksum when
+        transferring files between machines; judge the app separately.
+      </p>
+
+      <h2 id="download-source">Where do the download links go?</h2>
+      <p>
+        Straight to the source that publishes the file, every time: GitHub release assets for
+        PwEevee's own builds and the upstream projects' releases, and — labelled separately,
+        because it is a different kind of thing — the variant IPAs the SideloadLabs AltSource
+        lists for EeveeSpotify. Nothing is served from this site's own disk, and a download
+        button only renders when the release data says an asset actually exists. Where one does
+        not, the page says so instead of showing a dead button.
+      </p>
+
+      <h2 id="stats-source">Where do the statistics come from?</h2>
+      <p>
+        The <a href="/">homepage</a> stats band reads <code>website/data/stats.json</code>, a
+        snapshot produced by the project's update script from the GitHub API. The browser never
+        calls GitHub. The snapshot is refreshed on an hourly schedule and the page shows when it
+        was last generated. Numbers you see are GitHub's counts: stars, forks, real watchers
+        (<code>subscribers_count</code>), open issues and pull requests, and release asset
+        downloads. Those download totals are asset-download counts — <strong>not</strong> unique
+        users, devices, or successful installs — and no statistics of that last kind exist here,
+        because nothing measures them.
+      </p>
+
+      <h2 id="what-cached-means">What does the &ldquo;cached&rdquo; badge mean?</h2>
+      <p>
+        It appears on a release card when GitHub could not be reached during the last update run.
+        The site deliberately shows the last known-good release information instead of an error
+        or an invented state, and the badge is the honest marker that this value may be stale.
+        Nothing is edited by hand to hide it — if GitHub is down for you, it was down for the
+        updater too. A <code>403</code>/<code>429</code> in the update logs is the anonymous API
+        rate limit; <code>451</code> means a repository has been disabled upstream, which is a
+        real state, not a bug.
+      </p>
+
+      <h2 id="signing-in-browser">Can the site sign or install the IPA for me?</h2>
+      <p>
+        No — and the <a href="/install">install guide</a> is explicit about why. The browser-side
+        validator reads the files you select (IPA, provisioning profile, certificate container)
+        directly in your tab and cross-checks them against the release, but it never signs. The
+        signing step belongs to the tool that holds your certificate on your device, where the
+        private key belongs in the first place. There is no upload endpoint for any of it: this
+        is a static site with no server code behind it.
+      </p>
+
+      <h2 id="free-account">I don't have a paid Apple Developer account. Can I still install?</h2>
+      <p>
+        Yes — the signing tools support a free Apple ID personal-development flow, with
+        documented limits: 7-day app validity, a cap on active app IDs and devices, and a weekly
+        provisioning budget. Re-signing before expiry becomes a routine. The
+        <a href="/compatibility">compatibility page</a> keeps these rows marked
+        &ldquo;untested&rdquo; rather than &ldquo;verified&rdquo;, because the limits are the
+        signing tool's and Apple's documented behaviour, not something this project's validator
+        derives.
+      </p>
+
+      <h2 id="older-releases">Where are the older releases?</h2>
+      <p>
+        On the <a href="https://github.com/codeboy2012/spoti.pw-builds/releases" rel="noopener">
+        GitHub releases page</a> for the repository, permanently, as long as GitHub hosts them.
+        The <a href="/releases">release centre</a> shows the same chronological history
+        up-to-date from the most recent API read, with prereleases and drafts labelled as such;
+        no permanent availability of any hosted build is promised anywhere on this site.
+      </p>
+
+      <h2 id="success-claims">Why does the site never say &ldquo;installed successfully&rdquo;?</h2>
+      <p>
+        Because nothing in a web page can observe an app installation. The operating system
+        confirms a launch on-device; the signing tool confirms a signature. A browser tab can
+        structurally validate an IPA and tell you what a profile permits, and stops there. The
+        install guide's last step hands the artifact to the tool that will actually perform the
+        installation and report its own success or failure — and the website does not foresee
+        outcomes it has no way to measure.
+      </p>
+
+      <h2 id="report">How do I report a bug?</h2>
+      <p>
+        On the project's real issue tracker, via <a href="/support">Support</a>. The support page
+        lists what a report should include and what must never be included — most importantly,
+        never your private key, certificate password, or any file containing either.
+      </p>
+
+      <h2 id="docs-index">Where is everything else documented?</h2>
+      <p>
+        In the repository, and indexed on the <a href="/docs">documentation page</a>: the
+        installer architecture, the certificate/profile compatibility matrix, the deb packaging
+        notes, the build and validation suite and the development process. On-site pages —
+        <a href="/install">install</a>, <a href="/releases">releases</a>,
+        <a href="/compatibility">compatibility</a>, <a href="/privacy">privacy</a>,
+        <a href="/security">security</a> — cover what a visitor actually needs.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer inverted">
+  <div class="starfield" data-starfield aria-hidden="true"><canvas class="starfield__canvas"></canvas></div>
+  <div class="wrap">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="brand" href="/" aria-label="PwEevee — home">
+          <img class="brand__mark" src="/assets/icon-32.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+          <span class="brand__name">PwEevee</span>
+        </a>
+        <p class="footer__about">
+          An independent integration and distribution project: one tested Spotify IPA
+          carrying two upstream tweaks, published through GitHub releases, created by others.
+        </p>
+        <a class="icon-link" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">
+          <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg><span>codeboy2012/spoti.pw-builds</span>
+        </a>
+      </div>
+
+      <div class="footer__col">
+        <h3>Projects</h3>
+        <ul>
+          <li><a href="/projects/pweevee">PwEevee</a></li>
+          <li><a href="/projects/spotipw">spoti.pw</a></li>
+          <li><a href="/projects/eeveespotify">EeveeSpotify</a></li>
+          <li><a href="/projects">All projects</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Releases</h3>
+        <ul>
+          <li><a href="/downloads">Downloads</a></li>
+          <li><a href="/install">Install guide — AltStore &amp; SideStore</a></li>
+          <li><a href="/releases">Release history</a></li>
+          <li><a href="https://github.com/codeboy2012/spoti.pw-builds/releases" rel="noopener">GitHub releases</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Repositories</h3>
+        <ul>
+          <li><a href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">PwEevee</a></li>
+          <li><a href="https://github.com/skopevoj/spoti.pw" rel="noopener">spoti.pw</a></li>
+          <li><a href="https://github.com/SideloadLabs/EeveeSpotifyReincarnated" rel="noopener">EeveeSpotify</a></li>
+          <li><a href="https://github.com/samj-exe/taurus" rel="noopener">Taurus</a></li>
+          <li><a href="https://github.com/estrogencat/EeveeIPA" rel="noopener">EeveeIPA (prebuilt IPAs, not Eevee's source)</a></li>
+          <li><a href="https://github.com/SideloadLabs/SideloasLabs-AltSource" rel="noopener">SideloadLabs AltSource</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Docs &amp; support</h3>
+        <ul>
+          <li><a href="/docs">Documentation</a></li>
+          <li><a href="/compatibility">Compatibility</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/support">Support</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/security">Security</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Project</h3>
+        <ul>
+          <li><a href="/credits">Credits</a></li>
+          <li><a href="/development">Development &amp; AI</a></li>
+          <li><a href="/legal">Legal</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__credits">
+      <p>
+        <strong>Attribution.</strong> PwEevee integrates components and work from the
+        <a href="https://github.com/skopevoj/spoti.pw" rel="noopener">spoti.pw</a> and
+        <a href="https://github.com/SideloadLabs/EeveeSpotifyReincarnated" rel="noopener">EeveeSpotify</a>
+        projects. It did not create them and does not own them. Please visit their official
+        repositories for upstream information and attribution. PwEevee is maintained here;
+        spoti.pw and EeveeSpotifyReincarnated are separate upstream projects with their own authors
+        and licenses. The IPA variants listed for EeveeSpotify are published by
+        <a href="https://github.com/SideloadLabs" rel="noopener">SideloadLabs</a> in their own
+        AltSource, which PwEevee reads but does not own or mirror.
+        <a href="/credits">Full credits</a>.
+      </p>
+      <p>
+        Not affiliated with, endorsed by or connected to Spotify AB, Apple Inc., spoti.pw,
+        EeveeSpotify or SideloadLabs. All trademarks belong to their respective owners. Hosted on
+        SkyTweak infrastructure; hosted material may be removed, replaced or discontinued at any
+        time.
+      </p>
+      <div class="footer__legal">
+        <span>Canonical: <code>pweevee.skytweak.dpdns.org</code></span>
+        <span>GitHub release data generated 25 October 2026 &middot; SideloadLabs AltSource read 26 September 2026 &middot; Repository stats generated 25 October 2026</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script src="/assets/pweevee.js" defer></script>
+<script src="/assets/installer.js" defer></script>
+</body>
+</html>

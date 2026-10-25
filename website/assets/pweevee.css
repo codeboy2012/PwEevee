@@ -771,6 +771,94 @@ p { max-width: 74ch; }
 .badge--prerelease { color: var(--ink); border-style: dashed; border-color: var(--rule-strong); }
 .badge--stale      { color: var(--warn); border-color: var(--rule-strong); }
 
+/* Compatibility statuses — exactly three of them, paralleling the /install
+   validator's validated / unsupported / unable to verify. Colour is secondary:
+   each state also names itself in its text, so a colour-blind visitor loses
+   nothing. */
+.badge--verified    { color: var(--ink); border-color: var(--rule-strong); }
+.badge--verified    .badge__dot { background: var(--brand); }
+.badge--untested    { color: var(--warn); border-color: var(--rule-strong); }
+.badge--untested    .badge__dot { background: var(--warn); }
+.badge--unsupported { color: var(--bad); border-color: var(--rule-strong); }
+.badge--unsupported .badge__dot { background: var(--bad); }
+
+/* The /docs repository-document list: term = linked file path, definition =
+   one-line description. Styled as plain text so a document link panel does not
+   turn into a table of cards. */
+.doclist { margin: 0; }
+.doclist dt { margin-top: var(--s-5); }
+.doclist dt:first-child { margin-top: 0; }
+.doclist dt a {
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  color: var(--ink);
+  text-decoration-color: var(--rule-strong);
+}
+.doclist dt a:hover { color: var(--brand); }
+.doclist dd {
+  margin: 0.35em 0 0 0;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  max-width: none;
+}
+.doclist .doclist__missing { color: var(--ink-3); font-style: italic; }
+
+/* Simple data tables on the content pages (compatibility). Layout is genuinely
+   tabular: header row, one check per row, statuses in the middle column. The
+   wrapper gives small screens horizontal scroll instead of broken cells. */
+.tablewrap, .mtable-wrap { overflow-x: auto; }
+.mtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.mtable th, .mtable td {
+  padding: 0.7em 0.9em;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.mtable--tight th, .mtable--tight td { padding: 0.5em 0.7em; }
+.mtable thead th {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.mtable tbody th[scope="row"], .mtable--tight tbody th[scope="row"] {
+  font-weight: 500;
+  color: var(--ink);
+}
+.mtable td { color: var(--ink-2); }
+.mtable td .badge { white-space: normal; }
+
+/* The Android availability notice. One component, used wherever the notice is
+   shown (FAQ, compatibility, install) so the wording and treatment stay paired. */
+.android-notice {
+  padding: 0.9em 1.1em;
+  background: var(--surface-2);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-size: 0.9375rem;
+}
+.android-notice strong { color: var(--ink); }
+
+/* Compact ”label → arrow” links used where a card points at its own page. */
+.link-arrow {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration-color: var(--rule-strong);
+}
+.link-arrow::after {
+  content: " \2192";
+  color: var(--ink-3);
+}
+.link-arrow:hover { color: var(--brand); }
+
 /* A filter chip. Selected is a solid fill, not a tint — the state has to be
    unmistakable at a glance, including for a colour-blind visitor. */
 .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
@@ -1025,7 +1113,7 @@ p { max-width: 74ch; }
 
 .footer__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.6fr) repeat(5, minmax(0, 1fr));
   gap: var(--s-7) var(--s-5);
 }
 
@@ -1828,6 +1916,7 @@ a.feature:hover .small { color: var(--ink); }
 .mt-6 { margin-top: var(--s-6); }
 .mt-7 { margin-top: var(--s-7); }
 .mb-0 { margin-bottom: 0; }
+.mb-5 { margin-bottom: var(--s-5); }
 
 /* ------------------------------------------------------------ 19 reveal */
 
@@ -1842,10 +1931,10 @@ a.feature:hover .small { color: var(--ink); }
 
 /* -------------------------------------------------------- 20 responsive */
 
-/* Tablet: the five-column footer and the three-column grids stop working long
+/* Tablet: the six-column footer and the three-column grids stop working long
    before the nav does, so they go first. */
 @media (max-width: 1080px) {
-  .footer__grid { grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)); }
+  .footer__grid { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 960px) {

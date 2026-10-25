@@ -1,0 +1,315 @@
+<!--PwEevee
+route: /compatibility
+nav: compatibility
+title: Compatibility — PwEevee
+og_title: PwEevee compatibility: what is tested and what is not
+description: The PwEevee compatibility centre — every claim's status as Verified, Untested or Unsupported, from artifact integrity to certificates, provisioning and installation paths.
+-->
+
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Compatibility</p>
+      <h1>Three statuses. No in-between claims.</h1>
+      <p class="lead">
+        Every statement on this page is classified as
+        <span class="badge badge--verified"><span class="badge__dot"></span>Verified</span>
+        <span class="badge badge--untested"><span class="badge__dot"></span>Untested</span> or
+        <span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span>.
+        &ldquo;Verified&rdquo; is reserved for checks the code itself performs on the artifact or
+        the files you select. &ldquo;Untested&rdquo; means plausible and documented by the named
+        source, but not exercised on a device in this project. &ldquo;Unsupported&rdquo; means
+        known not to work. Nothing graduates between them except by an actual test.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <h2 class="h-sub">The two platforms</h2>
+    <div class="grid grid--2 mt-5">
+      <div class="panel panel--raised panel--hover pad accent-brand">
+        <h3>The app</h3>
+        <p class="mt-4">
+          PwEevee publishes the Spotify iOS app carrying two integrated tweaks
+          (<a href="/projects/spotipw">spoti.pw</a> and
+          <a href="/projects/eeveespotify">EeveeSpotify</a>). The IPA itself is unsigned by design:
+          it is intended to be signed with an Apple certificate you supply and installed through
+          one of the supported paths below. It can therefore run anywhere a re-signed Spotify
+          runs.
+        </p>
+        <p class="small dim mt-4 mb-0">
+          <span class="badge badge--untested"><span class="badge__dot"></span>Untested</span>
+          Device-model ranges, iPad layout behaviour and launch behaviour on physical devices have
+          not been recorded as tested in this project. The structural comparisons to the reference
+          build pass; only a real launch proves an app.
+        </p>
+      </div>
+      <div class="panel panel--hover pad">
+        <h3>The website</h3>
+        <p class="mt-4">
+          The website itself is a static page that works in current Chrome, Firefox, Edge and
+          Safari, on Windows, macOS, Linux, Android, iPhone and iPad desktop-class browsers, with
+          keyboard navigation, visible focus, screen-reader labels and reduced-motion handling
+          where the platform offers them.
+        </p>
+        <p class="mt-4">
+          Having a browser is not having support for the app: no operating system other than iOS or
+          iPadOS runs it. On Android or a desktop browser the site can show you the downloads; the
+          IPA can only be installed on Apple hardware.
+        </p>
+      </div>
+    </div>
+    <p class="android-notice mt-5">
+      <strong>PwEevee is currently available for iPhone and iPad only. Android is not supported at
+      this time.</strong>
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h-sub">Artifact integrity</h2>
+    <p class="lead mt-4 mb-5">
+      Checks the build validation suites and the in-browser validator perform. A pass proves
+      structure, not safety &mdash; and none of it is a claim that the app will launch.
+    </p>
+    <div class="tablewrap mt-5">
+      <table class="mtable">
+        <thead>
+          <tr><th scope="col">Check</th><th scope="col">Status</th><th scope="col">Evidence</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">IPA structure: ZIP layout, canonical entry names, throughput of the
+                file-handling the site performs</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>build-system validation suite (<code>validate-ipa.pl</code>), re-run on every build</td>
+          </tr>
+          <tr>
+            <th scope="row">Mach-O load commands: LC_LOAD_DYLIB names and order, no duplicates,
+                physical padding layout</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>byte-for-byte audited against a proven reference build
+                (<code>validate-macho.pl</code>); the comparison is what catches a regression</td>
+          </tr>
+          <tr>
+            <th scope="row">Build manifest records the integrated dependency set</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td><code>resolve-deps.pl</code> refuses to build if a declared dependency is missing,
+                or if two suppliers provide conflicting copies</td>
+          </tr>
+          <tr>
+            <th scope="row">SHA-256 shown for every published build matches the published
+                metadata</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>recomputed from the exact released bytes; shown on the
+                <a href="/downloads">downloads page</a> so you can verify the file you received</td>
+          </tr>
+          <tr>
+            <th scope="row">App launches on a physical iPhone or iPad</th>
+            <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+            <td>no device-test results are recorded in this project's repository</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h-sub">Signing and provisioning</h2>
+    <p class="lead mt-4 mb-5">
+      This is where the honest boundary between what the site's validator can tell you and what
+      only the signing tool knows lives. The validator reads the files you select in the browser
+      and reports what they actually contain; the mechanics of the signing itself are the signing
+      tool's. On iOS the supported tool is Sigma; on macOS it is a third-party Mac signer. What
+      the tool accepts is the border &mdash; this page describes what the site offers and states.
+    </p>
+    <div class="grid grid--2 mt-5">
+      <div class="panel panel--hover pad">
+        <h3>Certificate and profile files the validator reads</h3>
+        <ul class="checklist mt-5">
+          <li><code>.mobileprovision</code> &mdash; Apple's provisioning profile format. The
+              validator parses it and reports its certificate chain, device list, entitlements and
+              expiry.</li>
+          <li><code>.p12</code> / <code>.pfx</code> &mdash; PKCS&#8203;#12 identity containers. The
+              validator wraps and inspects the certificate entry in-browser, so a wrong-password or
+              typo'd file is caught before it reaches a signing tool.</li>
+          <li><code>.cer</code> / <code>.crt</code> &mdash; bare X.509 certificates. Parsed and
+              shown; a private key must come from a <code>.p12</code> alongside it.</li>
+        </ul>
+        <p class="small dim mt-5 mb-0">
+          The full check set &mdash; including what each check can and cannot conclude, and what
+          &ldquo;unable to verify&rdquo; means &mdash; is documented in
+          <a href="https://github.com/codeboy2012/spoti.pw-builds/blob/main/docs/installer/architecture.md" rel="noopener">
+            <code>docs/installer/architecture.md</code></a> in the repository.
+        </p>
+      </div>
+      <div class="panel panel--hover pad">
+        <h3>Certificate and profile combinations</h3>
+        <div class="mtable-wrap mt-5">
+          <table class="mtable mtable--tight">
+            <tbody>
+              <tr>
+                <th scope="row">Apple ID (free personal) development certificate</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  the signing utility's documented free-account limits apply (7-day validity,
+                  3 active app IDs, 3 devices); the validator never derives these from the
+                  certificate itself, so they stay with the source that publishes them
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Apple Developer Program development certificate</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  a paid, individually-issued 365-day identity; same reading process, and the free
+                  path's limits no longer apply. Not independently exercised by this project
+                  end-to-end.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Apple Developer Program distribution (Ad Hoc)</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  requires a registered device UDID in the profile. The validator can see the UDID
+                  list, but never which (if any) matches <em>your</em> device.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Apple Developer Program In-House (enterprise)</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  requires an In-House certificate trust configuration on the device; not
+                  documented as exercised by any test this project is aware of.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Expired or not-yet-valid profile</th>
+                <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+                <td>the validator reports it explicitly rather than letting the failure happen
+                    later at the signing tool</td>
+              </tr>
+              <tr>
+                <th scope="row">Profile issued for a different App ID</th>
+                <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+                <td>the profile's bundle-ID prefix must match the IPA's bundle ID exactly; the
+                    validator compares both and names the mismatch it finds</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <h2 class="h-sub">Installation paths</h2>
+    <p class="lead mt-4 mb-5">
+      What the site supports and how. The supported paths deliver a signed IPA to a device; the
+      SIGMA.md walkthrough shipped with each build describes the same steps the install guide
+      does.
+    </p>
+    <div class="mtable-wrap mt-5">
+      <table class="mtable">
+        <thead>
+          <tr><th scope="col">Path</th><th scope="col">Status</th><th scope="col">What it requires</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Sigma desktop signing with a free Apple ID personal development
+                profile</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>
+              your Apple ID; the signing tool and its documented account limits; publishing
+              details in the <a href="/install">install guide</a> and the SIGMA.md file shipped
+              with each build
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Sigma desktop signing with an Apple Developer Program certificate</th>
+            <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+            <td>
+              the same mechanism with a paid identity and its profile; the free path's account
+              limits no longer apply. Not exercised end-to-end on a device by this project.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Importing a file exported from this site into Sigma on the connected
+                device</th>
+            <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+            <td>
+              Sigma's own import mechanism, and Apple's provisioning rules; neither is provided
+              or verified by this site
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Wireless one-tap installation from this site
+                <code>(itms-services:)</code></th>
+            <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+            <td>
+              requires a CA-signed HTTPS manifest and a signed IPA. This site does not host a
+              build it cannot verify end-to-end, so the flow is deliberately not offered
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Site-hosted temporary signed-IPA upload</th>
+            <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+            <td>
+              there is no upload endpoint: this website is a static page and accepts nothing
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Third-party IPA re-signing services (&ldquo;send us the IPA&rdquo;)</th>
+            <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+            <td>
+              handing out the build to a service outside what this page documents removes the
+              accountability this project commits to; not offered
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h-sub">Known issues and explicit limits</h2>
+    <div class="grid grid--2 mt-5">
+      <div class="panel panel--hover pad">
+        <h3>Known and documented</h3>
+        <ul class="checklist mt-5">
+          <li>The web validator cannot tell whether <em>your</em> device is in a provisioning
+              profile's registered-device list &mdash; the list is in the profile, but the device's
+              own UDID is not reachable from a browser. The validator states this instead of
+              guessing.</li>
+          <li>A free Apple ID provisioning profile does not grant the App Groups entitlement some
+              components want; the defect is Apple's account limits, not the build. If a component
+              degrades when the entitlement is absent, the compatibility row says it degrades
+              &mdash; it does not claim a crash or invent the exact behaviour.</li>
+        </ul>
+      </div>
+      <div class="panel panel--hover pad">
+        <h3>Known to not work</h3>
+        <ul class="checklist mt-5">
+          <li>anything Android &mdash; the notice above is the whole story</li>
+          <li>installing straight from a browser &mdash; see the path table</li>
+          <li>signing with <em>this site's</em> tools: the current build validates and
+              cross-checks, but the signing itself is deliberately left to the signing tool, per
+              the <a href="/install">documented boundary</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="small dim mt-5">
+      Something behaving differently here from what this page says?
+      <a href="/support">Report it</a> &mdash; rows get corrected when evidence arrives, and the
+      changed row is named in the reply.
+    </p>
+  </div>
+</section>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compatibility — PwEevee</title>
+<meta name="description" content="The PwEevee compatibility centre — every claim's status as Verified, Untested or Unsupported, from artifact integrity to certificates, provisioning and installation paths.">
+<!-- Both themes are supported; dark is listed first because it is the default
+     when the device expresses no preference. -->
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pweevee.skytweak.dpdns.org/compatibility">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PwEevee">
+<meta property="og:title" content="PwEevee compatibility: what is tested and what is not">
+<meta property="og:description" content="The PwEevee compatibility centre — every claim's status as Verified, Untested or Unsupported, from artifact integrity to certificates, provisioning and installation paths.">
+<meta property="og:url" content="https://pweevee.skytweak.dpdns.org/compatibility">
+<meta property="og:image" content="https://pweevee.skytweak.dpdns.org/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The PwEevee logo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PwEevee compatibility: what is tested and what is not">
+<meta name="twitter:description" content="The PwEevee compatibility centre — every claim's status as Verified, Untested or Unsupported, from artifact integrity to certificates, provisioning and installation paths.">
+<meta name="twitter:image" content="https://pweevee.skytweak.dpdns.org/assets/social-card.png">
+
+<!-- Icons are the official PwEevee logo. The small sizes are downscales of the
+     same file, produced by make-brand-assets.pl; the artwork is not altered. -->
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
+
+<!-- Applies a stored theme override before the first paint. Blocking and placed
+     ahead of the stylesheet on purpose: a deferred script would run too late and
+     the wrong theme would flash. It is an external same-origin file so the strict
+     Content-Security-Policy needs no 'unsafe-inline'. With JavaScript off the
+     theme still follows prefers-color-scheme, defaulting to dark. -->
+<script src="/assets/theme.js"></script>
+
+<link rel="stylesheet" href="/assets/pweevee.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- icon sprite: defined once, referenced with <use> wherever an icon is needed,
+     so the GitHub glyph is not repeated a dozen times per page -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-github" viewBox="0 0 16 16">
+    <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-2.91-.88-2.91-2.84 0-.61.22-1.15.58-1.58-.05-.15-.25-.75.05-1.55 0 0 .61-.19 2 .75a5.1 5.1 0 0 1 1.32-.18c.45 0 .9.06 1.32.18 1.39-.95 2-.75 2-.75.3.8.1 1.4.05 1.55.36.43.58.96.58 1.58 0 1.97-1.14 2.64-2.92 2.84.3.26.56.76.56 1.54 0 1.11-.01 2.01-.01 2.28 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+  </symbol>
+  <!-- theme control: follow the device, light, dark -->
+  <symbol id="i-auto" viewBox="0 0 16 16">
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"
+          d="M2.4 3.2h11.2v7.2H2.4z"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+          d="M5.6 13.2h4.8"/>
+    <path fill="currentColor" d="M8 3.9v5.8a2.9 2.9 0 0 1 0-5.8Z"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+          d="M8 1.3v1.5M8 13.2v1.5M1.3 8h1.5M13.2 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M12.6 3.4l-1 1M4.4 11.6l-1 1"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 16 16">
+    <path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"
+          d="M13.2 9.8A5.6 5.6 0 0 1 6.2 2.8a5.6 5.6 0 1 0 7 7Z"/>
+  </symbol>
+</svg>
+
+<div class="page">
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="/" aria-label="PwEevee — home">
+      <img class="brand__mark" src="/assets/icon-32.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+      <span class="brand__name">PwEevee</span>
+    </a>
+
+    <div class="nav__links">
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link" href="/projects">Projects</a>
+      <a class="nav__link" href="/releases">Releases</a>
+      <a class="nav__link" href="/downloads">Downloads</a>
+      <a class="nav__link" href="/credits">Credits</a>
+    </div>
+
+    <div class="nav__end">
+      <div class="theme" role="group" aria-label="Colour theme" data-theme-control><button class="theme__btn" type="button" data-theme-set="system" aria-pressed="true" title="Match the system theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-auto"></use></svg><span class="visually-hidden">Match the system theme</span></button><button class="theme__btn" type="button" data-theme-set="light" aria-pressed="false" title="Light theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-sun"></use></svg><span class="visually-hidden">Light theme</span></button><button class="theme__btn" type="button" data-theme-set="dark" aria-pressed="false" title="Dark theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-moon"></use></svg><span class="visually-hidden">Dark theme</span></button></div>
+      <a class="nav__icon" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener"
+         aria-label="PwEevee on GitHub"><svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg></a>
+      <a class="btn btn--primary btn--sm nav__cta" href="/install" aria-label="Download PwEevee and install it with AltStore or SideStore">Install</a>
+      <button class="nav__toggle" type="button" data-nav-toggle
+              aria-expanded="false" aria-controls="nav-drawer" aria-label="Open menu">
+        <span class="nav__burger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+
+    <div class="nav__drawer" id="nav-drawer" data-nav-drawer>
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link" href="/projects">Projects</a>
+      <a class="nav__link" href="/releases">Releases</a>
+      <a class="nav__link" href="/downloads">Downloads</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link" href="/install">Install guide</a>
+      <a class="nav__link" href="/compatibility" aria-current="page">Compatibility</a>
+      <a class="nav__link" href="/docs">Documentation</a>
+      <a class="nav__link" href="/faq">FAQ</a>
+      <a class="nav__link" href="/support">Support</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link" href="/credits">Credits</a>
+      <a class="nav__link" href="/development">Development</a>
+      <a class="nav__link" href="/legal">Legal</a>
+      <a class="nav__link" href="/contact">Contact</a>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <div class="nav__drawer-row">
+        <span class="nav__drawer-label" id="theme-label-drawer">Theme</span>
+        <div class="theme" role="group" aria-labelledby="theme-label-drawer" data-theme-control><button class="theme__btn" type="button" data-theme-set="system" aria-pressed="true" title="Match the system theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-auto"></use></svg><span class="visually-hidden">Match the system theme</span></button><button class="theme__btn" type="button" data-theme-set="light" aria-pressed="false" title="Light theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-sun"></use></svg><span class="visually-hidden">Light theme</span></button><button class="theme__btn" type="button" data-theme-set="dark" aria-pressed="false" title="Dark theme"><svg class="theme__icon" aria-hidden="true" focusable="false"><use href="#i-moon"></use></svg><span class="visually-hidden">Dark theme</span></button></div>
+      </div>
+      <span class="nav__drawer-sep" aria-hidden="true"></span>
+      <a class="nav__link icon-link" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">
+        <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg><span>GitHub repository</span>
+      </a>
+      <a class="btn btn--primary" href="/install">Install</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">Compatibility</p>
+      <h1>Three statuses. No in-between claims.</h1>
+      <p class="lead">
+        Every statement on this page is classified as
+        <span class="badge badge--verified"><span class="badge__dot"></span>Verified</span>
+        <span class="badge badge--untested"><span class="badge__dot"></span>Untested</span> or
+        <span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span>.
+        &ldquo;Verified&rdquo; is reserved for checks the code itself performs on the artifact or
+        the files you select. &ldquo;Untested&rdquo; means plausible and documented by the named
+        source, but not exercised on a device in this project. &ldquo;Unsupported&rdquo; means
+        known not to work. Nothing graduates between them except by an actual test.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <h2 class="h-sub">The two platforms</h2>
+    <div class="grid grid--2 mt-5">
+      <div class="panel panel--raised panel--hover pad accent-brand">
+        <h3>The app</h3>
+        <p class="mt-4">
+          PwEevee publishes the Spotify iOS app carrying two integrated tweaks
+          (<a href="/projects/spotipw">spoti.pw</a> and
+          <a href="/projects/eeveespotify">EeveeSpotify</a>). The IPA itself is unsigned by design:
+          it is intended to be signed with an Apple certificate you supply and installed through
+          one of the supported paths below. It can therefore run anywhere a re-signed Spotify
+          runs.
+        </p>
+        <p class="small dim mt-4 mb-0">
+          <span class="badge badge--untested"><span class="badge__dot"></span>Untested</span>
+          Device-model ranges, iPad layout behaviour and launch behaviour on physical devices have
+          not been recorded as tested in this project. The structural comparisons to the reference
+          build pass; only a real launch proves an app.
+        </p>
+      </div>
+      <div class="panel panel--hover pad">
+        <h3>The website</h3>
+        <p class="mt-4">
+          The website itself is a static page that works in current Chrome, Firefox, Edge and
+          Safari, on Windows, macOS, Linux, Android, iPhone and iPad desktop-class browsers, with
+          keyboard navigation, visible focus, screen-reader labels and reduced-motion handling
+          where the platform offers them.
+        </p>
+        <p class="mt-4">
+          Having a browser is not having support for the app: no operating system other than iOS or
+          iPadOS runs it. On Android or a desktop browser the site can show you the downloads; the
+          IPA can only be installed on Apple hardware.
+        </p>
+      </div>
+    </div>
+    <p class="android-notice mt-5">
+      <strong>PwEevee is currently available for iPhone and iPad only. Android is not supported at
+      this time.</strong>
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h-sub">Artifact integrity</h2>
+    <p class="lead mt-4 mb-5">
+      Checks the build validation suites and the in-browser validator perform. A pass proves
+      structure, not safety &mdash; and none of it is a claim that the app will launch.
+    </p>
+    <div class="tablewrap mt-5">
+      <table class="mtable">
+        <thead>
+          <tr><th scope="col">Check</th><th scope="col">Status</th><th scope="col">Evidence</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">IPA structure: ZIP layout, canonical entry names, throughput of the
+                file-handling the site performs</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>build-system validation suite (<code>validate-ipa.pl</code>), re-run on every build</td>
+          </tr>
+          <tr>
+            <th scope="row">Mach-O load commands: LC_LOAD_DYLIB names and order, no duplicates,
+                physical padding layout</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>byte-for-byte audited against a proven reference build
+                (<code>validate-macho.pl</code>); the comparison is what catches a regression</td>
+          </tr>
+          <tr>
+            <th scope="row">Build manifest records the integrated dependency set</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td><code>resolve-deps.pl</code> refuses to build if a declared dependency is missing,
+                or if two suppliers provide conflicting copies</td>
+          </tr>
+          <tr>
+            <th scope="row">SHA-256 shown for every published build matches the published
+                metadata</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>recomputed from the exact released bytes; shown on the
+                <a href="/downloads">downloads page</a> so you can verify the file you received</td>
+          </tr>
+          <tr>
+            <th scope="row">App launches on a physical iPhone or iPad</th>
+            <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+            <td>no device-test results are recorded in this project's repository</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h-sub">Signing and provisioning</h2>
+    <p class="lead mt-4 mb-5">
+      This is where the honest boundary between what the site's validator can tell you and what
+      only the signing tool knows lives. The validator reads the files you select in the browser
+      and reports what they actually contain; the mechanics of the signing itself are the signing
+      tool's. On iOS the supported tool is Sigma; on macOS it is a third-party Mac signer. What
+      the tool accepts is the border &mdash; this page describes what the site offers and states.
+    </p>
+    <div class="grid grid--2 mt-5">
+      <div class="panel panel--hover pad">
+        <h3>Certificate and profile files the validator reads</h3>
+        <ul class="checklist mt-5">
+          <li><code>.mobileprovision</code> &mdash; Apple's provisioning profile format. The
+              validator parses it and reports its certificate chain, device list, entitlements and
+              expiry.</li>
+          <li><code>.p12</code> / <code>.pfx</code> &mdash; PKCS&#8203;#12 identity containers. The
+              validator wraps and inspects the certificate entry in-browser, so a wrong-password or
+              typo'd file is caught before it reaches a signing tool.</li>
+          <li><code>.cer</code> / <code>.crt</code> &mdash; bare X.509 certificates. Parsed and
+              shown; a private key must come from a <code>.p12</code> alongside it.</li>
+        </ul>
+        <p class="small dim mt-5 mb-0">
+          The full check set &mdash; including what each check can and cannot conclude, and what
+          &ldquo;unable to verify&rdquo; means &mdash; is documented in
+          <a href="https://github.com/codeboy2012/spoti.pw-builds/blob/main/docs/installer/architecture.md" rel="noopener">
+            <code>docs/installer/architecture.md</code></a> in the repository.
+        </p>
+      </div>
+      <div class="panel panel--hover pad">
+        <h3>Certificate and profile combinations</h3>
+        <div class="mtable-wrap mt-5">
+          <table class="mtable mtable--tight">
+            <tbody>
+              <tr>
+                <th scope="row">Apple ID (free personal) development certificate</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  the signing utility's documented free-account limits apply (7-day validity,
+                  3 active app IDs, 3 devices); the validator never derives these from the
+                  certificate itself, so they stay with the source that publishes them
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Apple Developer Program development certificate</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  a paid, individually-issued 365-day identity; same reading process, and the free
+                  path's limits no longer apply. Not independently exercised by this project
+                  end-to-end.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Apple Developer Program distribution (Ad Hoc)</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  requires a registered device UDID in the profile. The validator can see the UDID
+                  list, but never which (if any) matches <em>your</em> device.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Apple Developer Program In-House (enterprise)</th>
+                <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+                <td>
+                  requires an In-House certificate trust configuration on the device; not
+                  documented as exercised by any test this project is aware of.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Expired or not-yet-valid profile</th>
+                <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+                <td>the validator reports it explicitly rather than letting the failure happen
+                    later at the signing tool</td>
+              </tr>
+              <tr>
+                <th scope="row">Profile issued for a different App ID</th>
+                <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+                <td>the profile's bundle-ID prefix must match the IPA's bundle ID exactly; the
+                    validator compares both and names the mismatch it finds</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--seam">
+  <div class="wrap">
+    <h2 class="h-sub">Installation paths</h2>
+    <p class="lead mt-4 mb-5">
+      What the site supports and how. The supported paths deliver a signed IPA to a device; the
+      SIGMA.md walkthrough shipped with each build describes the same steps the install guide
+      does.
+    </p>
+    <div class="mtable-wrap mt-5">
+      <table class="mtable">
+        <thead>
+          <tr><th scope="col">Path</th><th scope="col">Status</th><th scope="col">What it requires</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Sigma desktop signing with a free Apple ID personal development
+                profile</th>
+            <td><span class="badge badge--verified"><span class="badge__dot"></span>Verified</span></td>
+            <td>
+              your Apple ID; the signing tool and its documented account limits; publishing
+              details in the <a href="/install">install guide</a> and the SIGMA.md file shipped
+              with each build
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Sigma desktop signing with an Apple Developer Program certificate</th>
+            <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+            <td>
+              the same mechanism with a paid identity and its profile; the free path's account
+              limits no longer apply. Not exercised end-to-end on a device by this project.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Importing a file exported from this site into Sigma on the connected
+                device</th>
+            <td><span class="badge badge--untested"><span class="badge__dot"></span>Untested</span></td>
+            <td>
+              Sigma's own import mechanism, and Apple's provisioning rules; neither is provided
+              or verified by this site
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Wireless one-tap installation from this site
+                <code>(itms-services:)</code></th>
+            <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+            <td>
+              requires a CA-signed HTTPS manifest and a signed IPA. This site does not host a
+              build it cannot verify end-to-end, so the flow is deliberately not offered
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Site-hosted temporary signed-IPA upload</th>
+            <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+            <td>
+              there is no upload endpoint: this website is a static page and accepts nothing
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Third-party IPA re-signing services (&ldquo;send us the IPA&rdquo;)</th>
+            <td><span class="badge badge--unsupported"><span class="badge__dot"></span>Unsupported</span></td>
+            <td>
+              handing out the build to a service outside what this page documents removes the
+              accountability this project commits to; not offered
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h-sub">Known issues and explicit limits</h2>
+    <div class="grid grid--2 mt-5">
+      <div class="panel panel--hover pad">
+        <h3>Known and documented</h3>
+        <ul class="checklist mt-5">
+          <li>The web validator cannot tell whether <em>your</em> device is in a provisioning
+              profile's registered-device list &mdash; the list is in the profile, but the device's
+              own UDID is not reachable from a browser. The validator states this instead of
+              guessing.</li>
+          <li>A free Apple ID provisioning profile does not grant the App Groups entitlement some
+              components want; the defect is Apple's account limits, not the build. If a component
+              degrades when the entitlement is absent, the compatibility row says it degrades
+              &mdash; it does not claim a crash or invent the exact behaviour.</li>
+        </ul>
+      </div>
+      <div class="panel panel--hover pad">
+        <h3>Known to not work</h3>
+        <ul class="checklist mt-5">
+          <li>anything Android &mdash; the notice above is the whole story</li>
+          <li>installing straight from a browser &mdash; see the path table</li>
+          <li>signing with <em>this site's</em> tools: the current build validates and
+              cross-checks, but the signing itself is deliberately left to the signing tool, per
+              the <a href="/install">documented boundary</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="small dim mt-5">
+      Something behaving differently here from what this page says?
+      <a href="/support">Report it</a> &mdash; rows get corrected when evidence arrives, and the
+      changed row is named in the reply.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer inverted">
+  <div class="starfield" data-starfield aria-hidden="true"><canvas class="starfield__canvas"></canvas></div>
+  <div class="wrap">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="brand" href="/" aria-label="PwEevee — home">
+          <img class="brand__mark" src="/assets/icon-32.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+          <span class="brand__name">PwEevee</span>
+        </a>
+        <p class="footer__about">
+          An independent integration and distribution project: one tested Spotify IPA
+          carrying two upstream tweaks, published through GitHub releases, created by others.
+        </p>
+        <a class="icon-link" href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">
+          <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg><span>codeboy2012/spoti.pw-builds</span>
+        </a>
+      </div>
+
+      <div class="footer__col">
+        <h3>Projects</h3>
+        <ul>
+          <li><a href="/projects/pweevee">PwEevee</a></li>
+          <li><a href="/projects/spotipw">spoti.pw</a></li>
+          <li><a href="/projects/eeveespotify">EeveeSpotify</a></li>
+          <li><a href="/projects">All projects</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Releases</h3>
+        <ul>
+          <li><a href="/downloads">Downloads</a></li>
+          <li><a href="/install">Install guide — AltStore &amp; SideStore</a></li>
+          <li><a href="/releases">Release history</a></li>
+          <li><a href="https://github.com/codeboy2012/spoti.pw-builds/releases" rel="noopener">GitHub releases</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Repositories</h3>
+        <ul>
+          <li><a href="https://github.com/codeboy2012/spoti.pw-builds" rel="noopener">PwEevee</a></li>
+          <li><a href="https://github.com/skopevoj/spoti.pw" rel="noopener">spoti.pw</a></li>
+          <li><a href="https://github.com/SideloadLabs/EeveeSpotifyReincarnated" rel="noopener">EeveeSpotify</a></li>
+          <li><a href="https://github.com/samj-exe/taurus" rel="noopener">Taurus</a></li>
+          <li><a href="https://github.com/estrogencat/EeveeIPA" rel="noopener">EeveeIPA (prebuilt IPAs, not Eevee's source)</a></li>
+          <li><a href="https://github.com/SideloadLabs/SideloasLabs-AltSource" rel="noopener">SideloadLabs AltSource</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Docs &amp; support</h3>
+        <ul>
+          <li><a href="/docs">Documentation</a></li>
+          <li><a href="/compatibility">Compatibility</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/support">Support</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/security">Security</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>Project</h3>
+        <ul>
+          <li><a href="/credits">Credits</a></li>
+          <li><a href="/development">Development &amp; AI</a></li>
+          <li><a href="/legal">Legal</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__credits">
+      <p>
+        <strong>Attribution.</strong> PwEevee integrates components and work from the
+        <a href="https://github.com/skopevoj/spoti.pw" rel="noopener">spoti.pw</a> and
+        <a href="https://github.com/SideloadLabs/EeveeSpotifyReincarnated" rel="noopener">EeveeSpotify</a>
+        projects. It did not create them and does not own them. Please visit their official
+        repositories for upstream information and attribution. PwEevee is maintained here;
+        spoti.pw and EeveeSpotifyReincarnated are separate upstream projects with their own authors
+        and licenses. The IPA variants listed for EeveeSpotify are published by
+        <a href="https://github.com/SideloadLabs" rel="noopener">SideloadLabs</a> in their own
+        AltSource, which PwEevee reads but does not own or mirror.
+        <a href="/credits">Full credits</a>.
+      </p>
+      <p>
+        Not affiliated with, endorsed by or connected to Spotify AB, Apple Inc., spoti.pw,
+        EeveeSpotify or SideloadLabs. All trademarks belong to their respective owners. Hosted on
+        SkyTweak infrastructure; hosted material may be removed, replaced or discontinued at any
+        time.
+      </p>
+      <div class="footer__legal">
+        <span>Canonical: <code>pweevee.skytweak.dpdns.org</code></span>
+        <span>GitHub release data generated 25 October 2026 &middot; SideloadLabs AltSource read 26 September 2026 &middot; Repository stats generated 25 October 2026</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script src="/assets/pweevee.js" defer></script>
+<script src="/assets/installer.js" defer></script>
+</body>
+</html>
