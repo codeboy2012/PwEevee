@@ -379,6 +379,7 @@ my @routes = qw(
     development/index.html
     legal/index.html
     contact/index.html
+    install/index.html
     404.html
 );
 ok(-f "$OUT/$_", "route rendered: $_") for @routes;
@@ -462,8 +463,12 @@ for my $asset (qw(assets/pweevee.css assets/pweevee.js assets/favicon.svg
 # the sitemap must list the indexable routes and nothing else
 my $sitemap = -f "$OUT/sitemap.xml" ? slurp("$OUT/sitemap.xml") : '';
 ok($sitemap =~ m{<loc>https://pweevee\.skytweak\.dpdns\.org/</loc>}, 'sitemap lists the home page');
+# one sitemap entry per source page template, minus the 404 (excluded above)
 my $locs = () = $sitemap =~ /<loc>/g;
-ok($locs == 11, 'sitemap lists all 11 indexable routes', "found $locs");
+my @src_pages = glob("website-src/pages/*.html");
+ok($locs == @src_pages - 1,
+   'sitemap lists every indexable route (one per source page minus the 404)',
+   "found $locs, source pages " . scalar(@src_pages));
 ok($sitemap !~ m{/404}, 'sitemap excludes the 404 page');
 my $robots = -f "$OUT/robots.txt" ? slurp("$OUT/robots.txt") : '';
 ok($robots =~ m{Sitemap: https://pweevee\.skytweak\.dpdns\.org/sitemap\.xml},
@@ -1905,9 +1910,417 @@ ok(defined resolve('/data/altsource.json'), 'the AltSource data file is publishe
 ok(-f "$OUT/alt-redirect.html", 'the alternate-host redirect page is still present');
 ok(-f "$OUT/nginx.conf.example", 'the nginx example config is still present');
 
+ok(defined resolve('/data/altsource.json'), 'the AltSource data file is published');
+ok(-f "$OUT/alt-redirect.html", 'the alternate-host redirect page is still present');
+ok(-f "$OUT/nginx.conf.example", 'the nginx example config is still present');
+
 my $alt = -f "$OUT/alt-redirect.html" ? slurp("$OUT/alt-redirect.html") : '';
 ok($alt =~ m{https://pweevee\.skytweak\.dpdns\.org/}, 'the redirect stub points at the canonical URL');
 ok($alt =~ /http-equiv="refresh"/i, 'the redirect stub still works without JavaScript');
+
+# ------------------------------------------- 7b. live repository statistics
+
+section('7b. live repository statistics (stats.json + homepage band)');
+
+ok(defined resolve('/install'), 'the install guide route resolves');
+
+{
+    my $stats_ok = -f 'website/data/stats.json';
+    ok($stats_ok, 'website/data/stats.json exists (run scripts/update-stats.sh)');
+    if ($stats_ok) {
+        my $fmt_count = sub {
+            my $n = 0 + ($_[0] // 0);
+            my $s = sprintf('%d', $n);
+            1 while $s =~ s/^(\d+)(\d{3})\z/$1,$2/;
+            return $s;
+        };
+        my $stats = eval { read_json('website/data/stats.json') };
+        ok(ref $stats eq 'HASH', 'stats.json parses as JSON');
+        if (ref $stats eq 'HASH') {
+            ok(($stats->{schema} // 0) >= 1, 'stats.json declares its schema version');
+            ok(($stats->{generated_at} // '') =~ /^\d{4}-\d{2}-\d{2}T/,
+               'stats.json records the generation time (UTC timestamp)');
+            ok(ref $stats->{metric_notes} eq 'HASH' && ref $stats->{repos} eq 'ARRAY',
+               'stats.json carries the metric notes and the repos array');
+            my $wnotes = $stats->{metric_notes}{watchers} // '';
+            ok($wnotes =~ /subscribers_count/ && $wnotes =~ /NOT watchers_count/,
+               'the watchers metric is documented as subscribers_count, explicitly not watchers_count');
+            ok(($stats->{metric_notes}{downloads} // '') =~ /download_count/,
+               'the downloads metric is documented as GitHub release-asset download_count',
+               $stats->{metric_notes}{downloads});
+            ok(($stats->{downloads}{aggregate_label} // '') =~ /not unique users or installs/,
+               'the site-facing aggregate disclaims unique users or installs',
+               $stats->{downloads}{aggregate_label});
+
+            my %by_slug = map { ($_->{slug} // '') => $_ } @{ $stats->{repos} };
+            my $home_entry = $by_slug{pweevee};
+            for my $slug (sort keys %by_slug) {
+                my $r = $by_slug{$slug};
+                ok($r->{stars}  !~ /[^\d]/ && ($r->{stars}  // 0) >= 0, "$slug stars is a non-negative number");
+                ok($r->{forks}   !~ /[^\d]/ && ($r->{forks}  // 0) >= 0, "$slug forks is a non-negative number");
+                ok($r->{subscribers} !~ /[^\d]/ && ($r->{subscribers} // 0) >= 0,
+                   "$slug watchers via subscribers_count is a non-negative number");
+                if ($r->{available}) {
+                    ok($r->{repo_url} =~ /^https:\/\/github\.com\//, "$slug repo_url is an https GitHub URL");
+                    ok($r->{stale} ? length($r->{error} // '') : 1,
+                       "$slug marks its staleness with an error message when stale");
+                }
+                else {
+                    ok(length($r->{error} // '') > 0,
+                       "$slug states why its statistics are unavailable instead of showing zeroes");
+                }
+            }
+
+            # The download aggregate must match the release data it derives from.
+            my $dl = $stats->{downloads};
+            ok(ref $dl eq 'HASH', 'stats.json carries the download aggregate');
+            if (ref $dl eq 'HASH') {
+                ok(($dl->{aggregate_label} // '') =~ /not unique users or installs/,
+                   'the aggregate is explicitly not presented as unique users');
+                my $done = 0;
+                my $rel  = eval { read_json('website/data/releases.json') };
+                if (ref $rel eq 'HASH') {
+                    my $sum = 0;
+                    for my $p (@{ $rel->{projects} || [] }) {
+                        my %counted;
+                        if (ref $p->{latest}{assets} eq 'ARRAY') {
+                            $counted{ $p->{latest}{version} } = 1;
+                            $sum += ($_->{download_count} // 0) for @{ $p->{latest}{assets} };
+                        }
+                        for my $h (@{ $p->{history} || [] }) {
+                            my $tag = $h->{tag_name} // $h->{version} // '';
+                            next if $counted{$tag};
+                            $sum += ($_->{download_count} // 0) for @{ $h->{assets} || [] };
+                        }
+                    }
+                    ok(0 + ($dl->{total} // -1) == $sum,
+                       'the published download total equals a fresh independent recount of the release data',
+                       "stats.json says " . (0 + ($dl->{total} // 0)) . ", recount says $sum");
+                    $done = 1;
+                }
+                ok($done, 'releases.json was readable for the independent download recount');
+            }
+
+            # ---- the rendered band on the homepage ----
+            if ($home_entry && $home_entry->{available} && !$home_entry->{stale}) {
+                my @expected = map { $fmt_count->($_) }
+                    ($home_entry->{stars}, $home_entry->{forks}, $home_entry->{subscribers},
+                     $home_entry->{open_issues});
+                push @expected, $fmt_count->($stats->{downloads}{total})
+                    if ($stats->{downloads}{total} // 0) > 0;
+                my @got = $home =~ /<dd class="stats-band__num">([\d,]+)<\/dd>/g;
+                ok(scalar(@got), 'the homepage renders the statistics band with numbers');
+                ok($got[0] eq $expected[0], 'the band renders stars exactly as stored in stats.json',
+                   "$got[0] vs $expected[0]") if @expected && @got;
+                ok(join('|', @got) eq join('|', @expected),
+                   'every rendered number matches its stats.json value in order',
+                   'rendered: ' . join(', ', @got) . ' / expected: ' . join(', ', @expected));
+                ok($home !~ /stats-band__missing/,
+                   'the homepage band does not claim statistics are missing (they exist and are fresh)');
+            }
+            else {
+                ok($home =~ /stats-band__missing/,
+                   'the homepage renders the explanatory missing state instead of fabricated zeroes');
+            }
+            if (length($stats->{generated_at} // '')) {
+                ok($home =~ /<time datetime="\Q$stats->{generated_at}\E">/,
+                   'the refresh timestamp rendered on the homepage is the stats.json generation time');
+            }
+            ok($home =~ /browser never calls GitHub/,
+               'the band states explicitly that the page loads a shared snapshot');
+            ok($home =~ /updated hourly/,
+               'the band labels its freshness as hourly');
+        }
+    }
+
+    # the rendered band stays a definition list: screen readers announce pairs
+    ok($home =~ /<dl class="stats-band">/, 'the statistics band is a real dl (definition list)');
+    ok($css =~ /\.stats-band\s*\{/, 'the statistics band has styles');
+    ok($css =~ /\.stats-band__num[^{}]*\{[^}]*font-variant-numeric:\s*tabular-nums/s,
+       'statistics numbers use tabular figures (no jitter between refreshes)');
+    ok($css =~ /\@media[^{]*max-width[^{]*\{[\s\S]*?\.stats-band[^{}]*\{[^}]*grid-template-columns:\s*(?:minmax\(0,\s*1fr\)|1fr)/s,
+       'the statistics band collapses to a single column on narrow screens');
+}
+
+# ------------------------------------------- 7c. update-stats.pl behaviour
+
+# Deterministic, mocked-HTTP tests. The GitHub REST API origin is overridden
+# (STATS_API_BASE) to a local 127.0.0.1 mock server, so the REAL data flow ---
+# parsing, metric selection, ETag bookkeeping, stale fallback, aggregation ---
+# runs through the genuine PwHttp client against canned responses, with no
+# external network access at all.
+
+section('7c. update-stats.pl fixture behaviour (deterministic, mocked HTTP)');
+
+{
+    my $FIX = 'PwEvevee/build-system/_work/stats-fixtures';
+
+    # A trimmed test tree — rebuilt from nothing every run, never reused, so a
+    # stale fixture can never pass by accident.
+    require File::Path;
+    File::Path::remove_tree($FIX) if -d $FIX;
+    File::Path::make_path($FIX);
+
+    my $writes = sub {
+        my ($path, $bytes) = @_;
+        require File::Basename;
+        File::Path::make_path(File::Basename::dirname($path));
+        open my $fh, '>', $path or die "fixture: cannot write $path: $!\n";
+        binmode $fh; print {$fh} $bytes; close $fh;
+    };
+
+    $writes->("$FIX/projects.json", <<'END_PROJECTS');
+{"projects":[
+  {"slug":"demo","name":"Demo project","github":{"owner":"mock-org","repo":"demo-repo"}},
+  {"slug":"bare","name":"Bare project"}
+]}
+END_PROJECTS
+
+    # latest assets sum 150; history repeats the latest (as update-releases.pl
+    # publishes it) plus one older release (25) — the aggregate must count 175,
+    # with 2 distinct releases, not 325 over 3.
+    $writes->("$FIX/releases.json", <<'END_RELEASES');
+{"generated_at":"2026-10-25T00:00:00Z","projects":[
+  {"slug":"demo","latest":{"version":"v2.0.0","assets":[
+      {"name":"a.ipa","download_count":100},{"name":"b.ipa","download_count":50}]},
+   "history":[
+      {"tag_name":"v2.0.0","assets":[
+          {"name":"a.ipa","download_count":100},{"name":"b.ipa","download_count":50}]},
+      {"tag_name":"v1.0.0","assets":[{"name":"c.ipa","download_count":25}]}]},
+  {"slug":"bare"}
+]}
+END_RELEASES
+
+    # The mock server serves exactly these responses, one per HTTP request,
+    # in this order: it is a scripted conversation, not a standing web app.
+    my $repo_body =
+        '{"stargazers_count":120,"watchers_count":120,"forks_count":7,'
+      . '"subscribers_count":17,"open_issues_count":3,'
+      . '"pushed_at":"2026-10-25T00:00:00Z","topics":[]}';
+    my $bad_body = '{"forks_count":7,"open_issues_count":3}';
+    my $convo = [
+        # 1 — case A: a fresh 200 with a real ETag
+        { status => 200, etag => 'W/"freshabc"', body => $repo_body },
+        # 2 — case B: conditional revalidation answered with 304 Not Modified
+        { status => 304, etag => 'W/"ennn"',     body => '' },
+        # 3 — case C, attempt 1: GitHub is up but erroring. PwHttp configures
+        # curl retry = 2, which retries transient failures (5xx included), so
+        # this response is ended and immediately REPLACED by the retry response;
+        # a scripted conversation of length 5 would misalign the remaining
+        # cases by one response and leave the server empty before case E.
+        { status => 500, body => '' },
+        # 3b — case C, attempt 2 (curl's own retry): the retry attempt sees a
+        # non-transient failure, so case C settles on this response.
+        { status => 404, body => '' },
+        # 4 — case D: repository gone
+        { status => 404, body => '' },
+        # 5 — case E: a 200 whose body is not a valid repository object
+        { status => 200, etag => 'W/"weird"',    body => $bad_body },
+    ];
+    my $convo_json = JSON::PP->new->canonical->encode($convo);
+    my $server_src = <<'SERVER_SRC';
+#!/usr/bin/env perl
+# One scripted mock GitHub API server. Serves the scripted responses in
+# script.json in order, one per connection, then exits. Used only by
+# website-tests.pl 7c; binds 127.0.0.1 only.
+use strict; use warnings;
+use IO::Socket::INET;
+my $dir = $ARGV[0] or die "usage: server.pl <dir>\n";
+my $raw;
+{
+    local $/;
+    open my $fh, '<', "$dir/script.json" or die "script.json: $!\n";
+    $raw = <$fh>;
+}
+require JSON::PP;
+my @convo = @{ JSON::PP::decode_json($raw) };
+my $srv = IO::Socket::INET->new(
+    LocalAddr => '127.0.0.1', LocalPort => 0, Proto => 'tcp',
+    Listen => 8, ReuseAddr => 1,
+) or die "bind: $!\n";
+open my $pf, '>', "$dir/port.txt" or die "port.txt: $!\n";
+print {$pf} $srv->sockport; close $pf;
+alarm 120;                       # never linger if the suite dies mid-run
+my $n = 0;
+while ($n < @convo) {
+    my $c = $srv->accept or last;
+    my $req = '';
+    while (defined(my $line = <$c>)) { $req .= $line; last if $line =~ /^\r?$/; }
+    my $hit  = $convo[$n];
+    my $body = $hit->{body} // '';
+    print {$c} "HTTP/1.0 $hit->{status} Mock\r\n";
+    print {$c} "ETag: $hit->{etag}\r\n" if length($hit->{etag} // '');
+    print {$c} "Content-Type: application/json\r\n"
+             . 'Content-Length: ' . length($body) . "\r\n\r\n";
+    print {$c} $body unless ($hit->{status} // 0) == 304;
+    close $c;
+    $n++;
+}
+close $srv;
+exit 0;
+SERVER_SRC
+    $writes->("$FIX/script.json", $convo_json . "\n");
+    $writes->("$FIX/server.pl",   $server_src . "\n");
+
+    # start the mock server (loopback only) and wait for its port
+    my $server_pid = fork();
+    defined $server_pid or die "cannot fork the mock server: $!\n";
+    if (!$server_pid) {
+        exec 'perl', "$FIX/server.pl", $FIX or die "exec mock server: $!\n";
+    }
+    my $port = '';
+    for (1 .. 200) {
+        if (open my $pf, '<', "$FIX/port.txt") {
+            $port = <$pf> // ''; close $pf; chomp $port;
+            last if $port =~ /^\d+$/;
+        }
+        select undef, undef, undef, 0.05;
+    }
+    die "the update-stats mock server did not come up\n" unless $port =~ /^\d+$/;
+    my $BASE = "http://127.0.0.1:$port";
+    my $repo_url = "$BASE/repos/mock-org/demo-repo";
+
+    # runs the real update-stats.pl against the mock server. The command must be
+    # ONE string: a qx{...} . qq{...} concatenation runs only the first piece and
+    # appends the second to the captured output, so every argument is lost.
+    my $run = sub {
+        my ($case, $out) = @_;
+        local $ENV{STATS_API_BASE} = $BASE;
+        my $stdout = qx{perl PwEvevee/build-system/release/update-stats.pl --out "$out" --projects "$FIX/projects.json" --releases "$FIX/releases.json" --quiet 2>&1};
+        my $exit = $? >> 8;
+        return ($exit, $stdout, $out);
+    };
+
+    # ---- A: fresh fetch, correct metric selection -------------------------
+    {
+        my ($exit, $stdout, $out) = $run->('fresh', "$FIX/fresh/stats.json");
+        ok($exit == 0, 'update-stats exits successfully on a clean fetch');
+        my $d = eval { read_json($out) };
+        ok(ref $d eq 'HASH', 'a clean fetch produces valid stats.json');
+        if (ref $d eq 'HASH') {
+            my %p = map { ($_->{slug} // '') => $_ } @{ $d->{repos} };
+            ok(($p{demo}{stars} // -1) == 120, 'stars come from stargazers_count');
+            ok(($p{demo}{forks} // -1) == 7,  'forks come from forks_count');
+            ok(($p{demo}{subscribers} // -1) == 17,
+               'watchers come from subscribers_count — the mocked watchers_count (120) is ignored');
+            ok(($p{demo}{open_issues} // -1) == 3, 'open issues are stored');
+            ok(($p{demo}{etag} // '') =~ /freshabc/,
+               'an ETag that the server actually sent is stored for conditional requests');
+            ok($p{demo}{available} && !$p{demo}{stale}, 'a clean fetch is available and not stale');
+            ok(ref $p{bare} eq 'HASH' && !$p{bare}{available} && length($p{bare}{error} // ''),
+               'a project with no GitHub coordinate renders unavailable with a reason');
+            my $dl = $d->{downloads};
+            ok(ref $dl eq 'HASH' && ($dl->{per_project}{demo}{release_downloads} // -1) == 175,
+               'the aggregate sums the latest release and the older history release exactly once',
+               "got " . ($dl->{per_project}{demo}{release_downloads} // 'missing'));
+            ok((($dl->{per_project}{demo}{releases_summed} // -1) == 2),
+               'the repeated latest release in history is recognised and not double-counted');
+            ok(($dl->{total} // -1) == 175, 'the all-projects download total is right',
+               "got " . (0 + ($dl->{total} // 0)));
+        }
+    }
+
+    # ---- B: If-None-Match/304 keeps stored numbers verbatim ---------------
+    {
+        my $prev = {
+            schema => 1, generated_at => '2026-10-25T00:00:00Z',
+            repos => [ {
+                slug => 'demo', name => 'Demo project', repo => 'mock-org/demo-repo',
+                repo_url => 'https://github.com/mock-org/demo-repo',
+                available => JSON::PP::true(), stale => JSON::PP::false(),
+                stars => 120, forks => 7, subscribers => 17, open_issues => 3,
+                pushed_at => '2026-10-25T00:00:00Z', topics => [],
+                etag => 'W/"ennn"', fetched_at => '2026-10-24T00:00:00Z',
+            } ],
+        };
+        my $writer = sub {
+            require File::Basename;
+            File::Path::make_path(File::Basename::dirname($_[0]));
+            open my $fh, '>', $_[0] or die "$!:\n"; binmode $fh;
+            print {$fh} JSON::PP->new->utf8->canonical->encode($_[1]); close $fh;
+        };
+        $writer->("$FIX/etag/stats.json", $prev);
+        my ($exit, $stdout, $out) = $run->('etag', "$FIX/etag/stats.json");
+        ok($exit == 0, 'a 304 run exits successfully');
+        my $d = eval { read_json($out) };
+        ok(ref $d eq 'HASH', 'a 304 run still produces valid stats.json');
+        if (ref $d eq 'HASH') {
+            my ($r) = grep { ($_->{slug} // '') eq 'demo' } @{ $d->{repos} };
+            ok(defined $r, 'the stored repo survives a 304');
+            ok(($r->{stars} // 0) == 120 && ($r->{subscribers} // 0) == 17,
+               'a 304 does not touch the stored numbers');
+            ok(($r->{fetched_at} // '') eq '2026-10-24T00:00:00Z',
+               'fetched_at still describes the last verification with actual numbers');
+            ok($r->{available} && !$r->{stale}, 'a 304 is a success path, not a stale path');
+        }
+    }
+
+    # ---- C: error with previous data -> stale fallback ---------------------
+    {
+        my $prev = {
+            schema => 1, generated_at => '2026-10-25T00:00:00Z',
+            repos => [ {
+                slug => 'demo', name => 'Demo project', repo => 'mock-org/demo-repo',
+                repo_url => 'https://github.com/mock-org/demo-repo',
+                available => JSON::PP::true(), stale => JSON::PP::false(),
+                stars => 120, forks => 7, subscribers => 17, open_issues => 3,
+                pushed_at => 'x', topics => [], etag => '',
+                fetched_at => '2026-10-24T00:00:00Z',
+            } ],
+        };
+        File::Path::make_path("$FIX/stale");
+        open my $fh, '>', "$FIX/stale/stats.json" or die "stale fixture: $!\n";
+        binmode $fh; print {$fh} JSON::PP->new->utf8->canonical->encode($prev); close $fh;
+        my ($exit, $stdout, $out) = $run->('stale', "$FIX/stale/stats.json");
+        ok($exit == 0, 'an upstream failure still exits cleanly (the site must keep rendering)');
+        my $d = eval { read_json($out) };
+        ok(ref $d eq 'HASH', 'the fallback run produces valid stats.json');
+        if (ref $d eq 'HASH') {
+            my ($r) = grep { ($_->{slug} // '') eq 'demo' } @{ $d->{repos} };
+            ok($r->{stale}, 'GitHub-down marks the previous data stale');
+            ok(($r->{stars} // 0) == 120 && ($r->{subscribers} // 0) == 17,
+               'the previous known-good numbers survive an outage byte for byte');
+            ok(length($r->{error} // '') > 0, 'the stale entry records what went wrong');
+            ok(length($r->{stale_since} // '') > 0, 'the stale entry records when staleness started');
+        }
+    }
+
+    # ---- D: failure with no previous data at all ----------------------------
+    {
+        my ($exit, $stdout, $out) = $run->('noprev', "$FIX/noprev/stats.json");
+        ok($exit == 2, 'no data anywhere is a hard failure (exit 2), not a silent success');
+        my $d = eval { read_json($out) };
+        ok(ref $d eq 'HASH', 'even a failed run writes a declarative stats.json');
+        if (ref $d eq 'HASH') {
+            my ($r) = grep { ($_->{slug} // '') eq 'demo' } @{ $d->{repos} };
+            ok($r && !$r->{available} && ($r->{error} // '') =~ /404/,
+               'a 404 is surfaced as the unavailable reason');
+        }
+        ok($stdout =~ /404/ || $stdout eq '', 'the failure is reported in the run log');
+    }
+
+    # ---- E: a 200 whose body is not a valid repository ----------------------
+    {
+        my ($exit, $stdout, $out) = $run->('badshape', "$FIX/badshape/stats.json");
+        ok($exit == 2, 'a non-repository 200 response is a hard failure, not a fake success');
+        my $d = eval { read_json($out) };
+        ok(ref $d eq 'HASH', 'the bad-shape run still writes its declarative output');
+        if (ref $d eq 'HASH') {
+            my ($r) = grep { ($_->{slug} // '') eq 'demo' } @{ $d->{repos} };
+            ok($r && !$r->{available} && ($r->{error} // '') =~ /missing required field/,
+               'the missing stargazers_count is named as the validation failure',
+               ($r->{error} // ''));
+        }
+    }
+
+    # replays done: retire the mock server (it also self-terminates after its
+    # scripted conversation, so a suite failure cannot leave it running)
+    kill 'KILL', $server_pid;
+    waitpid $server_pid, 0;
+
+    # tidy up: only what this run created
+    File::Path::remove_tree($FIX);
+}
 
 # ---------------------------------------------------------------- summary
 
