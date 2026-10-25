@@ -1,0 +1,5 @@
+# Core.autocrlf=true stripped this XML plist's CRs when it was first committed
+# (643 bytes -> 615), making the freshly-checked-out tree fail
+# build-system's component-manifest integrity pins on POSIX clones.
+# Keep the pinned bytes verbatim in the object store and on every checkout.
+"Evevee Spotify/component/frameworks/Orion.framework/Info.plist" -text
