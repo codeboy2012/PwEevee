@@ -58,27 +58,43 @@ sub pick_client {
 
 # ---------------------------------------------------------------- requests
 
-# http_get($url, %opt) -> ($status, $body)
+# http_get($url, %opt) -> ($status, $body) or, with with_headers => 1,
+#                                ($status, $body, \%headers)
 #
 # $status is undef when the client could not run at all. Options:
-#   headers => [ 'Accept: application/json', ... ]
-#   token   => bearer token (curl only)
-#   timeout => seconds (default 45)
+#   headers      => [ 'Accept: application/json', ... ]
+#   token        => bearer token (curl only)
+#   timeout      => seconds (default 45)
+#   with_headers => capture the response headers (curl dumps them to a temp
+#                   file; wget already prints them to stderr and they are
+#                   parsed from there). Callers that want response headers —
+#                   for example conditional-request ETags — opt in here so the
+#                   two-value contract of every existing caller stays
+#                   untouched.
 sub http_get {
     my ($url, %opt) = @_;
     die "http_init must be called before http_get\n" unless $CLIENT;
     my $timeout = $opt{timeout} || 45;
     my @headers = @{ $opt{headers} || [] };
 
+    my $want_headers = $opt{with_headers};
+
     if ($CLIENT eq 'curl') {
+        my $hdr_file = "$TMP/response-headers.txt";
         my $cfg = qq{url = "$url"\n};
         $cfg .= qq{header = "$_"\n} for @headers;
         $cfg .= qq{user-agent = "$UA"\n}
               . "silent\nshow-error\nlocation\n"
               . "max-time = $timeout\nretry = 2\n"
               . qq{write-out = "\\n%{http_code}"\n};
+        $cfg .= qq{dump-header = "$hdr_file"\n} if $want_headers;
         $cfg .= qq{header = "Authorization: Bearer $opt{token}"\n} if $opt{token};
         my $out = run_curl($cfg);
+        if ($want_headers) {
+            return (undef, '', {}) unless defined $out;
+            my ($code, $body) = split_status($out);
+            return ($code, $body, parse_headers($hdr_file));
+        }
         return (undef, '') unless defined $out;
         return split_status($out);
     }
@@ -88,10 +104,36 @@ sub http_get {
     push @cmd, "--header=$_" for @headers;
     push @cmd, $url;
     my $r = run_capture(\@cmd, 'wget.err');
-    return (undef, '') unless defined $r;
+    return (undef, '', {}) unless defined $r;
     my @codes = $r->{stderr} =~ m{HTTP/[\d.]+\s+(\d{3})}g;
     my $code  = @codes ? $codes[-1] + 0 : (length $r->{stdout} ? 200 : undef);
+    if ($want_headers) {
+        # wget's -S writes the response headers to stderr; parse from there.
+        my %h;
+        for my $line (split /\r?\n/, $r->{stderr}) {
+            next unless $line =~ /^\s*([A-Za-z0-9-]+):\s*(.*?)\s*\r?$/;
+            $h{ lc $1 } = $2;
+        }
+        return ($code, $r->{stdout}, \%h);
+    }
     return ($code, $r->{stdout});
+}
+
+# Parse a curl dump-header file into a lowercase-keyed hash. Best-effort: an
+# unreadable or missing file yields an empty hash, never an error.
+sub parse_headers {
+    my ($file) = @_;
+    my %h;
+    local $/;
+    if (open my $fh, '<', $file) {
+        for my $line (split /\r?\n/, <$fh>) {
+            next unless $line =~ /^([A-Za-z0-9-]+):\s*(.*?)\s*\r?$/;
+            $h{ lc $1 } = $2;
+        }
+        close $fh;
+    }
+    unlink $file if -f $file;
+    return \%h;
 }
 
 # http_head($url) -> $status or undef

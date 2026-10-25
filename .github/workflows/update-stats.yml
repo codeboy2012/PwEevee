@@ -1,0 +1,100 @@
+# Refresh the website's live repository statistics every hour.
+#
+# Updates website/data/stats.json from the public GitHub REST API by running
+# update-stats.pl, which:
+#   - uses one conditional GET per repository (If-None-Match with the stored
+#     ETag), so an unchanged repository costs a 304, not a fetch;
+#   - distinguishes stars (stargazers_count), forks (forks_count), real
+#     watchers (subscribers_count — GitHub's watchers_count is documented to
+#     equal stars) and open issues & PRs (open_issues_count);
+#   - aggregates release-download counts from the tracked release history
+#     (website/data/releases.json) without any extra API calls;
+#   - keeps the previous known-good numbers and marks them stale when GitHub
+#     is unreachable or rate-limited, instead of writing zeroes.
+#
+# Commit policy: this workflow does NOT commit hourly just to update counters.
+# The comparison strips the volatile bookkeeping fields (generated_at and the
+# per-repository fetched_at / stale_since timestamps) before comparing with the
+# last committed snapshot, so a commit happens only when an observable
+# statistic actually changed. A site rebuild re-renders the pages from the
+# committed data file; the numbers on the site are as fresh as the last
+# successful hourly run, and the rendered band states that explicitly rather
+# than claiming real-time data.
+#
+# Liveness: scheduled workflows can be delayed by GitHub; cron `0 * * * *` runs
+# at the top of each hour in UTC where scheduling permits. workflow_dispatch
+# exists for manual troubleshooting and immediate refreshes. Use the repo
+# status page (Actions → Hourly repository statistics) to see the last run and
+# its outcome; failures are visible there and never leak a token, because the
+# token only reaches curl through a 0600 config file inside PwHttp.
+
+name: Hourly repository statistics
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # top of every hour, UTC; GitHub scheduling may delay
+  workflow_dispatch: {}   # manual refresh / troubleshooting
+
+# Least privilege: the only write this job can do is a content commit. No
+# issues, no deployments, no packages.
+permissions:
+  contents: write
+
+concurrency:
+  group: hourly-stats-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-stats:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the site sources
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Refresh repository statistics and download aggregates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Plain (non-strict) mode: when GitHub is unreachable the script
+          # keeps the previous known-good numbers, marks them stale and still
+          # exits cleanly — the site keeps rendering an honest snapshot with
+          # its stale/error state instead of destroying data.
+          perl PwEvevee/build-system/release/update-stats.pl
+
+      - name: Commit the snapshot only when observable statistics changed
+        run: |
+          # The same numbers in, the same file out: two runs that fetched only
+          # 304s differ only in bookkeeping timestamps. Comparing with those
+          # timestamps stripped is what makes "commit only if changed" honest.
+          norm() {
+            perl -MJSON::PP -0777 -e '
+              my $d = decode_json(<STDIN>);
+              delete $d->{generated_at};
+              for my $r (@{ $d->{repos} || [] }) {
+                delete $r->{fetched_at};
+                delete $r->{stale_since};
+              }
+              print JSON::PP->new->canonical->encode($d);
+            '
+          }
+          if git cat-file -e HEAD:website/data/stats.json 2>/dev/null; then
+            git show HEAD:website/data/stats.json | norm > /tmp/stats-old.json
+          else
+            : > /tmp/stats-old.json
+          fi
+          norm < website/data/stats.json > /tmp/stats-new.json
+
+          if [ -s /tmp/stats-old.json ] && cmp -s /tmp/stats-old.json /tmp/stats-new.json; then
+            echo "Observable statistics unchanged since the last snapshot — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name  "pweevee-stats-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add website/data/stats.json
+          git commit -m "data(stats): hourly repository statistics refresh"
+          git push origin main

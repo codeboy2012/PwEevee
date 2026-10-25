@@ -292,14 +292,18 @@ sub normalise_release {
         }
         my ($sha256) = ($a->{digest} // '') =~ /^sha256:([0-9a-f]{64})$/i;
         push @assets, {
-            name         => $a->{name},
-            size         => ($a->{size} // 0) + 0,
-            size_label   => fmt_bytes($a->{size}),
-            content_type => $a->{content_type} // 'application/octet-stream',
-            download_url => $url,
-            kind         => asset_kind($a->{name}),
-            sha256       => $sha256,
-            updated_at   => $a->{updated_at},
+            name           => $a->{name},
+            size           => ($a->{size} // 0) + 0,
+            size_label     => fmt_bytes($a->{size}),
+            content_type   => $a->{content_type} // 'application/octet-stream',
+            download_url   => $url,
+            kind           => asset_kind($a->{name}),
+            sha256         => $sha256,
+            # GitHub counts one download per asset fetch. Kept so the website's
+            # download aggregates (update-stats.pl) are computed from the same
+            # source of truth rather than fetched a second time.
+            download_count => ($a->{download_count} // 0) + 0,
+            updated_at     => $a->{updated_at},
         };
     }
 
