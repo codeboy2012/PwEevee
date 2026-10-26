@@ -611,8 +611,11 @@ sub c_data_freshness {
         if $AS->{generated_at};
     push @parts, 'Repository stats generated ' . h(fmt_date($STATS->{generated_at}))
         if $STATS->{generated_at};
-    return 'Release data has not been generated yet' unless @parts;
-    return join(' &middot; ', @parts);
+    my $body = 'Release data has not been generated yet';
+    $body = join(' &middot; ', @parts) if @parts;
+    # data-fresh-note is the element the browser's expiry check annotates if it
+    # learns something new after the page opened; otherwise it stays as written.
+    return '<span data-fresh-note>' . $body . '</span>';
 }
 
 # ---- the featured PwEevee release ------------------------------------------
@@ -650,23 +653,46 @@ sub c_build_facts {
     my @facts;
 
     my $own = latest_of($HOME_SLUG);
-    push @facts, [ 'Latest release', ($own->{version_label} // $own->{version}) ] if $own;
-    push @facts, [ 'Published', $own->{published_label} ] if $own;
+    push @facts, [ 'Latest release', ($own->{version_label} // $own->{version}), $HOME_SLUG, 'version' ] if $own;
+    push @facts, [ 'Published', $own->{published_label}, $HOME_SLUG, 'date' ] if $own;
 
     for my $slug (qw(spotipw eeveespotify)) {
         my $r = latest_of($slug) or next;
         my $p = $PROJECT{$slug} or next;
-        push @facts, [ $p->{name}, ($r->{version_label} // $r->{version}) ];
+        push @facts, [ $p->{name}, ($r->{version_label} // $r->{version}), $slug, 'version' ];
     }
 
     return '' unless @facts;
     my $html = '<dl class="hero__stats reveal">';
     for my $f (@facts) {
         next unless defined $f->[1] && length $f->[1];
-        $html .= '<div class="hero__stat"><dt>' . h($f->[0]) . '</dt>'
-               . '<dd><span class="mono">' . h($f->[1]) . '</span></dd></div>';
+        my ($label, $value, $slug, $kind) = @$f;
+        my $hook = fresh_hook_attr($slug, $kind);
+        $html .= '<div class="hero__stat"><dt>' . h($label) . '</dt>'
+               . "<dd><span class=\"mono\"$hook>" . h($value) . '</span></dd></div>';
     }
-    return $html . '</dl>';
+    return $html . '</dl>' . fresh_note();
+}
+
+# Client hooks + one polite sentence about what re-checks what. The hooks carry
+# the repo coordinates and the epoch of the value that was rendered, so the
+# browser's once-per-visit check can compare without parsing anything it was
+# not handed here. See fresh_session() in pweevee.js.
+sub fresh_hook_attr {
+    my ($slug, $kind) = @_;
+    my $rel = latest_of($slug) or return '';
+    my $g = $GHP{$slug};
+    return '' unless $g && $g->{repo};
+    return ' data-fresh-repo="' . h($g->{repo}) . '"'
+         . ' data-fresh-kind="' . h($kind // 'version') . '"'
+         . ' data-fresh-epoch="' . h($rel->{published_epoch} // 0) . '"';
+}
+
+sub fresh_note {
+    return '<p class="source-note reveal">Release facts above were verified against the GitHub '
+         . 'API while this page was rendered. When you open the page, your browser re-checks them '
+         . 'quietly, once per visit, and updates any release shown here in place if the upstream '
+         . 'has moved on. See <a href="/privacy">what is (not) sent</a>.</p>';
 }
 
 # ---- repository statistics band -------------------------------------------
@@ -729,7 +755,10 @@ sub c_project_stats {
         $html .= '<p class="stats-band__fresh">'
                . 'Stats refreshed <time datetime="' . h($gen) . '">'
                . h(fmt_date($gen)) . '</time> (updated every 15 min). '
-               . 'This page loads a shared snapshot; your browser never calls GitHub.</p>';
+               . 'This page loads a shared snapshot refreshed on a schedule. When you open the '
+               . 'page, your browser quietly re-verifies release facts against the GitHub API once '
+               . 'per visit and updates any release shown here in place; nothing is uploaded.'
+               . '</p>';
     }
     return $html;
 }
@@ -772,11 +801,17 @@ sub project_card {
           . h($p->{role_label} // 'Maintained here') . '</span>'
         : '<span class="badge badge--upstream">' . h($p->{role_label} // 'Upstream project') . '</span>';
 
+    my $repo = ($g && $g->{repo}) ? $g->{repo} : '';
+    my $fresh = ($rel && $repo)
+        ? ' data-fresh-repo="' . h($repo) . '" data-fresh-epoch="'
+          . h($rel->{published_epoch} // 0) . '"' : '';
     my $version = $rel
-        ? '<span class="meta__v mono">' . h($rel->{version_label} // $rel->{version}) . '</span>'
+        ? '<span class="meta__v mono"' . $fresh . ' data-fresh-kind="version">'
+          . h($rel->{version_label} // $rel->{version}) . '</span>'
         : '<span class="meta__v muted">unavailable</span>';
     my $date = $rel
-        ? '<span class="meta__v">' . h($rel->{published_label}) . '</span>'
+        ? '<span class="meta__v"' . $fresh . ' data-fresh-kind="date">'
+          . h($rel->{published_label}) . '</span>'
         : '<span class="meta__v muted">&mdash;</span>';
 
     my $repo_url = $g && $g->{repo_url} ? $g->{repo_url} : repo_url_of($p);
@@ -920,17 +955,21 @@ sub release_panel {
     my $heading = $featured ? 'h2' : 'h3';
 
     return join('',
-        qq{<div class="panel panel--raised panel--hover download $accent reveal">},
+        qq{<div class="panel panel--raised panel--hover download $accent reveal"
+          data-release-panel="@{[ h($g->{repo}) ]}"
+          data-release-epoch="@{[ h($r->{published_epoch} // 0) ]}">},
           '<div class="download__head">',
             '<div class="download__ident">',
               '<span class="download__project">', project_badge($p),
                 h($p->{name}),
                 ($featured ? ' release' : ''), '</span>',
-              "<$heading class=\"download__version\">", h($r->{version_label} // $r->{version}),
+              "<$heading class=\"download__version\" data-release-version>", h($r->{version_label} // $r->{version}),
                 "</$heading>",
               ($r->{name} && $r->{name} ne $r->{version}
                   ? '<p class="download__title">' . h($r->{name}) . '</p>' : ''),
-              '<p class="download__date">Released ', h($r->{published_label}), '</p>',
+              '<p class="download__date" data-fresh-kind="date" data-fresh-repo="'
+              . h($g->{repo}) . '" data-fresh-epoch="' . h($r->{published_epoch} // 0)
+              . '">Released ', h($r->{published_label}), '</p>',
             '</div>',
             '<div class="download__badges">', join('', @badges), '</div>',
           '</div>',
@@ -1147,7 +1186,7 @@ sub kind_label {
 sub asset_list {
     my ($assets) = @_;
     return '' unless @$assets;
-    my $html = '<div class="download__files">';
+    my $html = '<div class="download__files" data-release-assets>';
     for my $a (@$assets) {
         next unless is_safe_url($a->{download_url});
         $html .= join('',

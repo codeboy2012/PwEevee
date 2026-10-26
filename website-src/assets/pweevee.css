@@ -1270,8 +1270,10 @@ p { max-width: 74ch; }
   text-transform: uppercase;
   color: var(--ink-3);
 }
-.footer__col ul { list-style: none; padding: 0; display: grid; gap: var(--s-2); }
+.footer__col ul { list-style: none; padding: 0; display: grid; gap: var(--s-1); }
 .footer__col a {
+  display: inline-block;
+  padding: 0.28em 0;
   font-size: 0.875rem;
   color: var(--ink-2);
   transition: color var(--t-fast) var(--ease);
@@ -2077,7 +2079,93 @@ html[data-fresh="offline"] [data-fresh-note] {
 .js [data-reveal-group] .reveal:nth-child(n+6) { transition-delay: 330ms; }
 .js .reveal.is-in { transition-delay: 0ms; }
 
-/* -------------------------------------------------------- 21 responsive */
+/* -------------------------------------- 20b hero entrance choreography */
+
+/* The page's opening shot: one composed sequence — eyebrow, display, lead,
+   actions, note, figure, then the facts strip — each on a short delay, using
+   only opacity/transform/filter, animating once on load, no JavaScript
+   required to run (the .js class just keeps it a progressive enhancement).
+   The global reduced-motion killer in section 22 disarms every piece. */
+.js .hero__copy > * { animation-name: hero-in; animation-duration: 680ms; }
+.js .hero__copy > *:nth-child(1) { animation-timing-function: var(--ease); animation-delay: 40ms;  animation-fill-mode: both; }
+.js .hero__copy > *:nth-child(2) { animation-timing-function: var(--ease); animation-delay: 140ms; animation-fill-mode: both; }
+.js .hero__copy > *:nth-child(3) { animation-timing-function: var(--ease); animation-delay: 240ms; animation-fill-mode: both; }
+.js .hero__copy > *:nth-child(4) { animation-timing-function: var(--ease); animation-delay: 340ms; animation-fill-mode: both; }
+.js .hero__copy > *:nth-child(5) { animation-timing-function: var(--ease); animation-delay: 440ms; animation-fill-mode: both; }
+
+/* the display itself: rises sharper than everything else, with a single
+   focus-pull, and once it lands its lit gradient settles from a wide drift
+   into the resting position of the gradient */
+.js .hero__copy > .display {
+  animation-name: hero-display-in, lit-settle;
+  animation-duration: 900ms, 1700ms;
+  animation-timing-function: var(--ease-in-out-so), var(--ease-in-out-so);
+  animation-delay: 140ms, 750ms;
+  animation-fill-mode: both, both;
+}
+.js .hero__figure {
+  animation-name: hero-in;
+  animation-duration: 760ms;
+  animation-timing-function: var(--ease-in-out-so);
+  animation-delay: 280ms;
+  animation-fill-mode: both;
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes hero-display-in {
+  0%   { opacity: 0; transform: translateY(18px) scale(0.988); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes lit-settle {
+  from { background-size: 165% 165%; background-position: 22% 22%; }
+  to   { background-size: 100% 100%; background-position: 0% 0%; }
+}
+
+/* the seam the hero closes on draws itself in */
+.js .aurora-line {
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  animation: line-draw 1200ms var(--ease-in-out-so) 550ms forwards;
+}
+@keyframes line-draw { to { transform: scaleX(1); } }
+
+/* ------------------------------------------ 20c interaction micro-details */
+
+/* project cards: the work answers hover with its own icon breathing up */
+.project-card__icon,
+.project-card__glyph {
+  transition: transform var(--t-med) var(--ease),
+              box-shadow var(--t-med) var(--ease);
+}
+.project-card:hover .project-card__icon,
+.project-card:hover .project-card__glyph {
+  transform: translateY(-2px);
+  box-shadow: 0 0 34px -10px color-mix(in oklab, var(--accent) 55%, transparent);
+}
+.project-card__tagline { transition: color var(--t-fast) var(--ease); }
+.project-card:hover .project-card__tagline { color: var(--ink); }
+
+/* download rows: the format pill lights, the filename leans forward a step */
+.asset__kind { transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.asset__name { transition: transform var(--t-med) var(--ease); }
+.asset:hover .asset__kind {
+  border-color: color-mix(in oklab, var(--accent) 44%, var(--rule));
+  color: var(--accent-ink);
+}
+.asset:hover .asset__name { transform: translateX(2px); }
+
+/* the build pipeline: a number picks up a halo while its step is inspected */
+.pipeline li::before {
+  transition: box-shadow var(--t-med) var(--ease),
+              background-color var(--t-med) var(--ease);
+}
+.pipeline li:hover::before {
+  background: color-mix(in oklab, var(--accent) 22%, transparent);
+  box-shadow: 0 0 24px -8px color-mix(in oklab, var(--accent) 55%, transparent);
+}
 
 @media (max-width: 1080px) {
   .footer__grid { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); }
@@ -2151,6 +2239,10 @@ html[data-fresh="offline"] [data-fresh-note] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    /* held entrance animations keep their backwards fill during animation-delay;
+       jumping the delay to the past completes them the moment they start */
+    animation-delay: -1ms !important;
+    transition-delay: 0ms !important;
   }
   .starfield { display: none !important; }
   .inverted > .starfield { display: none !important; }

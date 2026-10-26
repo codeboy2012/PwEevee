@@ -358,10 +358,15 @@ for my $f (@files) {
 }
 ok(!@suspect, 'no credentials anywhere under website/', join('; ', @suspect));
 
-# the client must never be told to call the GitHub API with credentials
+# the client must never be told to call the GitHub API with credentials.
+# The one permitted arrival is the unauthenticated, read-only release-freshness
+# check (freshSession, docs/freshness.md); everything else stays same-origin.
 my $js = slurp("$OUT/assets/pweevee.js");
 ok($js !~ /Authorization/i, 'the browser script sends no Authorization header');
-ok($js !~ m{api\.github\.com}, 'the browser script does not call the GitHub API');
+ok($js =~ s{api\.github\.com}{}g == 1,
+   'the browser script calls the GitHub API exactly once (the anonymous visit check)');
+ok($js =~ / credentials: ['"]omit\b/,
+   'that one call is explicitly credential-free (credentials: omit)');
 
 # ---------------------------------------------------------------- 3. routes
 
@@ -515,7 +520,7 @@ for my $gone (qw(--void --midnight --navy --blue-bright --blue-deep --crimson
                  --edge --edge-strong --edge-bright --bloom --bloom-strong
                  --glow-blue --glow-blue-dim --glow-crimson --rim --blur-1
                  --blur-2 --blur-3 --accent-bright --accent-glow
-                 --mint --violet --amber --mint-ink --green --r-pill)) {
+                 --mint --violet --amber --mint-ink --green)) {
     ok($css !~ /\Q$gone\E\s*:/, "retired token removed: $gone");
 }
 ok($css !~ /accent-mint|accent-violet|accent-amber|accent-crimson|accent-cyan/,
@@ -541,6 +546,12 @@ ok($css =~ /\.accent-neutral\b/, 'the neutral accent tone is declared');
         '#1f2847 #90a0d5 #f2f3f6',
         # the two desaturated status inks, in each theme
         '#7a5410 #8c2f2f #d9b471 #e39a9a',
+        # the v4 cinematic palette: the violet/ice/cyan accent family, the
+        # charcoal surfaces, rules and inks of the dark theme, and the light
+        # theme's derived text greys
+        '#0d9488 #191430 #1d1e25 #23242b #3373d0 #35373f #454652 #4a37c9 #5b46e0',
+        '#63e6dc #65676f #7757ff #7c8293 #7fd0ff #8f7bff #a8aec0 #a99dff
+         #b39dff #edeff6 #eeecfc #ffffff12',
         # the print stylesheet, which is deliberately plain black on white
         '#fff #000 #ccc');
     # Comments are prose, not colour: a hex quoted in an explanation is not a
@@ -565,16 +576,22 @@ ok($css =~ /\.accent-neutral\b/, 'the neutral accent tone is declared');
 
 # ---- the aesthetic we moved away from must not come back ------------------
 
-ok($css !~ /backdrop-filter/i, 'no glassmorphism backdrop blur');
-ok($css !~ /\bfilter:\s*blur|\bblur\(/, 'no blur filters');
+# Glass is deliberate and sparing: only the sticky header and its mobile drawer
+# may blur what passes behind them. Nowhere else may a blur appear.
+my $glass = () = $css =~ /backdrop-filter/g;
+ok($glass > 0, 'the navigation glass exists', "found $glass");
+ok($glass <= 4, 'glass stays confined to the navigation', "found $glass");
+ok($css !~ /(?<!backdrop-)filter:\s*blur/, 'no blur filters on artwork or text layers');
 
-# Gradients were the signature of the old theme. There are none: a flat surface
-# and a hairline carry the structure instead.
+# The new identity keeps a controlled amount of atmosphere: the aurora light
+# behind the hero, the lit display headline, the sheen on the primary button.
+# Capped well below "every element glows".
 my $gradients = () = $css =~ /\b(?:linear|radial|conic)-gradient\(/g;
-ok($gradients == 0, 'no gradients anywhere in the stylesheet', "found $gradients");
+ok($gradients > 0, 'the atmosphere system exists in the stylesheet', "found $gradients");
+ok($gradients <= 20, 'gradients are capped, not everywhere', "found $gradients");
 
 # the glowing-blob background and the glossy hero stage are gone from both sides
-for my $ghost (qw(atmosphere __glow __halo __plinth __specks __vignette
+for my $ghost (qw(__glow __halo __plinth __specks __vignette
                   __grain __reflection stage__ glass--  btn--glass)) {
     ok($css !~ /\Q$ghost\E/, "retired design vocabulary absent from CSS: $ghost");
 }
@@ -595,7 +612,7 @@ for my $step (qw(--r-xs --r-sm --r --r-lg)) {
        defined $v ? "${v}px" : 'not declared');
 }
 {
-    my %icon_radius = map { $_ => 1 } qw(project-hero__icon);
+    my %icon_radius = map { $_ => 1 } qw(project-hero__icon showcase__frame);
     my @oversized;
     for my $rule (split /\}/, $css) {
         next unless $rule =~ /border-radius:\s*([^;]+)/;
@@ -633,10 +650,11 @@ if (defined $shadow_token) {
     ok($neutral, 'the elevation shadow is neutral, not a coloured bloom', $shadow_token);
 }
 # Only outer shadows count as elevation. An `inset` box-shadow is standing in for
-# a border — it draws a hairline without changing the box model — which is the
-# opposite of making something float.
+# a border — it draws a hairline without changing the box model. The wide, cheap
+# glow shapes of the old theme are capped: a dozen restrained blooms at most,
+# without counting inset hairlines or resets.
 my @outer = grep { !/inset/ && !/^\s*none/ } ($css =~ /box-shadow:\s*([^;}]+)/g);
-ok(scalar(@outer) <= 4, 'elevation is used sparingly',
+ok(scalar(@outer) <= 14, 'elevation and glow stay restrained',
    scalar(@outer) . ' outer shadows: ' . join(' | ', @outer));
 
 # ---- the inverted context ------------------------------------------------
@@ -1543,7 +1561,7 @@ ok($home =~ m{<a class="brand"[^>]*>.*?<span class="brand__name">PwEevee</span>}
    'the navbar wordmark reads PwEevee');
 ok($home =~ m{<title>PwEevee — A unified Spotify customization ecosystem</title>},
    'the browser title reads PwEevee');
-ok($home =~ m{<h1 class="display">PwEevee</h1>}, 'the hero heading reads PwEevee');
+ok($home =~ m{<h1 class="display display--lit">PwEevee</h1>}, 'the hero heading reads PwEevee');
 ok($home =~ m{<meta property="og:site_name" content="PwEevee">},
    'the Open Graph site name reads PwEevee');
 for my $f (@html) {
@@ -2038,8 +2056,8 @@ ok(defined resolve('/install'), 'the install guide route resolves');
                 ok($home =~ /<time datetime="\Q$stats->{generated_at}\E">/,
                    'the refresh timestamp rendered on the homepage is the stats.json generation time');
             }
-            ok($home =~ /browser never calls GitHub/,
-               'the band states explicitly that the page loads a shared snapshot');
+            ok($home =~ /re-verifies release facts/,
+               'the band states what the browser re-verifies on an open (not nothing)');
             ok($home =~ /updated every 15 min/,
                'the band labels its freshness as every-15-minutes');
         }
@@ -2476,6 +2494,85 @@ section('8b. statistics count-up animation');
        'the changed-value highlight has a stylesheet rule');
     ok($inst_css =~ /\@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.stats-band__num--changed \{ animation: none;/,
        'the reduced-motion block explicitly disarms the highlight');
+}
+
+# ------------------------------------------------- on-visit freshness check
+
+# The browser-side release-freshness check (see docs/freshness.md), verified at
+# the same three layers the rest of this file watches: what the renderer gave
+# the browser to hook into, what the browser may and may not do with it, and
+# what stays true when the network is not there.
+{
+    my $fresh_css = slurp('website/assets/pweevee.css');
+    my $fresh_js  = slurp('website/assets/pweevee.js');
+    my $home      = slurp('website/index.html');
+    my $project   = slurp('website/projects/pweevee/index.html');
+    my $downloads = slurp('website/downloads/index.html');
+
+    # The freshSession IIFE extracted, so these assertions judge the module on
+    # its own rather than on whatever else the file legitimately contains.
+    ok($fresh_js =~ /\(function freshSession[\s\S]*?\}\(\)\);\s*\z/,
+       'the visit-check module exists at the end of the shipped javascript (freshSession)');
+    my ($mod_start) = index($fresh_js, '(function freshSession');
+    my $mod = $mod_start >= 0 ? substr($fresh_js, $mod_start) : '';
+    ok(length $mod > 300, 'the freshness module is not an empty stub');
+
+    my $n_api = () = $mod =~ /api\.github\.com\/repos\//g;
+    ok($n_api == 1,
+       "the module asks exactly one endpoint (found $n_api, want 1)");
+    my $repo_nwo = $mod =~ /api\.github\.com\/repos\/["']\s*\+\s*String\(repo\)/ ? 1 : 0;
+    ok($repo_nwo,
+       'the repo coordinates come from the render-time hooks, never hardcoded');
+    ok($mod !~ /codeboy\d+|skopevoj|SideloadLabs/,
+       'no repository name is hardcoded inside the module');
+
+    # the renderer must have left usable hooks on the pages the visitor lands on
+    ok($home =~ /data-release-panel="[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+"/,
+       'featured release panels carry their repo coordinates for the visit check');
+    ok($home =~ /data-release-version/,
+       'featured release version headings are hookable (data-release-version)');
+    ok($project =~ /data-release-panel="[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+"/,
+       'project pages carry the same panel hook on their own release panel');
+    my $n_hooks = () = $downloads =~ /data-fresh-repo="[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+"/g;
+    ok($n_hooks >= 2,
+       "downloads page card rows carry version/date freshness hooks (found $n_hooks)");
+
+    # session discipline: nav around the site must not pile up upstream requests
+    ok($mod =~ /seen\.all/,
+       'navigation within the site does not re-run the check (session gate on all)');
+    ok($mod =~ /MIN_MS = 10 \* 60 \* 1000/,
+       'the same repo is not re-asked sooner than every 10 minutes');
+    ok($mod =~ /sessionStorage\.setItem\(KEY/,
+       'session-level dedupe is persisted');
+    ok($mod =~ /credentials: ['"]omit['"]/,
+       'the check sends no credentials or cookies');
+    ok($mod =~ /split\('\/'\)\.map\(encodeURIComponent\)\.join\('\/'\)/,
+       'each repo path segment is URL-encoded (the slash stays a path separator)');
+
+    # what the module may never do
+    ok($mod !~ /Authorization|Bearer|GITHUB_TOKEN|client_secret/i,
+       'no auth header, token or secret inside the visit check');
+    ok($mod =~ /rel\.html_url/,
+       'a newer release links to the authoritative page instead of being rewritten');
+    ok($mod =~ /rel\.draft\) throw/,
+       'draft releases never reach the page');
+    ok($mod !~ /(download_url|sha256)\s*=/,
+       'the visit check never rewrites download URLs or hashes from the browser');
+
+    # failure behaviour
+    ok($mod =~ /catch\(function \(\) \{ settle\(false\); \}\)/,
+       'per-repo failures degrade to the rendered values, never a broken page');
+    ok($mod =~ /settle\(false\)/ && $mod =~ /settle\(true\)/,
+       'both success and failure paths settle the visit state');
+    ok($mod =~ /data-fresh-note/,
+       'the footer freshness note exists for the browser to annotate politely');
+    ok($mod =~ /failures \? 'offline' : 'checked'/,
+       'a fully failed check is recorded as such, not presented as success');
+
+    ok($fresh_css =~ /\.badge--fresh\s*\{/,
+       'the new-release badge that the browser may add is styled');
+    ok($fresh_css =~ /\.source-note\s*\{/,
+       'the freshness source note is styled as a quiet footnote');
 }
 
 # ---------------------------------------------------------------- summary
