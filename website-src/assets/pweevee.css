@@ -803,6 +803,14 @@ p { max-width: 74ch; }
   align-items: center;
   padding-block: 0.75em;
 }
+
+/* add-source actions on the AltSource panel: deep-link buttons plus a copy
+   action, wrapping under each other on narrow phones */
+.source-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
 .btn__sub {
   font-family: var(--mono);
   font-size: 0.74rem;
@@ -1605,6 +1613,23 @@ html[data-fresh="offline"] [data-fresh-note] {
   background: color-mix(in oklab, var(--surface-2) 46%, transparent);
   transition: background-color var(--t-fast) var(--ease);
 }
+.asset__action { display: inline-flex; align-items: center; gap: var(--s-2); }
+.asset__copy {
+  appearance: none;
+  padding: 0.42em 0.8em;
+  min-height: 34px;
+  background: transparent;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-sm, 8px);
+  font: inherit;
+  font-size: 0.74rem;
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.asset__copy:hover,
+.asset__copy[data-copied] { color: var(--ink); border-color: var(--accent); }
 .asset:hover { background: color-mix(in oklab, var(--accent-wash) 30%, transparent); }
 .asset + .asset { border-top: 1px solid var(--rule); }
 .asset__kind {
@@ -1715,6 +1740,43 @@ html[data-fresh="offline"] [data-fresh-note] {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-wash) 60%, transparent);
 }
+
+.sort {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+/* the chevron belongs to the control; a plain mask keeps it recolourable */
+.sort::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0.85em;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  border-right: 1.4px solid var(--ink-3);
+  border-bottom: 1.4px solid var(--ink-3);
+  transform: translateY(-4px) rotate(45deg);
+  z-index: 1;
+}
+
+/* sorting is meaningless without the filter script, so don't advertise it */
+html:not(.js) .sort { display: none; }
+.sort__select {
+  appearance: none;
+  padding: 0.5em 2.1em 0.5em 1em;
+  background: color-mix(in oklab, var(--surface) 82%, transparent);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.sort__select:hover, .sort__select:focus { border-color: var(--accent); }
+.sort__select option { background: var(--surface); color: var(--ink); }
 
 .group-head {
   display: flex;

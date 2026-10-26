@@ -1165,12 +1165,38 @@ sub c_altsource_source {
 
     my $note = ($as && $as->{note}) || $decl->{note};
 
+    # Add-source deep links use the documented URL schemes of the two installers
+    #   SideStore: https://docs.sidestore.io/docs/advanced/url-schema
+    #   AltStore:  https://faq.altstore.io/developers/make-a-source
+    # The manifest URL is validated by is_safe_url before any of this renders,
+    # so what lands in the href is a https URL with no control characters
+    # HTML-escaped. On a desktop browser these schemes can only do nothing —
+    # the note under the buttons says so outright instead of pretending.
+    my $actions = '';
+    if ($url && is_safe_url($url)) {
+        my $u = h($url);
+        $actions = join('',
+            '<div class="source-add mt-5">',
+              qq{<a class="btn btn--primary btn--sm" href="sidestore://source?url=$u"}
+              . qq{ aria-label="Add the SideloadLabs source to SideStore">Add to SideStore</a>},
+              qq{<a class="btn btn--primary btn--sm" href="altstore://source?url=$u"}
+              . qq{ aria-label="Add the SideloadLabs source to AltStore">Add to AltStore</a>},
+              qq{<button class="btn btn--outline btn--sm" type="button" data-copy="@{[ h($url) ]}"}
+              . qq{ aria-label="Copy the source manifest URL">Copy source URL</button>},
+            '</div>',
+            '<p class="small dim mt-4 mb-0">The add buttons open the source inside AltStore or'
+            . " SideStore on an iPhone or iPad. Anywhere else they can not do anything — use"
+            . ' the copy button and paste the URL into the installer&rsquo;s own Sources screen</p>',
+        );
+    }
+
     return join('',
         '<div class="panel pad accent-neutral">',
           '<p class="eyebrow">Source</p>',
           '<h3>Where these variants come from</h3>',
           ($note ? '<p class="muted mt-4 measure">' . h($note) . '</p>' : ''),
           $kv,
+          $actions,
           ($as && $as->{stale}
               ? '<p class="small muted mt-4 mb-0">The source could not be reached during the last '
               . 'update, so this is the last known-good variant list.</p>' : ''),
@@ -1199,6 +1225,11 @@ sub asset_list {
                 '</span>',
               '</span>',
               '<span class="asset__action">',
+                ($a->{sha256}
+                    ? qq{<button class="asset__copy" type="button" data-copy="@{[ h($a->{sha256}) ]}" }
+                    . qq{aria-label="Copy the SHA-256 checksum of @{[ h($a->{name}) ]}"}
+                    . qq{ title="Copy the full SHA-256 checksum">SHA-256 &#9110;</button>}
+                    : ''),
                 qq{<a class="btn btn--outline btn--sm" href="@{[ attr($a->{download_url}) ]}" rel="noopener" }
                 . qq{aria-label="Download @{[ h($a->{name}) ]}">Download</a>},
               '</span>',
@@ -1301,6 +1332,15 @@ sub c_release_history {
               '<input class="search__input" type="search" data-filter-search '
               . 'placeholder="Search versions…" autocomplete="off">',
             '</label>',
+            # Sorting is a JS affordance: the markup is already newest-first, so
+            # without JavaScript the select stays hidden and nothing lies.
+            '<label class="sort">',
+              '<span class="visually-hidden">Sort releases</span>',
+              '<select class="sort__select" data-filter-sort>',
+                '<option value="newest">Newest first</option>',
+                '<option value="oldest">Oldest first</option>',
+              '</select>',
+            '</label>',
             '<span class="small dim" data-filter-count aria-live="polite">',
               filter_count_text($shown, scalar @entries), '</span>',
           '</div>',
@@ -1335,7 +1375,7 @@ sub c_release_history {
             my $on = ($default eq 'all' || $e->{slug} eq $default) ? 1 : 0;
             my $mark = ($on && $first_visible) ? ' timeline__item--first' : '';
             $first_visible = 0 if $on;
-            $html .= qq{<div class="timeline__item$mark" data-release-item }
+            $html .= qq{<div class="timeline__item$mark" data-release-item data-epoch="@{[ $e->{epoch} ]}" }
                    . qq{data-project="@{[ h($e->{slug}) ]}" data-search="@{[ h($e->{search}) ]}"}
                    . ($on ? '' : ' hidden') . '>'
                    . $e->{html} . '</div>';

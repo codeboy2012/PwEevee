@@ -711,6 +711,7 @@
 
     var chips = all('[data-filter]', scope);
     var input = one('[data-filter-search]', scope);
+    var sortSel = one('[data-filter-sort]', scope);
     var items = all('[data-release-item]', scope);
     var groups = all('[data-release-group]', scope);
     var empty = one('[data-filter-empty]', scope);
@@ -718,7 +719,9 @@
     if (!items.length) return;
 
     var PARAM = scope.getAttribute('data-filter-param') || 'project';
+    var SORT_PARAM = 'sort';
     var DEFAULT = scope.getAttribute('data-filter-default') || 'all';
+    var sort = 'newest';
 
     var known = {};
     chips.forEach(function (c) {
@@ -762,10 +765,43 @@
 
     var active = fromUrl() || DEFAULT;
 
+    /* Sorting re-orders the rendered timeline in the DOM: each month group's
+       cards are re-appended in the chosen direction, then the groups themselves.
+       The empty state keeps last place so it stays below the timeline. With JS
+       off the select is hidden and the rendered newest-first order simply holds. */
+    function orderOf(el) { return +(el.getAttribute('data-epoch') || 0); }
+
+    function layout() {
+      groups.forEach(function (group) {
+        var box = one('.timeline', group);
+        if (!box) return;
+        var cards = all('[data-release-item]', group);
+        if (sort === 'oldest') cards.reverse();
+        cards.forEach(function (c) { box.appendChild(c); });
+      });
+      var ordered = sort === 'oldest' ? groups.slice().reverse() : groups;
+      ordered.forEach(function (g) { scope.appendChild(g); });
+      if (empty) scope.appendChild(empty);
+    }
+
+    function fromUrlSort() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var v = (params.get(SORT_PARAM) || '').toLowerCase();
+        return v === 'oldest' ? 'oldest' : null;
+      } catch (e) {
+        return /sort=oldest/.test(window.location.search) ? 'oldest' : null;
+      }
+    }
+
     function setChips() {
       chips.forEach(function (c) {
         c.setAttribute('aria-pressed', String(c.getAttribute('data-filter') === active));
       });
+    }
+
+    function setSortSel() {
+      if (sortSel) sortSel.value = sort === 'oldest' ? 'oldest' : 'newest';
     }
 
     function show(el, visible) {
@@ -818,9 +854,13 @@
         url = new URL(window.location.href);
         if (active === DEFAULT) url.searchParams.delete(PARAM);
         else url.searchParams.set(PARAM, active);
+        if (sort === 'oldest') url.searchParams.set(SORT_PARAM, 'oldest');
+        else url.searchParams.delete(SORT_PARAM);
         url = url.pathname + (url.search || '') + url.hash;
       } catch (e) {
-        url = window.location.pathname + (active === DEFAULT ? '' : '?' + PARAM + '=' + active);
+        url = window.location.pathname;
+        if (active !== DEFAULT) url += '?' + PARAM + '=' + active;
+        if (sort === 'oldest') url += (active === DEFAULT ? '?' : '&') + 'sort=oldest';
       }
       if (push) window.history.pushState({ filter: active }, '', url);
       else window.history.replaceState({ filter: active }, '', url);
@@ -841,11 +881,27 @@
       });
     });
 
+    if (sortSel) {
+      if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+        /* nothing special: the select still works, ordering is just instant */
+      }
+      on(sortSel, 'change', function () {
+        sort = sortSel.value === 'oldest' ? 'oldest' : 'newest';
+        layout();
+        apply();
+        writeUrl(true);
+      });
+    }
+
     on(window, 'popstate', function () {
       var next = fromUrl() || DEFAULT;
-      if (next === active) return;
+      var nextSort = fromUrlSort();
+      if (next === active && nextSort === sort) return;
       active = next;
+      sort = nextSort || 'newest';
       setChips();
+      setSortSel();
+      layout();
       apply();
     });
 
@@ -865,6 +921,9 @@
     }
 
     setChips();
+    sort = fromUrlSort() || 'newest';
+    setSortSel();
+    if (sort === 'oldest') layout();
     apply();
     writeUrl(false);
   }());

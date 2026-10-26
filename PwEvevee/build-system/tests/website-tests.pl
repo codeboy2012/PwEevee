@@ -1681,7 +1681,7 @@ ok(!@also_pressed, 'no other filter is selected by default', join(', ', @also_pr
 # the default view must already be filtered in the markup, so it is right with
 # JavaScript switched off and there is no flash of the wrong content
 my (%visible, %hidden_by_project);
-while ($releases_page =~ m{<div class="timeline__item[^"]*" data-release-item data-project="([^"]+)"[^>]*?(\shidden)?>}g) {
+while ($releases_page =~ m{<div class="timeline__item[^"]*" data-release-item data-epoch="\d+" data-project="([^"]+)"[^>]*?(\shidden)?>}g) {
     my ($proj, $hidden) = ($1, $2);
     if ($hidden) { $hidden_by_project{$proj}++ } else { $visible{$proj}++ }
 }
@@ -1696,11 +1696,47 @@ for my $other (qw(spotipw eeveespotify)) {
 }
 
 # every item is tagged, or the filter could never match it
-my $tagged = () = $releases_page =~ /data-release-item data-project="/g;
+# (items carry their publish epoch too, so the sort control can re-order them)
+my $tagged = () = $releases_page =~ /data-release-item data-epoch="\d+" data-project="/g;
 ok($tagged == $total_items, 'every release item declares its project',
    "$tagged of $total_items");
 my $searchable = () = $releases_page =~ /data-search="/g;
 ok($searchable == $total_items, 'every release item is searchable');
+
+# ---- release explorer: sort control and checksum copy actions ---------------
+
+section('5g. release explorer sort + asset copy tools');
+
+ok($releases_page =~ /<select class="sort__select" data-filter-sort>/,
+   'the release history offers a sort control');
+ok($releases_page =~ /<option value="oldest">/, 'oldest-first sort is offered');
+ok($releases_page !~ /<select[^>]*hidden/,
+   'the sort control carries no inline hidden attribute (css gates it to js)');
+
+# documented add-source deep links, pointing at a https manifest URL
+{
+  my ($ss) = 0;
+  my ($as) = 0;
+  my $link_url;
+  for my $f (@html) {
+    my $c = slurp($f);
+    $ss = 1 if $c =~ /sidestore:\/\/source\?url=/;
+    $as = 1 if $c =~ /altstore:\/\/source\?url=/;
+    ($link_url) = $c =~ /sidestore:\/\/source\?url=(https:[^"]+)/ unless $link_url;
+  }
+  ok($ss, 'a page documents a SideStore add-source deep link');
+  ok($as, 'a page documents an AltStore add-source deep link too');
+  ok($link_url && $link_url !~ /[\s"<>]/,
+     'the deep-link URL is a clean https URL', $link_url // '(none)');
+}
+
+# every displayed checksum row also offers to copy the full value
+{
+  my $sha_rows = () = $releases_page =~ /asset__sub">[^<]*sha256 /g;
+  my $copies   = () = $releases_page =~ /class="asset__copy"/g;
+  ok($copies == $sha_rows, 'every checksum row offers a copy action',
+     "$copies copies / $sha_rows rows");
+}
 
 # month groups must be hidden when the default filter empties them
 my $groups_total  = () = $releases_page =~ /<section data-release-group/g;
