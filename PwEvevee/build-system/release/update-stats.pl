@@ -30,6 +30,16 @@
 #                                     presents the aggregate as the "total of
 #                                     available GitHub release assets", never
 #                                     as unique users or installs.
+#                                     repo-level verified_total_download -> GitHub's
+#                                     own release-download count for the WHOLE
+#                                     repository (every release, tracked or not),
+#                                     read from
+#                                     img.shields.io/github/downloads/<nwo>/total.json
+#                                     — the exact figure shields.io badges show.
+#                                     This is what a single repository's own
+#                                     stats band leads with; the cross-project
+#                                     aggregate is a different, clearly
+#                                     labelled number.
 #
 # Conditional requests: the stored ETag per repository is sent as
 # If-None-Match; a 304 keeps the stored numbers untouched. An etag is stored
@@ -62,6 +72,10 @@ binmode STDERR, ':encoding(UTF-8)';
 # suite points it at a local 127.0.0.1 mock so update-stats' real data flow is
 # exercised deterministically and offline. It is never set in production.
 my $API = $ENV{STATS_API_BASE} || 'https://api.github.com';
+
+# Same discipline for the per-repository download total: STATS_SHIELDS_BASE
+# is a test seam so the total fetch runs against the same loopback mock.
+my $SHIELDS = $ENV{STATS_SHIELDS_BASE} || 'https://img.shields.io';
 
 my %opt = (
     out      => 'website/data/stats.json',
@@ -155,9 +169,20 @@ for my $p (@{ $model->{projects} }) {
     elsif ($code == 304) {
         # Not modified under If-None-Match: the stored numbers are still
         # current. The previous record is kept verbatim (etag included).
+        # Exception: the download total is a separate resource the repo ETag
+        # never covered, so it is re-verified on every successful run; if the
+        # read fails, the stored value survives unperturbed.
         my $keep = $prev_by_slug{$slug};
         if ($keep) {
             info("$name: 304 Not Modified — keeping stored stats");
+            # GitHub just vouched the stored numbers are current: an earlier
+            # network-failure staleness is cleared on the spot.
+            delete $keep->{stale};
+            delete $keep->{stale_since};
+            delete $keep->{error};
+            if (defined(my $total = fetch_shields_total($nwo))) {
+                $keep->{downloads_total} = 0 + $total;
+            }
             push @out, fetchable_copy($keep, $nwo, $keep->{etag} // '');
             push @unchanged, $name;
             next;
@@ -183,10 +208,25 @@ for my $p (@{ $model->{projects} }) {
             # Store an etag ONLY when one actually arrived (never a fabricated
             # value); it enables the 304 fast path on the next run.
             my $etag = ref $headers eq 'HASH' ? ($headers->{etag} // '') : '';
-            push @out, normalise_repo($p, $nwo, $repo, $etag);
+            # GitHub's release-download total for the whole repository. A
+            # failed read here must not cost the record its stars: fall back
+            # to this repository's previous verified total, and only omit the
+            # field entirely when no previous value exists either.
+            my $total = fetch_shields_total($nwo);
+            if (!defined $total) {
+                $total = $prev_by_slug{$slug}{downloads_total} // undef;
+                warn "!! $name: the GitHub release-download total could not be read"
+                   . (defined $total
+                        ? '; keeping the value verified on ' . ($prev_by_slug{$slug}{fetched_at} // '?') . "\n"
+                        : "; nothing previous to keep\n");
+            }
+            push @out, normalise_repo($p, $nwo, $repo, $etag, $total);
             info("$name: stars " . ($repo->{stargazers_count} // 0)
                  . " \x{b7} forks " . ($repo->{forks_count} // 0)
                  . " \x{b7} watchers " . ($repo->{subscribers_count} // 0)
+                 . (defined $total
+                      ? " \x{b7} downloads " . (0 + $total)
+                      : " \x{b7} downloads unavailable this run")
                  . " \x{b7} pushed " . ($repo->{pushed_at} // 'unknown'));
             next;
         }
@@ -216,13 +256,14 @@ write_json($opt{out}, {
     schema       => 1,
     generated_at => iso_now(),
     generator    => 'PwEevee/build-system/release/update-stats.pl',
-    source       => 'GitHub REST API (api.github.com) — public repository and release data only',
+    source       => 'GitHub REST API (api.github.com) — public repository and release data only; per-repo release-download totals via img.shields.io (public badge relay of GitHub counts)',
     metric_notes => {
         stars       => 'stargazers_count',
         forks       => 'forks_count',
         watchers    => 'subscribers_count (NOT watchers_count, which GitHub documents as equal to stars)',
         open_issues => 'open_issues_count (includes pull requests)',
-        downloads   => 'sum of per-asset download_count over the release history tracked in website/data/releases.json',
+        downloads   => 'sum of per-asset download_count over the release history tracked in website/data/releases.json (across all projects)',
+        downloads_total => 'GitHub release-download count summed over EVERY release of that one repository — the exact figure shields.io badges display; verified when the repo was last fetched, carried over between runs, and omitted rather than zeroed when never verified',
     },
     downloads => $downloads,
     repos     => \@out,
@@ -317,10 +358,10 @@ sub fetchable_copy {
 }
 
 sub normalise_repo {
-    my ($p, $nwo, $repo, $etag) = @_;
+    my ($p, $nwo, $repo, $etag, $total) = @_;
     my $url  = "https://github.com/$nwo";
     my $home = $repo->{homepage};
-    return {
+    my %rec = (
         slug         => $p->{slug},
         name         => ($p->{name} // $p->{slug}),
         repo         => $nwo,
@@ -337,8 +378,46 @@ sub normalise_repo {
         topics       => [ map { "$_" } @{ $repo->{topics} || [] } ],
         etag         => $etag,
         fetched_at   => iso_now(),
-    };
+    );
+    # Only a verified number from this run or an inherited previous one is
+    # stored: an omitted field means the renderer may say it differently,
+    # never that a zero was observed.
+    $rec{downloads_total} = 0 + $total if defined $total;
+    return \%rec;
 }
+
+# GitHub's own release-download count for the whole repository, served exactly
+# as shields.io serves it:
+#
+#   <SHIELDS>/github/downloads/<nwo>/total.json
+#   -> {"schemaVersion":1,"label":"downloads","value":"658"}
+#
+# The value is the same number those public badges display: GitHub adds up the
+# asset download_count of EVERY release of the repository, not just the ones
+# the tracked release history still holds. Only plain numeric values are
+# accepted (with the k/M badge suffix expanded); anything else, any HTTP error
+# and any network failure means "no number this run" — undef, never a guess.
+sub fetch_shields_total {
+    my ($nwo) = @_;
+    return undef unless length($nwo // '') && $nwo =~ m{^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+\z};
+    my ($status, $body, $err) = http_get(
+        "$SHIELDS/github/downloads/$nwo/total.json",
+        headers => [ 'Accept: application/json' ],
+    );
+    return undef unless defined $status && ($status // 0) == 200 && defined $body;
+    my $d = eval { JSON::PP::decode_json($body) };
+    return undef unless ref $d eq 'HASH' && defined $d->{value} && defined $d->{message};
+    my $v = $d->{value};
+    $v =~ s/^\s+|\s+$//g;
+    if    ($v =~ /^(\d+)\z$/)                       { return 0 + $1 }
+    elsif ($v =~ /^(\d+(?:\.\d+)?)([kM])\z$/) {   # badges may compact large counts
+        my ($num, $unit) = (0 + $1, lc $2);
+        return int($num * ($unit eq 'k' ? 1_000 : 1_000_000) + 0.5);
+    }
+    warn "!! shields total for $nwo returned '$v' — not a plain download count\n";
+    return undef;
+}
+
 
 sub unavailable_entry {
     my ($p, $why) = @_;

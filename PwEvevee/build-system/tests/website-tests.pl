@@ -1948,6 +1948,9 @@ ok(defined resolve('/install'), 'the install guide route resolves');
             ok(($stats->{metric_notes}{downloads} // '') =~ /download_count/,
                'the downloads metric is documented as GitHub release-asset download_count',
                $stats->{metric_notes}{downloads});
+            ok(($stats->{metric_notes}{downloads_total} // '') =~ /EVERY release/,
+               'the per-repository verified total is documented as the whole-repo count',
+               $stats->{metric_notes}{downloads_total});
             ok(($stats->{downloads}{aggregate_label} // '') =~ /not unique users or installs/,
                'the site-facing aggregate disclaims unique users or installs',
                $stats->{downloads}{aggregate_label});
@@ -2006,8 +2009,17 @@ ok(defined resolve('/install'), 'the install guide route resolves');
                 my @expected = map { $fmt_count->($_) }
                     ($home_entry->{stars}, $home_entry->{forks}, $home_entry->{subscribers},
                      $home_entry->{open_issues});
-                push @expected, $fmt_count->($stats->{downloads}{total})
-                    if ($stats->{downloads}{total} // 0) > 0;
+                # Mirror the renderer exactly: the band shows this repository's
+                # OWN verified whole-repo total (downloads_total), falling back
+                # to this slug's tracked-history sum — never the cross-project
+                # total, which upstream releases dominated.
+                my $band_total = ($home_entry->{downloads_total} // 0) > 0
+                    ? $home_entry->{downloads_total}
+                    : 0;
+                if ($band_total == 0 && ref $stats->{downloads}{per_project} eq 'HASH') {
+                    $band_total = $stats->{downloads}{per_project}{pweevee}{release_downloads} // 0;
+                }
+                push @expected, $fmt_count->($band_total) if $band_total > 0;
                 my @got = $home =~ /<dd class="stats-band__num">([\d,]+)<\/dd>/g;
                 ok(scalar(@got), 'the homepage renders the statistics band with numbers');
                 ok($got[0] eq $expected[0], 'the band renders stars exactly as stored in stats.json',
@@ -2097,12 +2109,25 @@ END_RELEASES
         '{"stargazers_count":120,"watchers_count":120,"forks_count":7,'
       . '"subscribers_count":17,"open_issues_count":3,'
       . '"pushed_at":"2026-10-25T00:00:00Z","topics":[]}';
+    # the whole-repo release-download total, served exactly as
+    # img.shields.io/github/downloads/<nwo>/total.json serves it.
+    # 175 > demo's tracked-history sum, deliberately: the verified total and
+    # the history-limited aggregate are different numbers by design.
+    my $shields_body =
+        '{"schemaVersion":1,"label":"downloads","message":"334",'
+      . '"color":"green","value":"334"}';
     my $bad_body = '{"forks_count":7,"open_issues_count":3}';
     my $convo = [
         # 1 — case A: a fresh 200 with a real ETag
         { status => 200, etag => 'W/"freshabc"', body => $repo_body },
+        # 1b — case A continuation: the verified per-repository download total
+        #       (the same response shape img.shields.io serves)
+        { status => 200, body => $shields_body },
         # 2 — case B: conditional revalidation answered with 304 Not Modified
         { status => 304, etag => 'W/"ennn"',     body => '' },
+        # 2b — case B continuation: the download total is not covered by the
+        #       repo ETag, so it is re-verified even on a 304
+        { status => 200, body => $shields_body },
         # 3 — case C, attempt 1: GitHub is up but erroring. PwHttp configures
         # curl retry = 2, which retries transient failures (5xx included), so
         # this response is ended and immediately REPLACED by the retry response;
@@ -2191,7 +2216,8 @@ SERVER_SRC
     # appends the second to the captured output, so every argument is lost.
     my $run = sub {
         my ($case, $out) = @_;
-        local $ENV{STATS_API_BASE} = $BASE;
+        local $ENV{STATS_API_BASE}     = $BASE;
+        local $ENV{STATS_SHIELDS_BASE} = $BASE;   # the total fetch is mocked too
         my $stdout = qx{perl PwEvevee/build-system/release/update-stats.pl --out "$out" --projects "$FIX/projects.json" --releases "$FIX/releases.json" --quiet 2>&1};
         my $exit = $? >> 8;
         return ($exit, $stdout, $out);
@@ -2223,6 +2249,13 @@ SERVER_SRC
                'the repeated latest release in history is recognised and not double-counted');
             ok(($dl->{total} // -1) == 175, 'the all-projects download total is right',
                "got " . (0 + ($dl->{total} // 0)));
+            # the new verified whole-repo total, parsed from the shields reply
+            ok(($p{demo}{downloads_total} // -1) == 334,
+               'downloads_total is the verified whole-repo GitHub count from the total.json reply',
+               "got " . ($p{demo}{downloads_total} // 'missing'));
+            ok(($dl->{per_project}{demo}{release_downloads} // -1) == 175
+               && ($p{demo}{downloads_total} // -1) == 334,
+               'the verified total and the history-limited aggregate coexist as different numbers');
         }
     }
 
@@ -2258,6 +2291,9 @@ SERVER_SRC
             ok(($r->{fetched_at} // '') eq '2026-10-24T00:00:00Z',
                'fetched_at still describes the last verification with actual numbers');
             ok($r->{available} && !$r->{stale}, 'a 304 is a success path, not a stale path');
+            ok(($r->{downloads_total} // -1) == 334,
+               'a 304 still re-verifies the download total (a separate resource the repo ETag never covered)',
+               "got " . ($r->{downloads_total} // 'missing'));
             my $log = '';
             if (open my $f, '<', "$FIX/requests.log") { local $/; $log = <$f>; close $f; }
             ok($log =~ /If-None-Match: W\/"ennn"/,

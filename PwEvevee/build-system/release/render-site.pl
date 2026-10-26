@@ -658,10 +658,24 @@ sub c_project_stats {
         push @stats, [ 'Open issues & PRs', $own->{open_issues},
             'open issues and pull requests (GitHub counts PRs in open_issues_count)' ];
     }
-    my $downloads = $STATS->{downloads};
-    if ($downloads && $downloads->{total}) {
-        push @stats, [ 'Release downloads', $downloads->{total},
-            'total of available GitHub release assets, not unique users or installs' ];
+    # Downloads: the band is about one repository, so it leads with that
+    # repository's own verified GitHub total — GitHub counts every release,
+    # tracked release history or not (this is the same number the public
+    # shields.io badge displays). Fallbacks degrade honestly, each labelled:
+    #   2. the tracked release-history sum for this slug alone.
+    # The cross-project grand total is deliberately never shown here: upstream
+    # releases used to outnumber ours 80:1 and made the figure meaningless for
+    # this project — a number is not real just because it is large.
+    my $own_slug  = $own->{slug} // $HOME_SLUG;
+    my $own_total = $own->{downloads_total} // 0;
+    my $own_sum   = $STATS->{downloads}{per_project}{$own_slug}{release_downloads} // 0;
+    if ($own_total > 0) {
+        push @stats, [ 'Release downloads', $own_total,
+            'GitHub total across every release of this repository — the exact count the public badges show, not unique users or installs' ];
+    }
+    elsif ($own_sum > 0) {
+        push @stats, [ 'Release downloads', $own_sum,
+            'release-asset download_count summed over the release history tracked in releases.json (the GitHub total was unavailable on the last run), not unique users or installs' ];
     }
 
     unless (@stats) {

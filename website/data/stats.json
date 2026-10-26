@@ -69,10 +69,11 @@
       "release_data_generated_at": "2026-10-25T20:40:01Z",
       "total": 52910
    },
-   "generated_at": "2026-10-25T21:58:44Z",
+   "generated_at": "2026-10-26T00:12:17Z",
    "generator": "PwEevee/build-system/release/update-stats.pl",
    "metric_notes": {
-      "downloads": "sum of per-asset download_count over the release history tracked in website/data/releases.json",
+      "downloads": "sum of per-asset download_count over the release history tracked in website/data/releases.json (across all projects)",
+      "downloads_total": "GitHub release-download count summed over EVERY release of that one repository — the exact figure shields.io badges display; verified when the repo was last fetched, carried over between runs, and omitted rather than zeroed when never verified",
       "forks": "forks_count",
       "open_issues": "open_issues_count (includes pull requests)",
       "stars": "stargazers_count",
@@ -81,6 +82,7 @@
    "repos": [
       {
          "available": true,
+         "downloads_total": 658,
          "etag": "W/\"231672e421cb7551dda4babdb029b753575492e7f375ed9b62d131ecd574daaf\"",
          "fetched_at": "2026-10-25T21:58:44Z",
          "forks": 2,
@@ -91,7 +93,6 @@
          "repo": "codeboy2012/spoti.pw-builds",
          "repo_url": "https://github.com/codeboy2012/spoti.pw-builds",
          "slug": "pweevee",
-         "stale": false,
          "stars": 12,
          "subscribers": 2,
          "topics": [
@@ -122,15 +123,16 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-25T21:58:44Z",
+         "stale_since": "2026-10-26T00:12:17Z",
          "stars": 0,
          "subscribers": 0
       },
       {
          "available": true,
-         "etag": "W/\"6997f0aef4bbd1ed9b9134e32413ca394c6b5253ac04489634a9b43afd1472d8\"",
-         "fetched_at": "2026-10-25T21:58:44Z",
-         "forks": 4802,
+         "downloads_total": 52000,
+         "etag": "W/\"a5bd29d23fd9c91e77f4fe64654cbb8e0b41ed159bef9e796f9edc1a093e9f27\"",
+         "fetched_at": "2026-10-26T00:09:29Z",
+         "forks": 4807,
          "homepage": "https://github.com/SideloadLabs/Eevee-Alt-Source/raw/refs/heads/main/apps.json",
          "name": "EeveeSpotify",
          "open_issues": 33,
@@ -138,12 +140,11 @@
          "repo": "SideloadLabs/EeveeSpotifyReincarnated",
          "repo_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated",
          "slug": "eeveespotify",
-         "stale": false,
-         "stars": 1390,
+         "stars": 1393,
          "subscribers": 16,
          "topics": []
       }
    ],
    "schema": 1,
-   "source": "GitHub REST API (api.github.com) — public repository and release data only"
+   "source": "GitHub REST API (api.github.com) — public repository and release data only; per-repo release-download totals via img.shields.io (public badge relay of GitHub counts)"
 }
