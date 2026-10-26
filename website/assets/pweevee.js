@@ -996,4 +996,187 @@
     }
     function safeUrl(u) { return typeof u === 'string' && /^https:\/\/[a-z0-9.-]+\//i.test(u); }
   }());
+
+  // Scroll-aware header: the glass bar densifies and gains a shadow once a
+  // page has actually scrolled under it. Pure state class, transform/opacity
+  // cheap, listener passive, and file: protocol handled with a rAF-free fast
+  // path (no passive warning on those browsers).
+  (function () {
+    var header = document.querySelector('.site-header');
+    if (!header) return;
+    var setValue = function (v) {
+      if (v) header.setAttribute('data-scrolled', '');
+      else header.removeAttribute('data-scrolled');
+    };
+    var paint = function () {
+      setValue(window.scrollY > 12);
+    };
+    var t = 0;
+    var onScroll = function () {
+      if (t) return;
+      t = requestAnimationFrame(function () {
+        t = 0;
+        paint();
+      });
+    };
+    paint();
+    if (window.location.protocol === 'file:') {
+      window.addEventListener('scroll', function () { paint(); }, { passive: false });
+    } else {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+    }
+  }());
+
+  /* ======================================================== 8. on-visit freshness check === */
+
+  /* Every page that displays release facts carries tiny data-* hooks the
+     renderer wrote: the repo coordinates ("owner/repo") and the epoch of the
+     value that was put on screen. Once per visit, quietly, we ask GitHub
+     ( unauthenticated, read-only) whether each of those releases is still the
+     newest, and only when something has actually moved do we update the
+     visible text.
+
+     deliberately conservative details:
+       - one unauthenticated request per repo per visit, at most;
+       - the same browser session never re-asks sooner than every 10 minutes
+         (sessionStorage), so paging around the site does not hammer GitHub;
+       - a newer release updates the displayed VERSION text and adds a link to
+         the upstream release, but download URLs and SHA-256 lines are never
+         rewritten from browser data — those were signed off at render time;
+       - prereleases are allowed through (the site tracks them, just labeled);
+         drafts are not;
+       - any network failure, malformed response, rate limit or offline state
+         leaves the page EXACTLY as rendered: that data was verified when the
+         page was built and stays internally consistent, and the footer note
+         quietly says so;
+       - the browser only ever READS the public releases API and never uploads
+         anything — no token, no cookie, no analytics, no "checking in".
+
+     See docs/freshness.md for the full contract and the test coverage. */
+  (function freshSession() {
+    var KEY = 'pweevee-fresh';
+    var MIN_MS = 10 * 60 * 1000;
+
+    var hooks = {};
+    var els = document.querySelectorAll('[data-fresh-repo], [data-release-panel]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      var repo = el.getAttribute('data-fresh-repo') || el.getAttribute('data-release-panel');
+      if (!repo) continue;
+      if (el.hasAttribute('data-release-panel')) {
+        var versionNode = el.querySelector('[data-release-version]');
+        if (!versionNode) continue;
+        (hooks[repo] = hooks[repo] || []).push({
+          node: versionNode,
+          kind: 'panel',
+          epoch: +el.getAttribute('data-release-epoch') || 0,
+          badges: el.querySelector('.download__badges') || versionNode.parentNode
+        });
+        continue;
+      }
+      var kind = el.getAttribute('data-fresh-kind') || 'version';
+      if (kind === 'panel') continue;
+      (hooks[repo] = hooks[repo] || []).push({
+        node: el,
+        kind: kind,
+        epoch: +el.getAttribute('data-fresh-epoch') || 0
+      });
+    }
+    var repos = Object.keys(hooks);
+    if (!repos.length) return;
+
+    /* Session gate: this very browser already asked in the last 10 minutes, so
+       navigation to another page merely reads the fresh numbers it rendered —
+       those pages were built from data no older than the render itself. */
+    var seen = null;
+    try { seen = JSON.parse(window.sessionStorage.getItem(KEY) || 'null'); } catch (e) { /* ok */ }
+    var now = Date.now();
+    if (seen && (seen.at || 0) && now - (seen.at || 0) < MIN_MS && seen.all) return;
+
+    seen = { at: now, repos: (seen && seen.repos) || {}, all: false };
+    function remember() {
+      try { window.sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (e) { /* private */ }
+    }
+    remember();
+
+    var pending = repos.length, failures = 0;
+    function settle(ok) {
+      pending--;
+      if (!ok) failures++;
+      if (pending > 0) return;
+      var value = failures ? 'offline' : 'checked';
+      document.documentElement.setAttribute('data-fresh', value);
+      seen.all = true;
+      remember();
+      var noteEl = document.querySelector('[data-fresh-note]');
+      if (noteEl) {
+        noteEl.setAttribute('data-fresh-state', failures ? 'offline' : 'ok');
+        if (!failures) {
+          noteEl.setAttribute('title', 'Re-checked live against the GitHub API when this page was opened.');
+        } else {
+          noteEl.setAttribute('title', 'The live re-check could not reach GitHub; the rendered '
+            + 'release data below is the most recent verified snapshot.');
+        }
+      }
+    }
+
+    repos.forEach(function (repo) {
+      if (seen.repos[repo] && now - seen.repos[repo] < MIN_MS) { settle(true); return; }
+      var url = 'https://api.github.com/repos/'
+              + String(repo).split('/').map(encodeURIComponent).join('/') + '/releases/latest';
+      fetch(url, {
+        headers: { 'Accept': 'application/vnd.github+json' },
+        credentials: 'omit',
+        cache: 'no-store',
+        referrerPolicy: 'strict-origin-when-cross-origin'
+      }).then(function (res) {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.json();
+      }).then(function (rel) {
+        if (!rel || !rel.tag_name || rel.draft) throw new Error('bad payload');
+        seen.repos[repo] = Date.now(); remember();
+        apply(repo, rel);
+        settle(true);
+      }).catch(function () { settle(false); });
+    });
+
+    function tagName(rel) {
+      return String(rel.tag_name || '').replace(/^v(?=\d)/i, '');
+    }
+    function tagEpoch(rel) {
+      return Math.floor((Date.parse(rel.published_at) || 0) / 1000);
+    }
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+      'August', 'September', 'October', 'November', 'December'];
+    function fmtDate(iso) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ''));
+      if (!m) return '';
+      return (+m[3]) + ' ' + MONTHS[+m[2] - 1] + ' ' + (+m[1]);
+    }
+
+    function apply(repo, rel) {
+      var upstream = tagEpoch(rel);
+      (hooks[repo] || []).forEach(function (h) {
+        if (!h.node || !upstream || upstream <= h.epoch) return;
+        if (h.kind === 'date') {
+          h.node.textContent = 'Released ' + fmtDate(rel.published_at);
+          return;
+        }
+        h.node.textContent = tagName(rel);
+        if (h.kind !== 'panel') return;
+        /* A full release panel gets one badge: honest about what changed,
+           pointing to the authoritative source, never rewriting downloads. */
+        if (rel.html_url && h.badges && !h.badges.querySelector('[data-fresh-badge]')) {
+          var a = document.createElement('a');
+          a.setAttribute('data-fresh-badge', '');
+          a.className = 'badge badge--fresh';
+          a.href = rel.html_url;
+          a.rel = 'noopener';
+          a.textContent = 'Newer: ' + tagName(rel) + ' on GitHub';
+          h.badges.appendChild(a);
+        }
+      });
+    }
+  }());
 }());

@@ -1,32 +1,20 @@
 /* ==========================================================================
-   PwEevee — design system
+   PwEevee — design system (v4, cinematic rebuild)
    ==========================================================================
-   Visual identity: editorial software documentation.
+   Visual identity: cinematic dark luxury with atmosphere and depth.
 
-     one surface  +  hairline structure  +  one ink  +  one blue accent
+     layered charcoal surfaces  +  selective glass  +  aurora light
+     electric violet carries the interface, the logo blue remains the brand,
+     a trace of cyan marks what is live right now.
 
-   Structure comes from 1px rules and honest spacing, not from floating cards,
-   blur or glow. Type does the work: a confident display size, a small mono label
-   above each section, and a comfortable measure for reading. Borders are thin,
-   radii are small, shadows are almost absent.
+   DARK is the designed default: a deep near-black stage with soft columns of
+   coloured light rather than flat grey boxes. LIGHT is a warm paper theme kept
+   in the same shapes; it is not an inversion. Selection is the same cascade as
+   before: an explicit data-theme beats the device, which beats :root.
 
-   Two themes, both designed rather than one being an inversion of the other.
-   DARK is the default and needs neither a media query nor JavaScript to apply;
-   LIGHT takes over when the device asks for it, or when the visitor picks it.
-   Section 02 is the whole switch. Components only ever use the semantic tokens,
-   so nothing below section 03 knows which theme is running.
-
-   The accent is the blue sampled from the official PwEevee artwork (the
-   original render in website/assets/brand/pweevee.png — #2A3762, lifted to
-   #90A0D5 where it has to sit on near-black). It is used sparingly and only where it means
-   something: focus rings, the "latest release" marker, and PwEevee's own
-   material as distinct from upstream material. Upstream material is graphite.
-   There is no third hue, no gradient blob and no rainbow.
-
-   Some regions take the dark set whatever the theme is — the footer, and the
-   bands that carry a single idea. Those are the only places the falling-star
-   field appears, and it is deliberately faint: full strength on dark, and
-   substantially dimmed on light via --star-intensity.
+   Interaction vocabulary: pill-shaped controls, hairline borders that brighten
+   on hover, restrained low-alpha glows, entrance choreography through the
+   existing reveal system. Flat and loud are both gone.
 
    No build step, no preprocessor, no framework. Source of truth:
    website-src/assets/pweevee.css, copied to website/assets by render-site.pl.
@@ -36,30 +24,32 @@
      02  the two themes
      02b reset and base
      03  the inverted (dark) context
-     04  layout primitives
-     05  typography
-     06  panels
-     07  buttons
-     08  badges and chips
-     09  header and navigation
-     10  footer
-     11  hero and showcase
-     12  the falling-star field
-     13  downloads, releases, assets, variants
-     14  release history: toolbar, groups, timeline
-     15  project cards, features, pipeline, lists
-     16  key/value, meta, checksum, disclosure, notes
-     17  states and skeletons
-     18  utilities
-     19  reveal
-     20  responsive
-     21  reduced motion, forced colours, print
+     04  atmosphere (page ambient, aurora, aurora beams)
+     05  layout primitives
+     06  typography
+     07  panels
+     08  buttons
+     09  badges and chips
+     10  header and navigation
+     11  footer
+     12  hero and showcase
+     13  the falling-star field
+     14  downloads, releases, assets, variants
+     15  release history: toolbar, groups, timeline
+     16  project cards, features, pipeline, lists
+     17  key/value, meta, checksum, disclosure, notes
+     18  states and skeletons
+     19  utilities
+     20  reveal choreography
+     21  responsive
+     22  reduced motion, forced colours, print
+     23  installer workshop
    ========================================================================== */
 
 /* ------------------------------------------------------------- 01 tokens */
 
 :root {
-  /* ---- the palette, exactly as specified --------------------------------- */
+  /* ---- the base palette (near-black charcoals, blue-tinted) -------------- */
   --white:      #ffffff;
   --off-white:  #f5f5f3;
   --light-gray: #e8e8e6;
@@ -70,11 +60,14 @@
   /* ======================================================================
      Each theme's raw values, declared exactly once. Components never touch
      these: they use the semantic tokens, which section 02 maps to one set or
-     the other. Keeping both sets here is what makes the two themes designed
-     rather than one of them being an inversion of the other.
+     the other. Derived tints are composed with color-mix at the point of use,
+     so the raw set stays small.
+
+     The accent family: violet is the interface accent, the logo blue remains
+     the brand accent, ice blue and cyan are atmosphere at very low strengths.
      ====================================================================== */
 
-  /* ---- LIGHT: paper ----------------------------------------------------- */
+  /* ---- LIGHT: warm paper ------------------------------------------------ */
   --l-bg:         var(--white);
   --l-surface:    var(--white);
   --l-surface-2:  var(--off-white);
@@ -82,45 +75,47 @@
   --l-rule:       var(--light-gray);
   --l-rule-2:     #d2d2cf;
   --l-ink:        var(--near-black);
-  --l-ink-2:      #4a4a46;
-  /* The tertiary grey is set by contrast, not by taste: it has to clear 4.5:1
-     against the off-white band as well as against white, because the smallest
-     type on the site (mono labels, captions, file sizes) uses it.
-     #6e6e68 gives 4.7:1 on --l-surface-2 and 5.1:1 on --l-bg. */
-  --l-ink-3:      #6e6e68;
-  /* one step toward the viewer, for a selected segment sitting on --surface-2.
-     Light elevates by getting brighter; so does dark, which is why this cannot
-     just be --surface in both themes. */
+  --l-ink-2:      #454652;
+  --l-ink-3:      #65676f;
   --l-raised:     var(--white);
   --l-brand:      #2a3762;              /* the logo blue, as sampled */
   --l-brand-hi:   #1f2847;              /* pressed / hovered link */
   --l-wash:       #f2f3f6;              /* the faintest usable tint of it */
-  --l-solid:      var(--near-black);    /* the primary button is ink on paper */
+  --l-accent:     #5b46e0;              /* the interface violet */
+  --l-accent-ink: #4a37c9;
+  --l-accent-2:   #8f7bff;              /* gradient pole */
+  --l-ice:        #3373d0;
+  --l-cyan:       #0d9488;
+  --l-accent-wash:#eeecfc;
+  --l-solid:      #5b46e0;              /* the primary control */
   --l-solid-ink:  var(--white);
-  --l-solid-hi:   var(--dark-gray);
+  --l-solid-hi:   #4a37c9;
   --l-warn:       #7a5410;
   --l-bad:        #8c2f2f;
 
   /* ---- DARK: the default ------------------------------------------------ */
-  /* Not an inversion. The greys are pure neutrals where the light theme's are
-     warm, because paper is warm and a screen at this level is not, and the
-     accent is lifted because #2a3762 is unreadable on near-black. */
   --d-bg:         var(--near-black);
   --d-surface:    #111111;
   --d-surface-2:  var(--dark-gray);
   --d-header:     var(--charcoal);
-  --d-rule:       #242424;
-  --d-rule-2:     #383838;
-  --d-ink:        #f4f4f4;
-  --d-ink-2:      #b0b0b0;
-  --d-ink-3:      #8a8a8a;
-  --d-raised:     #242424;
-  --d-brand:      #90a0d5;              /* same hue, lifted to 8.5:1 on --d-bg */
+  --d-rule:       #23242b;
+  --d-rule-2:     #35373f;
+  --d-ink:        #edeff6;
+  --d-ink-2:      #a8aec0;
+  --d-ink-3:      #7c8293;
+  --d-raised:     #1d1e25;
+  --d-brand:      #90a0d5;              /* same hue, lifted to legibility */
   --d-brand-hi:   var(--white);
   --d-wash:       var(--dark-gray);
-  --d-solid:      var(--white);         /* inverted: paper on ink */
-  --d-solid-ink:  var(--near-black);
-  --d-solid-hi:   var(--light-gray);
+  --d-accent:     #8f7bff;
+  --d-accent-ink: #a99dff;
+  --d-accent-2:   #b39dff;
+  --d-ice:        #7fd0ff;
+  --d-cyan:       #63e6dc;
+  --d-accent-wash:#191430;
+  --d-solid:      #7757ff;
+  --d-solid-ink:  var(--white);
+  --d-solid-hi:   var(--d-accent);
   --d-warn:       #d9b471;
   --d-bad:        #e39a9a;
 
@@ -130,11 +125,11 @@
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
           "Liberation Mono", monospace;
 
-  --fs-display: clamp(2.5rem,  1.42rem + 4.6vw,  4.5rem);
-  --fs-h1:      clamp(2rem,    1.36rem + 2.4vw,  3rem);
-  --fs-h2:      clamp(1.55rem, 1.16rem + 1.6vw,  2.25rem);
-  --fs-h3:      clamp(1.05rem, 0.99rem + 0.3vw,  1.2rem);
-  --fs-lead:    clamp(1.02rem, 0.97rem + 0.35vw, 1.2rem);
+  --fs-display: clamp(3rem,     1.1rem + 7.2vw,  5.6rem);
+  --fs-h1:      clamp(2.1rem,   1.3rem + 3.2vw,  3.3rem);
+  --fs-h2:      clamp(1.65rem,  1.15rem + 2.1vw,  2.5rem);
+  --fs-h3:      clamp(1.08rem,  0.99rem + 0.4vw, 1.25rem);
+  --fs-lead:    clamp(1.05rem,  0.99rem + 0.4vw, 1.28rem);
 
   /* ---- space ------------------------------------------------------------- */
   --s-1: 4px;
@@ -147,43 +142,37 @@
   --s-8: 64px;
 
   --gutter:      clamp(20px, 4vw, 40px);
-  --section-y:   clamp(56px, 7vw, 104px);
-  --maxw:        1160px;
+  --section-y:   clamp(60px, 7.5vw, 116px);
+  --maxw:        1200px;
   --maxw-narrow: 760px;
-  --header-h:    61px;
+  --header-h:    68px;
 
   /* ---- radius ------------------------------------------------------------ */
-  /* small on purpose: a document, not a set of pills */
-  --r-xs: 3px;
-  --r-sm: 5px;
-  --r:    8px;
-  --r-lg: 10px;
+  --r-xs:   5px;
+  --r-sm:   8px;
+  --r:      10px;
+  --r-lg:   12px;
+  --r-pill: 999px;
 
   /* ---- elevation --------------------------------------------------------- */
-  /* One step, and it is barely there; nothing on this site floats. Only the
-     light theme uses it: a drop shadow on a near-black surface is invisible at
-     this strength and merely muddies the edge, so dark sets --shadow to none. */
-  --shadow-paper: 0 1px 2px rgba(8, 8, 8, 0.04), 0 10px 26px -20px rgba(8, 8, 8, 0.18);
+  /* --shadow-paper stays the neutral paper shadow for the light theme, where
+     real depth is needed and a coloured bloom would be mud. The coloured
+     atmosphere lives in explicit low-alpha glows per component (dark theme). */
+  --shadow-paper: 0 1px 2px rgba(8, 8, 8, 0.05), 0 10px 26px -20px rgba(8, 8, 8, 0.2);
 
   /* ---- motion ------------------------------------------------------------ */
-  --t-fast: 120ms;
-  --t-med:  200ms;
-  --ease:   cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 140ms;
+  --t-med:  260ms;
+  --ease:   cubic-bezier(0.33, 1, 0.36, 1);
 }
 
 /* ------------------------------------------------------ 02 the two themes */
 
 /* How the theme is chosen, in order of precedence:
-
-     1. html[data-theme="light"|"dark"]  — an explicit choice the visitor made.
-        assets/theme.js writes it from localStorage before the first paint, so
-        an override never flashes the other theme first.
+     1. html[data-theme="light"|"dark"]  — an explicit visitor choice, written
+        by assets/theme.js before the first paint (no flash).
      2. prefers-color-scheme: light      — the device asked for light.
-     3. otherwise                        — DARK. This is the bare :root block,
-        so it needs no media query and no JavaScript at all.
-
-   The attribute selectors are (0,1,1) and :root is (0,1,0), so an explicit
-   choice wins over the media query regardless of source order. */
+     3. otherwise                        — DARK, straight from :root. */
 
 :root {
   color-scheme: dark;
@@ -200,16 +189,18 @@
   --raised:      var(--d-raised);
   --brand:       var(--d-brand);
   --brand-hover: var(--d-brand-hi);
-  --accent:      var(--d-brand);
-  --accent-ink:  var(--d-brand);
-  --accent-wash: var(--d-wash);
+  --accent:      var(--d-accent);
+  --accent-ink:  var(--d-accent-ink);
+  --accent-2:    var(--d-accent-2);
+  --ice:         var(--d-ice);
+  --cyan:        var(--d-cyan);
+  --accent-wash: var(--d-accent-wash);
   --btn-solid:     var(--d-solid);
   --btn-solid-ink: var(--d-solid-ink);
   --btn-solid-hi:  var(--d-solid-hi);
   --warn:        var(--d-warn);
   --bad:         var(--d-bad);
   --shadow:      none;
-  /* stars are designed for the dark theme, so here they run at full strength */
   --star-intensity: 1;
 }
 
@@ -229,17 +220,18 @@
     --raised:      var(--l-raised);
     --brand:       var(--l-brand);
     --brand-hover: var(--l-brand-hi);
-    --accent:      var(--l-brand);
-    --accent-ink:  var(--l-brand);
-    --accent-wash: var(--l-wash);
+    --accent:      var(--l-accent);
+    --accent-ink:  var(--l-accent-ink);
+    --accent-2:    var(--l-accent-2);
+    --ice:         var(--l-ice);
+    --cyan:        var(--l-cyan);
+    --accent-wash: var(--l-accent-wash);
     --btn-solid:     var(--l-solid);
     --btn-solid-ink: var(--l-solid-ink);
     --btn-solid-hi:  var(--l-solid-hi);
     --warn:        var(--l-warn);
     --bad:         var(--l-bad);
     --shadow:      var(--shadow-paper);
-    /* substantially dimmed: the band is still dark, but the light theme has no
-       business looking like a night sky */
     --star-intensity: 0.45;
   }
 }
@@ -260,9 +252,12 @@ html[data-theme="light"] {
   --raised:      var(--l-raised);
   --brand:       var(--l-brand);
   --brand-hover: var(--l-brand-hi);
-  --accent:      var(--l-brand);
-  --accent-ink:  var(--l-brand);
-  --accent-wash: var(--l-wash);
+  --accent:      var(--l-accent);
+  --accent-ink:  var(--l-accent-ink);
+  --accent-2:    var(--l-accent-2);
+  --ice:         var(--l-ice);
+  --cyan:        var(--l-cyan);
+  --accent-wash: var(--l-accent-wash);
   --btn-solid:     var(--l-solid);
   --btn-solid-ink: var(--l-solid-ink);
   --btn-solid-hi:  var(--l-solid-hi);
@@ -288,9 +283,12 @@ html[data-theme="dark"] {
   --raised:      var(--d-raised);
   --brand:       var(--d-brand);
   --brand-hover: var(--d-brand-hi);
-  --accent:      var(--d-brand);
-  --accent-ink:  var(--d-brand);
-  --accent-wash: var(--d-wash);
+  --accent:      var(--d-accent);
+  --accent-ink:  var(--d-accent-ink);
+  --accent-2:    var(--d-accent-2);
+  --ice:         var(--d-ice);
+  --cyan:        var(--d-cyan);
+  --accent-wash: var(--d-accent-wash);
   --btn-solid:     var(--d-solid);
   --btn-solid-ink: var(--d-solid-ink);
   --btn-solid-hi:  var(--d-solid-hi);
@@ -342,9 +340,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: var(--s-6) 0; }
 /* the hidden attribute must win over an author display rule */
 [hidden] { display: none !important; }
 
-::selection { background: var(--accent); color: var(--bg); }
+::selection { background: color-mix(in oklab, var(--accent) 80%, transparent); }
 
-/* One focus treatment everywhere, and it is the accent doing real work. */
+/* One focus treatment everywhere. */
 :focus-visible {
   outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
@@ -367,12 +365,12 @@ main { flex: 1 0 auto; }
   left: var(--s-3);
   z-index: 200;
   transform: translateY(-180%);
-  padding: 0.6em 1em;
+  padding: 0.6em 1.1em;
   background: var(--btn-solid);
   color: var(--btn-solid-ink);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: transform var(--t-fast) var(--ease);
 }
 .skip-link:focus { transform: translateY(0); }
@@ -392,10 +390,8 @@ main { flex: 1 0 auto; }
 
 /* --------------------------------------------- 03 the inverted context */
 
-/* One class puts a region on the dark set whatever the page theme is. In the
-   light theme that makes a deliberate near-black band; in the dark theme the
-   values already match, so it is a no-op and the band is delineated by its
-   hairlines instead. Either way it is the only place stars appear. */
+/* One class puts a region on the dark set whatever the page theme is. The
+   footer and single-idea bands are the only places stars are allowed. */
 .inverted {
   --bg:          var(--d-bg);
   --surface:     var(--d-surface);
@@ -409,9 +405,12 @@ main { flex: 1 0 auto; }
   --raised:      var(--d-raised);
   --brand:       var(--d-brand);
   --brand-hover: var(--d-brand-hi);
-  --accent:      var(--d-brand);
-  --accent-ink:  var(--d-brand);
-  --accent-wash: var(--d-wash);
+  --accent:      var(--d-accent);
+  --accent-ink:  var(--d-accent-ink);
+  --accent-2:    var(--d-accent-2);
+  --ice:         var(--d-ice);
+  --cyan:        var(--d-cyan);
+  --accent-wash: var(--d-accent-wash);
   --btn-solid:   var(--d-solid);
   --btn-solid-ink: var(--d-solid-ink);
   --btn-solid-hi:  var(--d-solid-hi);
@@ -425,14 +424,91 @@ main { flex: 1 0 auto; }
   color: var(--ink);
 }
 
-/* In the dark theme the band sits at the same value as the page, so it needs
-   its own edges to read as a distinct zone rather than as nothing at all. */
-.section.inverted { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-
 /* the stars sit behind, the content in front */
 .inverted > .wrap { position: relative; z-index: 1; }
 
-/* ------------------------------------------------- 04 layout primitives */
+/* ------------------------------------------------- 04 atmosphere */
+
+/* A fixed ambient wash behind the whole page: two low-alpha pools of light so
+   the near-black never reads as an empty void. Decorative only. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(540px 380px at 12% -4%,
+      color-mix(in oklab, var(--accent) 13%, transparent), transparent 72%),
+    radial-gradient(640px 460px at 96% 14%,
+      color-mix(in oklab, var(--ice) 9%, transparent), transparent 70%);
+}
+
+/* The hero's aurora: slow-moving coloured light behind the composition. It is
+   three drift layers, all animation via transform, all killed under reduced
+   motion together with everything else. */
+.aurora {
+  position: absolute;
+  inset: -20% -10%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.aurora__beam {
+  position: absolute;
+  border-radius: 50%;
+  filter: none;
+  will-change: transform;
+  mix-blend-mode: screen;
+}
+.aurora__beam--a {
+  width: 46em;
+  height: 30em;
+  left: -8%;
+  top: -18%;
+  background: radial-gradient(closest-side,
+    color-mix(in oklab, var(--accent) 21%, transparent), transparent 74%);
+  animation: aurora-drift-a 26s var(--ease-in-out-so) infinite alternate;
+}
+.aurora__beam--b {
+  width: 38em;
+  height: 26em;
+  right: -6%;
+  top: -6%;
+  background: radial-gradient(closest-side,
+    color-mix(in oklab, var(--ice) 16%, transparent), transparent 72%);
+  animation: aurora-drift-b 34s var(--ease-in-out-so) infinite alternate;
+}
+.aurora__beam--c {
+  width: 30em;
+  height: 22em;
+  left: 28%;
+  bottom: -34%;
+  background: radial-gradient(closest-side,
+    color-mix(in oklab, var(--cyan) 10%, transparent), transparent 70%);
+  animation: aurora-drift-a 40s var(--ease-in-out-so) infinite alternate-reverse;
+}
+@keyframes aurora-drift-a {
+  from { transform: translate3d(-4%, -2%, 0) scale(1); }
+  to   { transform: translate3d(6%, 5%, 0) scale(1.12); }
+}
+@keyframes aurora-drift-b {
+  from { transform: translate3d(5%, 3%, 0) scale(1.05); }
+  to   { transform: translate3d(-5%, -4%, 0) scale(1); }
+}
+:root { --ease-in-out-so: cubic-bezier(0.45, 0, 0.28, 1); }
+
+/* a hairline that fades at both ends: the seam between atmosphere and content */
+.aurora-line {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--rule-strong), transparent);
+}
+
+/* the hero sits its content above the aurora */
+.hero > .wrap { position: relative; z-index: 1; }
+
+/* ------------------------------------------------- 05 layout primitives */
 
 .wrap {
   width: 100%;
@@ -446,14 +522,12 @@ main { flex: 1 0 auto; }
   position: relative;
   padding-block: var(--section-y);
 }
-/* the alternating band: a hairline and a paper shift, no gradient seam */
 .section--seam {
-  background: var(--surface-2);
+  background: color-mix(in oklab, var(--surface-2) 62%, var(--bg) 38%);
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
 }
 .inverted.section--seam { border-color: var(--rule); }
-/* two adjacent hairlines read as one thick line, which is not the intent */
 .hero + .section--seam,
 .section--seam + .section--seam { border-top: 0; }
 .section--tight { padding-block: clamp(40px, 5vw, 64px); }
@@ -462,8 +536,8 @@ main { flex: 1 0 auto; }
 .section__head {
   display: grid;
   gap: var(--s-3);
-  max-width: 68ch;
-  margin-bottom: var(--s-7);
+  max-width: 70ch;
+  margin-bottom: clamp(40px, 5vw, 72px);
 }
 .section__head > :last-child { margin-bottom: 0; }
 
@@ -486,35 +560,46 @@ main { flex: 1 0 auto; }
 
 .stack-lg { display: grid; gap: var(--s-7); }
 
-/* ---------------------------------------------------------- 05 typography */
+/* ---------------------------------------------------------- 06 typography */
 
-/* Headings are tight and dark; body copy is comfortable. Nothing is centred,
-   because a document reads better ranged left. */
 h1, h2, h3, h4 {
-  font-weight: 600;
-  line-height: 1.18;
-  letter-spacing: -0.018em;
+  font-weight: 650;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
   color: var(--ink);
   text-wrap: balance;
 }
 
 h1 { font-size: var(--fs-h1); }
 h2 { font-size: var(--fs-h2); }
-h3 { font-size: var(--fs-h3); line-height: 1.35; letter-spacing: -0.01em; }
-h4 { font-size: 0.95rem; line-height: 1.4; letter-spacing: 0; }
+h3 { font-size: var(--fs-h3); line-height: 1.35; letter-spacing: -0.008em; }
+h4 { font-size: 0.96rem; line-height: 1.4; letter-spacing: 0; }
 
+/* The display headline: oversized, tight, and lit — a violet-to-ice gradient
+   edge catches the top of the glyph and reads as studio lighting. Before
+   painting the gradient, --ink is the honest fallback for every engine that
+   does not support background-clip: text. */
 .display {
   font-size: var(--fs-display);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-weight: 750;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
   margin: 0;
+  color: var(--ink);
 }
 
-.h-sub { font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.7rem); }
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .display.display--lit {
+    background: linear-gradient(105deg, var(--ice) 0%, var(--ink) 38%, var(--accent) 78%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
 
-/* The small mono label above a heading. One hairline in the accent colour is
-   the entire decoration — it marks the start of a section and nothing else. */
+.h-sub { font-size: clamp(1.35rem, 1.12rem + 1vw, 1.8rem); }
+
+/* The small mono label above a heading; the marker pulses once on reveal. */
 .eyebrow {
   display: flex;
   align-items: center;
@@ -523,24 +608,26 @@ h4 { font-size: 0.95rem; line-height: 1.4; letter-spacing: 0; }
   font-family: var(--mono);
   font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
 .eyebrow::before {
   content: "";
   flex: none;
-  width: 18px;
+  width: 22px;
   height: 2px;
-  background: var(--accent);
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--ice));
 }
 
 .lead {
   font-size: var(--fs-lead);
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--ink-2);
-  max-width: 66ch;
+  max-width: 64ch;
 }
+.lead strong { color: var(--ink); }
 
 p { max-width: 74ch; }
 
@@ -554,7 +641,6 @@ p { max-width: 74ch; }
 .measure       { max-width: 66ch; }
 .measure-tight { max-width: 54ch; }
 
-/* long-form copy: legal, disclosure, policy */
 .prose { max-width: 70ch; }
 .prose > * + * { margin-top: var(--s-4); }
 .prose h2 { margin-top: var(--s-7); }
@@ -562,7 +648,6 @@ p { max-width: 74ch; }
 .prose ul, .prose ol { padding-left: 1.3em; }
 .prose li + li { margin-top: var(--s-2); }
 
-/* an aside that is not important enough for a panel */
 .note {
   max-width: 74ch;
   padding-left: var(--s-4);
@@ -574,8 +659,8 @@ p { max-width: 74ch; }
 /* the one thing on a page that must not be skimmed past */
 .callout {
   padding: var(--s-5);
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--accent-wash) 72%, var(--surface) 28%);
+  border: 1px solid color-mix(in oklab, var(--accent) 34%, var(--rule));
   border-left: 2px solid var(--accent);
   border-radius: 0 var(--r) var(--r) 0;
 }
@@ -584,8 +669,6 @@ p { max-width: 74ch; }
 .list-plain { list-style: none; padding: 0; }
 .list-plain > li + li { margin-top: var(--s-2); }
 
-/* Prose links are the accent's other real job. They are underlined, because a
-   colour alone is not an affordance. */
 .prose a, .notes a, .footer__credits a, .measure a, p a:not(.btn) {
   color: var(--accent-ink);
   text-decoration: underline;
@@ -594,152 +677,179 @@ p { max-width: 74ch; }
 }
 .prose a:hover, .notes a:hover, .footer__credits a:hover,
 .measure a:hover, p a:not(.btn):hover {
-  /* light darkens the blue on hover; dark lifts it to white, because a darker
-     step would vanish. --brand-hover carries whichever is right. */
   color: var(--brand-hover);
   text-decoration-thickness: 2px;
 }
 
-/* ------------------------------------------------------------- 06 panels */
+/* ------------------------------------------------------------- 07 panels */
 
-/* A bordered region of paper. No blur, no inset rim light, no gradient: a
-   hairline and a background shift are enough to group content. */
+/* A bordered region. Hover answers with a brightening border and a restrained
+   accent bloom behind the panel — no lift, no transform, no reflow. */
 .panel {
   position: relative;
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: var(--r);
+  border-radius: var(--r-lg);
 }
 
-/* one step forward, for the single most important panel on a page */
 .panel--raised {
   border-color: var(--rule-strong);
   box-shadow: var(--shadow);
 }
 
-/* Interactive panels answer the pointer with a border and a paper shift only.
-   Nothing lifts, so nothing reflows and nothing shimmers. */
 .panel--hover {
-  transition: border-color var(--t-fast) var(--ease),
+  transition: border-color var(--t-med) var(--ease),
+              box-shadow var(--t-med) var(--ease),
               background-color var(--t-fast) var(--ease);
 }
-.panel--hover:hover { border-color: var(--rule-strong); }
-.panel--hover:focus-within { border-color: var(--accent); }
+.panel--hover:hover {
+  border-color: color-mix(in oklab, var(--accent) 42%, var(--rule-strong));
+  box-shadow: 0 0 44px -18px color-mix(in oklab, var(--accent) 42%, transparent);
+}
+.panel--hover:focus-within {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--rule-strong));
+}
 
 .pad    { padding: clamp(18px, 2.6vw, 28px); }
-.pad-lg { padding: clamp(24px, 3.4vw, 40px); }
+.pad-lg { padding: clamp(26px, 3.4vw, 44px); }
 
-/* The accent is a property of content, not of decoration: PwEevee's own
-   material carries the logo blue, upstream material is graphite. */
-/* --brand is already the right lightness for the current theme, so these two
-   need no dark-mode variants of their own. */
 .accent-brand   { --accent: var(--brand); --accent-ink: var(--brand); }
 .accent-neutral { --accent: var(--ink-3); --accent-ink: var(--ink-2); }
 
-/* ------------------------------------------------------------ 07 buttons */
+/* ------------------------------------------------------------ 08 buttons */
 
 .btn {
   --btn-bg: transparent;
   --btn-ink: var(--ink);
   --btn-border: transparent;
 
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.55em;
-  padding: 0.62em 1.05em;
-  min-height: 40px;
+  padding: 0.66em 1.25em;
+  min-height: 42px;
   background: var(--btn-bg);
   color: var(--btn-ink);
   border: 1px solid var(--btn-border);
-  border-radius: var(--r-sm);
-  font-size: 0.925rem;
-  font-weight: 500;
+  border-radius: var(--r-pill);
+  font-size: 0.92rem;
+  font-weight: 600;
   line-height: 1.25;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.002em;
   text-align: center;
   cursor: pointer;
   transition: background-color var(--t-fast) var(--ease),
               border-color var(--t-fast) var(--ease),
-              color var(--t-fast) var(--ease);
+              color var(--t-fast) var(--ease),
+              box-shadow var(--t-med) var(--ease),
+              filter var(--t-fast) var(--ease);
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* the dominant action: solid black on paper, white on an inverted surface */
+/* the dominant action: a violet gradient that reads as studio lighting, with
+   a sheen that sweeps through on hover (and never on any keyboard path). */
 .btn--primary {
-  --btn-bg: var(--btn-solid);
+  --btn-bg: linear-gradient(135deg, var(--btn-solid) 0%, var(--accent-2) 100%);
   --btn-ink: var(--btn-solid-ink);
-  --btn-border: var(--btn-solid);
+  --btn-border: color-mix(in oklab, var(--btn-solid) 88%, #ffffff12);
 }
-.btn--primary:hover { --btn-bg: var(--btn-solid-hi); --btn-border: var(--btn-solid-hi); }
+.btn--primary:hover {
+  color: var(--btn-solid-ink);
+  box-shadow: 0 8px 30px -10px color-mix(in oklab, var(--accent) 55%, transparent),
+              0 0 0 1px color-mix(in oklab, #ffffff 14%, transparent) inset;
+}
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 32%,
+    color-mix(in oklab, #ffffff 20%, transparent) 50%, transparent 66%);
+  transform: translateX(-110%);
+  transition: transform 640ms var(--ease-in-out-so);
+}
+.btn--primary:hover::after { transform: translateX(110%); }
+.btn--primary:active { filter: brightness(0.92); }
 
-/* the secondary action: a bordered button, the workhorse of the site */
+/* the secondary action: a bordered pill; on hover its border lights. */
 .btn--outline {
-  --btn-bg: var(--surface);
+  --btn-bg: color-mix(in oklab, var(--surface) 84%, transparent);
   --btn-ink: var(--ink);
   --btn-border: var(--rule-strong);
 }
-.btn--outline:hover { --btn-bg: var(--surface-2); --btn-border: var(--ink-3); }
+.btn--outline:hover {
+  --btn-border: color-mix(in oklab, var(--accent) 46%, var(--rule-strong));
+  --btn-bg: color-mix(in oklab, var(--accent-wash) 42%, var(--surface) 58%);
+  box-shadow: 0 0 26px -14px color-mix(in oklab, var(--accent) 50%, transparent);
+}
 
-/* the tertiary action: text until you touch it */
+/* the tertiary action */
 .btn--quiet {
   --btn-bg: transparent;
   --btn-ink: var(--ink-2);
   --btn-border: transparent;
 }
-.btn--quiet:hover { --btn-ink: var(--ink); --btn-bg: var(--surface-2); }
+.btn--quiet:hover { --btn-ink: var(--ink); --btn-bg: color-mix(in oklab, var(--surface-2) 74%, transparent); }
 
-.btn--sm { padding: 0.45em 0.8em; min-height: 33px; font-size: 0.85rem; }
-.btn--lg { padding: 0.8em 1.4em; min-height: 48px; font-size: 1rem; }
+.btn--sm { padding: 0.45em 0.9em; min-height: 34px; font-size: 0.85rem; }
+.btn--lg { padding: 0.85em 1.6em; min-height: 52px; font-size: 1rem; }
 
-/* a download button says what it is and how big it is, on two lines */
 .btn--stack {
   flex-direction: column;
   gap: 0.15em;
   align-items: center;
-  padding-block: 0.7em;
+  padding-block: 0.75em;
 }
 .btn__sub {
   font-family: var(--mono);
   font-size: 0.74rem;
   font-weight: 400;
   letter-spacing: 0;
-  opacity: 0.72;
+  opacity: 0.75;
 }
 
 .btn__icon { width: 15px; height: 15px; flex: none; }
 
 /* the click acknowledgement pweevee.js sets on a download link */
-.btn[data-fired] { --btn-bg: var(--btn-solid-hi); }
+.btn[data-fired] { color: var(--btn-solid-ink); background-color: var(--btn-solid-hi); }
 
 .btn-row { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
 
 /* the checksum copy button */
 .copy {
-  padding: 0.3em 0.65em;
-  background: var(--surface);
+  padding: 0.32em 0.8em;
+  background: color-mix(in oklab, var(--surface-2) 78%, transparent);
   color: var(--ink-2);
   border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
+  border-radius: var(--r-pill);
   font-family: var(--mono);
   font-size: 0.74rem;
   cursor: pointer;
-  transition: color var(--t-fast) var(--ease),
-              border-color var(--t-fast) var(--ease);
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
 }
-.copy:hover { color: var(--ink); border-color: var(--rule-strong); }
-.copy[data-copied] { color: var(--accent-ink); border-color: var(--accent); }
+.copy:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+.copy[data-copied] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  box-shadow: 0 0 14px -6px color-mix(in oklab, var(--accent) 62%, transparent);
+}
 
-/* -------------------------------------------------- 08 badges and chips */
+/* -------------------------------------------------- 09 badges and chips */
 
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 0.45em;
-  padding: 0.22em 0.6em;
-  background: var(--surface-2);
+  padding: 0.24em 0.72em;
+  background: color-mix(in oklab, var(--surface-2) 82%, transparent);
   border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
+  border-radius: var(--r-pill);
   font-family: var(--mono);
   font-size: 0.71rem;
   font-weight: 500;
@@ -755,14 +865,14 @@ p { max-width: 74ch; }
   flex: none;
 }
 
-/* the only badge that carries the accent: what you actually came for. The wash
-   is the faintest possible tint of the logo blue — present, but not a colour. */
+/* the badge that carries the accent: what you actually came for */
 .badge--latest {
   color: var(--ink);
-  border-color: var(--rule-strong);
-  background: var(--accent-wash);
+  border-color: color-mix(in oklab, var(--accent) 46%, var(--rule-strong));
+  background: color-mix(in oklab, var(--accent-wash) 76%, var(--surface) 24%);
+  box-shadow: 0 0 18px -8px color-mix(in oklab, var(--accent) 48%, transparent);
 }
-.badge--latest .badge__dot { background: var(--brand); }
+.badge--latest .badge__dot { background: var(--accent); }
 
 .badge--maintained { color: var(--ink); border-color: var(--rule-strong); }
 .badge--maintained .badge__dot { background: var(--brand); }
@@ -771,10 +881,6 @@ p { max-width: 74ch; }
 .badge--prerelease { color: var(--ink); border-style: dashed; border-color: var(--rule-strong); }
 .badge--stale      { color: var(--warn); border-color: var(--rule-strong); }
 
-/* Compatibility statuses — exactly three of them, paralleling the /install
-   validator's validated / unsupported / unable to verify. Colour is secondary:
-   each state also names itself in its text, so a colour-blind visitor loses
-   nothing. */
 .badge--verified    { color: var(--ink); border-color: var(--rule-strong); }
 .badge--verified    .badge__dot { background: var(--brand); }
 .badge--untested    { color: var(--warn); border-color: var(--rule-strong); }
@@ -782,9 +888,7 @@ p { max-width: 74ch; }
 .badge--unsupported { color: var(--bad); border-color: var(--rule-strong); }
 .badge--unsupported .badge__dot { background: var(--bad); }
 
-/* The /docs repository-document list: term = linked file path, definition =
-   one-line description. Styled as plain text so a document link panel does not
-   turn into a table of cards. */
+/* The /docs repository-document list */
 .doclist { margin: 0; }
 .doclist dt { margin-top: var(--s-5); }
 .doclist dt:first-child { margin-top: 0; }
@@ -803,9 +907,7 @@ p { max-width: 74ch; }
 }
 .doclist .doclist__missing { color: var(--ink-3); font-style: italic; }
 
-/* Simple data tables on the content pages (compatibility). Layout is genuinely
-   tabular: header row, one check per row, statuses in the middle column. The
-   wrapper gives small screens horizontal scroll instead of broken cells. */
+/* Simple data tables on the content pages (compatibility). */
 .tablewrap, .mtable-wrap { overflow-x: auto; }
 .mtable {
   width: 100%;
@@ -824,7 +926,7 @@ p { max-width: 74ch; }
   font-family: var(--mono);
   font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--ink-3);
   border-bottom: 1px solid var(--rule-strong);
 }
@@ -835,19 +937,17 @@ p { max-width: 74ch; }
 .mtable td { color: var(--ink-2); }
 .mtable td .badge { white-space: normal; }
 
-/* The Android availability notice. One component, used wherever the notice is
-   shown (FAQ, compatibility, install) so the wording and treatment stay paired. */
+/* The Android availability notice. */
 .android-notice {
   padding: 0.9em 1.1em;
-  background: var(--surface-2);
+  background: color-mix(in oklab, var(--surface-2) 76%, transparent);
   border: 1px solid var(--rule-strong);
-  border-radius: var(--r-sm);
+  border-radius: var(--r);
   color: var(--ink);
   font-size: 0.9375rem;
 }
 .android-notice strong { color: var(--ink); }
 
-/* Compact ”label → arrow” links used where a card points at its own page. */
 .link-arrow {
   color: var(--ink);
   font-weight: 500;
@@ -855,56 +955,74 @@ p { max-width: 74ch; }
 }
 .link-arrow::after {
   content: " \2192";
-  color: var(--ink-3);
+  color: var(--accent-ink);
 }
-.link-arrow:hover { color: var(--brand); }
+.link-arrow:hover { color: var(--brand-hover); }
 
-/* A filter chip. Selected is a solid fill, not a tint — the state has to be
-   unmistakable at a glance, including for a colour-blind visitor. */
+/* A filter chip; selected is unmistakable at a glance. */
 .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 
 .chip {
-  padding: 0.42em 0.85em;
-  background: var(--surface);
+  padding: 0.42em 0.95em;
+  background: color-mix(in oklab, var(--surface) 80%, transparent);
   color: var(--ink-2);
   border: 1px solid var(--rule-strong);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color var(--t-fast) var(--ease),
               color var(--t-fast) var(--ease),
-              border-color var(--t-fast) var(--ease);
+              border-color var(--t-fast) var(--ease),
+              box-shadow var(--t-med) var(--ease);
 }
-.chip:hover { color: var(--ink); background: var(--surface-2); }
+.chip:hover {
+  color: var(--ink);
+  background: color-mix(in oklab, var(--surface-2) 82%, transparent);
+}
 .chip[aria-pressed="true"] {
   background: var(--btn-solid);
   color: var(--btn-solid-ink);
   border-color: var(--btn-solid);
+  box-shadow: 0 6px 22px -10px color-mix(in oklab, var(--accent) 52%, transparent);
 }
-.chip[aria-pressed="true"]:hover { background: var(--btn-solid-hi); border-color: var(--btn-solid-hi); }
+.chip[aria-pressed="true"]:hover {
+  background: var(--btn-solid-hi);
+  border-color: var(--btn-solid-hi);
+}
 
-/* --------------------------------------- 09 header and navigation */
+/* --------------------------------------- 10 header and navigation */
 
+/* A glass bar that floats over the page: translucent, softly blurred, and
+   transformed by scroll state (pweevee.js toggles data-scrolled) which lets
+   its shadow and density grow only after content passes under it. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  /* one step off the page so content scrolling under it is masked; in the light
-     theme that is the same white, and the border does the separating */
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--header-bg) 74%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--rule) 78%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+          backdrop-filter: blur(16px) saturate(1.35);
+  transition: box-shadow var(--t-med) var(--ease),
+              background-color var(--t-med) var(--ease),
+              border-color var(--t-med) var(--ease);
+}
+.site-header[data-scrolled] {
+  background: color-mix(in oklab, var(--header-bg) 88%, transparent);
+  border-bottom-color: var(--rule);
+  box-shadow: 0 10px 30px -22px rgba(5, 6, 10, 0.55);
 }
 
 .nav {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--s-5);
+  gap: var(--s-4);
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
-  padding: var(--s-3) var(--gutter);
+  padding: var(--s-2) var(--gutter);
   min-height: var(--header-h);
 }
 
@@ -913,17 +1031,18 @@ p { max-width: 74ch; }
   align-items: center;
   gap: 0.55em;
   flex: none;
-  font-size: 0.98rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.018em;
   color: var(--ink);
 }
 .brand__mark {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   display: block;
   flex: none;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #ffffff 12%, transparent);
 }
 .brand__name { white-space: nowrap; }
 
@@ -931,26 +1050,36 @@ p { max-width: 74ch; }
 
 .nav__link {
   position: relative;
-  padding: 0.5em 0.7em;
-  border-radius: var(--r-xs);
+  padding: 0.5em 0.8em;
+  border-radius: var(--r-pill);
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--ink-2);
-  transition: color var(--t-fast) var(--ease);
+  transition: color var(--t-fast) var(--ease),
+              background-color var(--t-fast) var(--ease);
 }
-.nav__link:hover { color: var(--ink); }
-
-/* the current page is marked by the accent, not by a filled pill */
-.nav__link[aria-current="page"] { color: var(--ink); }
-.nav__link[aria-current="page"]::after {
+.nav__link:hover {
+  color: var(--ink);
+  background: color-mix(in oklab, var(--surface-2) 62%, transparent);
+}
+.nav__link::after {
   content: "";
   position: absolute;
-  left: 0.7em;
-  right: 0.7em;
-  bottom: -0.55em;
+  left: 0.8em;
+  right: 0.8em;
+  bottom: 0.12em;
   height: 2px;
-  background: var(--brand);
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--ice));
+  opacity: 0;
+  transform: scaleX(0.4);
+  transform-origin: left center;
+  transition: opacity var(--t-med) var(--ease), transform var(--t-med) var(--ease);
 }
+
+/* the current page keeps the underline lit */
+.nav__link[aria-current="page"] { color: var(--ink); }
+.nav__link[aria-current="page"]::after { opacity: 1; transform: none; }
 
 .nav__end { display: flex; align-items: center; gap: var(--s-2); margin-left: auto; }
 
@@ -960,12 +1089,15 @@ p { max-width: 74ch; }
   justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   color: var(--ink-2);
   transition: color var(--t-fast) var(--ease),
               background-color var(--t-fast) var(--ease);
 }
-.nav__icon:hover { color: var(--ink); background: var(--surface-2); }
+.nav__icon:hover {
+  color: var(--ink);
+  background: color-mix(in oklab, var(--surface-2) 66%, transparent);
+}
 .nav__icon .btn__icon { width: 17px; height: 17px; }
 
 .nav__cta { flex: none; }
@@ -974,15 +1106,15 @@ p { max-width: 74ch; }
   display: none;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: var(--surface);
+  width: 38px;
+  height: 38px;
+  background: color-mix(in oklab, var(--surface-2) 60%, transparent);
   border: 1px solid var(--rule-strong);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   cursor: pointer;
   flex: none;
 }
-.nav__toggle:hover { background: var(--surface-2); }
+.nav__toggle:hover { background: color-mix(in oklab, var(--surface-2) 90%, transparent); }
 
 .nav__burger { position: relative; display: block; width: 16px; height: 11px; }
 .nav__burger span {
@@ -1002,8 +1134,8 @@ p { max-width: 74ch; }
 [aria-expanded="true"] .nav__burger span:nth-child(2) { opacity: 0; }
 [aria-expanded="true"] .nav__burger span:nth-child(3) { transform: translateY(-4.75px) rotate(-45deg); }
 
-/* The mobile drawer. Hidden from the accessibility tree and from the tab order
-   until it is open, so it is never a set of invisible focus stops. */
+/* The mobile drawer: the same glass, sliding down and fading in. Hidden from
+   the accessibility tree and from the tab order until it is open. */
 .nav__drawer {
   display: none;
   position: absolute;
@@ -1011,38 +1143,34 @@ p { max-width: 74ch; }
   left: 0;
   right: 0;
   padding: var(--s-3) var(--gutter) var(--s-5);
-  background: var(--header-bg);
+  background: color-mix(in oklab, var(--header-bg) 92%, transparent);
   border-bottom: 1px solid var(--rule);
-  box-shadow: var(--shadow);
+  box-shadow: 0 26px 42px -30px rgba(5, 6, 10, 0.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+          backdrop-filter: blur(18px) saturate(1.3);
 }
 .nav__drawer[data-open] { display: grid; gap: var(--s-1); }
-.nav__drawer .nav__link { padding: 0.62em 0.4em; font-size: 0.95rem; }
+.nav__drawer .nav__link { padding: 0.62em 0.7em; font-size: 0.95rem; }
 .nav__drawer .nav__link[aria-current="page"]::after { display: none; }
 .nav__drawer .nav__link[aria-current="page"] {
   color: var(--ink);
-  box-shadow: inset 2px 0 0 var(--brand);
-  padding-left: 0.8em;
+  box-shadow: inset 2px 0 0 var(--accent);
+  padding-left: 0.9em;
 }
 .nav__drawer .btn { margin-top: var(--s-3); }
 .nav__drawer-sep { height: 1px; background: var(--rule); margin: var(--s-2) 0; }
 
 /* ---- the theme control -------------------------------------------------- */
 
-/* Three small segments in one bordered group — the same shape as a filter chip
-   row, so it reads as part of the system rather than as a widget bolted on. It
-   is deliberately quiet: no label, no accent fill, roughly 84px wide.
-
-   Hidden until JavaScript is present, because without it the buttons cannot do
-   anything; the theme still follows prefers-color-scheme in that case. */
 .theme { display: none; }
 .js .theme {
   display: inline-flex;
   flex: none;
   padding: 2px;
   gap: 2px;
-  background: var(--surface-2);
+  background: color-mix(in oklab, var(--surface-2) 78%, transparent);
   border: 1px solid var(--rule);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
 }
 
 .theme__btn {
@@ -1050,21 +1178,17 @@ p { max-width: 74ch; }
   align-items: center;
   justify-content: center;
   width: 26px;
-  height: 24px;
+  height: 25px;
   padding: 0;
   background: none;
   border: 0;
-  border-radius: var(--r-xs);
+  border-radius: var(--r-pill);
   color: var(--ink-3);
   cursor: pointer;
   transition: color var(--t-fast) var(--ease),
               background-color var(--t-fast) var(--ease);
 }
 .theme__btn:hover { color: var(--ink); }
-
-/* The selected segment steps toward the viewer. --raised rather than --surface,
-   because on the dark theme --surface (#111) is DARKER than the group's
-   --surface-2 (#171717), which would read as pressed-in instead of selected. */
 .theme__btn[aria-pressed="true"] {
   background: var(--raised);
   color: var(--ink);
@@ -1073,14 +1197,12 @@ p { max-width: 74ch; }
 
 .theme__icon { width: 14px; height: 14px; display: block; }
 
-/* In the drawer the group gets a label, because there is room for one and a
-   row of three unlabelled icons is less obvious on a phone. */
 .nav__drawer-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--s-3);
-  padding: 0.5em 0.4em;
+  padding: 0.5em 0.7em;
 }
 .nav__drawer-label {
   font-family: var(--mono);
@@ -1090,7 +1212,6 @@ p { max-width: 74ch; }
   color: var(--ink-3);
 }
 
-/* an icon beside a label, used in the drawer and the footer */
 .icon-link {
   display: inline-flex;
   align-items: center;
@@ -1101,17 +1222,36 @@ p { max-width: 74ch; }
 }
 .icon-link:hover { color: var(--ink); }
 
-/* -------------------------------------------------------------- 10 footer */
+/* -------------------------------------------------------------- 11 footer */
 
 .site-footer {
+  position: relative;
   padding-block: var(--s-8) var(--s-6);
-  /* In the light theme the dark block is its own boundary. In the dark theme it
-     sits at the same value as the page, so it needs the hairline. */
-  border-top: 1px solid var(--rule);
   overflow: hidden;
 }
 
+/* A horizon: the page's floor lights up toward the accent. */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(680px 300px at 84% 112%,
+      color-mix(in oklab, var(--accent) 11%, transparent), transparent 74%),
+    linear-gradient(180deg, transparent, color-mix(in oklab, var(--surface) 30%, transparent));
+}
+.site-footer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--rule-strong), transparent);
+}
+
 .footer__grid {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) repeat(5, minmax(0, 1fr));
   gap: var(--s-7) var(--s-5);
@@ -1120,9 +1260,6 @@ p { max-width: 74ch; }
 .footer__brand { display: grid; gap: var(--s-4); align-content: start; }
 .footer__about { font-size: 0.875rem; line-height: 1.6; color: var(--ink-2); max-width: 34ch; }
 
-/* h3, not h4: a page whose last content heading is an h2 would otherwise jump
-   straight to h4 here, skipping a level in the document outline. The size is set
-   explicitly, so the tag change is invisible. */
 .footer__col h3 {
   margin-bottom: var(--s-3);
   font-family: var(--mono);
@@ -1163,18 +1300,19 @@ p { max-width: 74ch; }
 }
 .footer__legal code { background: none; color: inherit; }
 
-/* -------------------------------------------- 11 hero and showcase */
+/* -------------------------------------------- 12 hero and showcase */
 
 .hero {
   position: relative;
-  padding-block: clamp(48px, 7vw, 96px) clamp(48px, 6vw, 88px);
+  padding-block: clamp(56px, 8vw, 118px) clamp(56px, 7vw, 104px);
   border-bottom: 1px solid var(--rule);
+  overflow: hidden;
 }
 
 .hero__grid {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: clamp(32px, 5vw, 72px);
+  gap: clamp(32px, 5vw, 80px);
   align-items: center;
 }
 
@@ -1192,19 +1330,22 @@ p { max-width: 74ch; }
   border-top: 1px solid var(--rule);
 }
 
-.hero__figure { display: flex; justify-content: flex-end; }
+.hero__figure {
+  display: flex;
+  justify-content: flex-end;
+  filter: drop-shadow(0 0 60px color-mix(in oklab, var(--accent) 24%, transparent));
+}
 
-/* The facts strip under a hero: a row of definition pairs divided by hairlines,
-   which is how a spec sheet presents numbers. */
+/* The facts strip under a hero: glass cards over charcoal. */
 .hero__stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0;
   margin-top: clamp(40px, 5vw, 64px);
-  border: 1px solid var(--rule);
-  border-radius: var(--r);
+  border: 1px solid color-mix(in oklab, var(--rule) 86%, transparent);
+  border-radius: var(--r-lg);
   overflow: hidden;
-  background: var(--surface);
+  background: color-mix(in oklab, var(--surface) 72%, transparent);
 }
 .hero__stat {
   padding: var(--s-4) var(--s-5);
@@ -1220,27 +1361,25 @@ p { max-width: 74ch; }
   text-transform: uppercase;
   color: var(--ink-3);
 }
-/* the dd carries mono repo names and tags; anywhere keeps them from setting the
-   min-content width of the facts strip on a narrow screen */
-.hero__stat dd { font-size: 0.95rem; font-weight: 500; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.hero__stat dd {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 
-/* ---- the live repository statistics band ([component:project-stats]) ---- */
+/* ---- the live repository statistics band ------------------------------- */
 
-/* A second, tighter facts strip: the numbers GitHub publishes about the
-   repository itself, refreshed every 15 minutes by a scheduled job that writes a shared
-   snapshot. The page loads that snapshot already rendered — the browser never
-   calls GitHub, so nothing reflows while loading and the band needs no
-   skeleton state. font-variant-numeric keeps the digit widths fixed so the
-   paint is identical when the same band is re-rendered with new counts. */
 .stats-band {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0;
   margin-top: var(--s-6);
-  border: 1px solid var(--rule);
-  border-radius: var(--r);
+  border: 1px solid color-mix(in oklab, var(--rule) 86%, transparent);
+  border-radius: var(--r-lg);
   overflow: hidden;
-  background: var(--surface);
+  background: color-mix(in oklab, var(--surface) 72%, transparent);
 }
 .stats-band__item {
   padding: var(--s-4) var(--s-5);
@@ -1259,19 +1398,13 @@ p { max-width: 74ch; }
 }
 .stats-band__num {
   font-weight: 600;
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
   min-width: 0;
   overflow-wrap: anywhere;
 }
-/* a missing or degraded dataset renders as one explanatory full-width cell,
-   never a row of fabricated zeroes */
-/* Fires ONLY when a displayed value genuinely changed to a different one
-   (window.PwEeveeStats.update with from ≠ to) — never on first paint, which is
-   the server-rendered settled state. A brief surface tint plus a small glow,
-   then it leaves no residue. */
 @keyframes stats-emphasize {
   0%   { background-color: var(--accent-wash); box-shadow: 0 0 16px -6px var(--accent-wash); }
   100% { background-color: transparent;         box-shadow: none; }
@@ -1292,30 +1425,72 @@ p { max-width: 74ch; }
   color: var(--ink-3);
 }
 
+/* on-visit freshness check ------------------------------------------------- */
+
+/* The one-line note under the hero facts and in the footer, telling the visitor
+   what was verified when and what the browser quietly re-checked. Nothing loud:
+   it is a footnote, not a banner. */
+.source-note {
+  margin: var(--s-3) 0 0;
+  max-width: 62ch;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.source-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+[data-fresh-note] { transition: opacity 0.4s ease; }
+[data-fresh-note][data-fresh-state="offline"] { opacity: 0.75; }
+html[data-fresh="offline"] [data-fresh-note] {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+/* Badge the browser adds when a newer upstream release exists than the one
+   rendered. Uses the existing badge family, sits in the badge row, and is a
+   link to the authoritative release rather than a rewritten download. */
+.badge--fresh {
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--rule));
+  color: color-mix(in oklab, var(--accent) 88%, white);
+}
+
 /* ---- the app icon, presented as an app icon ---------------------------- */
 
 .showcase {
   display: grid;
   gap: var(--s-3);
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
   margin: 0;
 }
 
+/* a slow ring of light sweeps behind the icon */
 .showcase__frame {
   position: relative;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   padding: clamp(14px, 2.2vw, 24px);
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: var(--r-lg);
+  background: color-mix(in oklab, var(--surface-2) 74%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 26%, var(--rule));
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow:
+    0 0 70px -24px color-mix(in oklab, var(--accent) 45%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, #ffffff 6%, transparent);
 }
+.showcase__frame::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(0deg, transparent 88%, color-mix(in oklab, var(--accent) 34%, transparent) 95%, transparent 101%);
+  animation: showcase-orbit 9s linear infinite;
+}
+@keyframes showcase-orbit {
+  to { transform: rotate(1turn); }
+}
+.showcase__frame > * { position: relative; }
 
-/* The artwork is used exactly as delivered: contained, never cropped, never
-   stretched, never recoloured, and with no filter of any kind. */
 .showcase__art {
   display: block;
   width: 100%;
@@ -1323,7 +1498,6 @@ p { max-width: 74ch; }
   object-fit: contain;
 }
 
-/* the fallback mark, used only when no artwork file is present */
 .showcase__standin {
   display: grid;
   place-items: center;
@@ -1344,34 +1518,29 @@ p { max-width: 74ch; }
   font-size: 0.72rem;
   letter-spacing: 0.06em;
 }
-/* Only the label is uppercased. The meta side names the product, and
-   text-transform would render "PwEevee for iOS" as "PWEEVEE FOR IOS" — the brand
-   is written one way, so no rule is allowed to restyle it into another. */
 .showcase__label { color: var(--ink-3); text-transform: uppercase; }
 .showcase__meta  { color: var(--ink-2); }
 
-/* -------------------------------------- 12 the falling-star field */
+/* -------------------------------------- 13 the falling-star field */
 
-/* The container is painted by pweevee.js and carries no content. It ships empty,
-   so with JavaScript off, or under prefers-reduced-motion, the dark surface is
-   simply plain — nothing is missing, because nothing here is information. */
 .starfield {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  /* it only ever belongs to a dark region */
   display: none;
 }
 .inverted > .starfield { display: block; }
 .starfield__canvas { display: block; width: 100%; height: 100%; }
 
-/* ------------------------ 13 downloads, releases, assets, variants */
+/* ------------------------ 14 downloads, releases, assets, variants */
 
-/* The headline download. A single panel, sectioned by hairlines: identity,
-   actions, files, checksum, facts, notes. */
 .download { display: grid; gap: var(--s-5); padding: clamp(22px, 3vw, 34px); }
+.panel--raised.download {
+  background:
+    color-mix(in oklab, var(--surface) 84%, transparent);
+}
 
 .download__head {
   display: flex;
@@ -1382,9 +1551,6 @@ p { max-width: 74ch; }
 }
 .download__ident { display: grid; gap: var(--s-2); min-width: 0; }
 
-/* Not uppercased: this label carries the project's name, and uppercasing would
-   render PwEevee as PWEEVEE and spoti.pw as SPOTI.PW. Mono, small and muted is
-   already enough to read as a label. */
 .download__project {
   display: inline-flex;
   align-items: center;
@@ -1395,26 +1561,25 @@ p { max-width: 74ch; }
   letter-spacing: 0.06em;
   color: var(--ink-3);
 }
-/* the small logo that labels a release panel */
 .download__logo {
   width: 20px;
   height: 20px;
-  border-radius: 5px;
+  border-radius: 6px;
   display: block;
   flex: none;
 }
 
 .download__version {
-  font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1.08;
+  font-size: clamp(1.9rem, 1.4rem + 2vw, 2.8rem);
+  font-weight: 650;
+  line-height: 1.06;
   letter-spacing: -0.03em;
   font-family: var(--mono);
 }
 .download__title { font-size: 0.95rem; color: var(--ink-2); }
 .download__date  { font-size: 0.85rem; color: var(--ink-3); }
 
-.download__badges { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.download__badges { display: flex; flex-wrap: wrap; gap: var(--s-2); align-content: start; }
 
 .download__actions {
   display: flex;
@@ -1423,11 +1588,10 @@ p { max-width: 74ch; }
   align-items: stretch;
 }
 
-/* the file list: a table of rows, not a stack of cards */
 .download__files {
   display: grid;
   border: 1px solid var(--rule);
-  border-radius: var(--r-sm);
+  border-radius: var(--r);
   overflow: hidden;
 }
 .asset {
@@ -1436,8 +1600,10 @@ p { max-width: 74ch; }
   align-items: center;
   gap: var(--s-4);
   padding: var(--s-3) var(--s-4);
-  background: var(--surface);
+  background: color-mix(in oklab, var(--surface-2) 46%, transparent);
+  transition: background-color var(--t-fast) var(--ease);
 }
+.asset:hover { background: color-mix(in oklab, var(--accent-wash) 30%, transparent); }
 .asset + .asset { border-top: 1px solid var(--rule); }
 .asset__kind {
   font-family: var(--mono);
@@ -1445,9 +1611,9 @@ p { max-width: 74ch; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-3);
-  padding: 0.25em 0.5em;
+  padding: 0.28em 0.6em;
   border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
+  border-radius: var(--r-pill);
   min-width: 3.6em;
   text-align: center;
 }
@@ -1463,9 +1629,6 @@ p { max-width: 74ch; }
 
 /* ---- AltSource variants ------------------------------------------------- */
 
-/* A family is one build with two install options: the head carries what both
-   share, the grid carries the choice. One step quieter than a release panel,
-   because this is a secondary source and is labelled as one. */
 .variant-family { display: grid; gap: var(--s-5); }
 .variant-family + .variant-family { margin-top: var(--s-7); }
 
@@ -1508,7 +1671,7 @@ p { max-width: 74ch; }
 .variant__note { font-size: 0.85rem; color: var(--ink-2); }
 .variant__actions { display: grid; gap: var(--s-2); }
 
-/* ------------------- 14 release history: toolbar, groups, timeline */
+/* -------------- 15 release history: toolbar, groups, timeline */
 
 .toolbar {
   display: flex;
@@ -1528,28 +1691,29 @@ p { max-width: 74ch; }
 }
 .search__icon {
   position: absolute;
-  left: 0.7em;
+  left: 0.8em;
   width: 15px;
   height: 15px;
   color: var(--ink-3);
   pointer-events: none;
 }
 .search__input {
-  width: min(260px, 60vw);
-  padding: 0.45em 0.7em 0.45em 2.25em;
-  background: var(--surface);
+  width: min(250px, 60vw);
+  padding: 0.5em 1em 0.5em 2.4em;
+  background: color-mix(in oklab, var(--surface) 82%, transparent);
   color: var(--ink);
   border: 1px solid var(--rule-strong);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   font-size: 0.875rem;
-  transition: border-color var(--t-fast) var(--ease);
+  transition: border-color var(--t-fast) var(--ease),
+              box-shadow var(--t-med) var(--ease);
 }
 .search__input::placeholder { color: var(--ink-3); }
-.search__input:focus { border-color: var(--accent); }
-/* the browser draws its own clear button; `color-scheme` on :root is what makes
-   it legible in both themes, so there is nothing to restyle here */
+.search__input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-wash) 60%, transparent);
+}
 
-/* a month heading, ruled across the remaining width */
 .group-head {
   display: flex;
   align-items: center;
@@ -1565,12 +1729,10 @@ p { max-width: 74ch; }
   color: var(--ink-3);
   flex: none;
 }
-.group-head__line { flex: 1 1 auto; height: 1px; background: var(--rule); }
+.group-head__line { flex: 1 1 auto; height: 1px; background: linear-gradient(90deg, var(--rule-strong), transparent); }
 
 [data-release-group] + [data-release-group] { margin-top: var(--s-7); }
 
-/* One vertical hairline with a small square node per entry. The node is a
-   geometric marker, not a glowing bead. */
 .timeline { position: relative; display: grid; gap: var(--s-4); padding-left: var(--s-6); }
 .timeline::before {
   content: "";
@@ -1579,7 +1741,7 @@ p { max-width: 74ch; }
   top: 6px;
   bottom: 6px;
   width: 1px;
-  background: var(--rule);
+  background: linear-gradient(180deg, var(--rule-strong), var(--rule) 60%, transparent);
 }
 .timeline__item { position: relative; }
 .timeline__item::before {
@@ -1589,14 +1751,16 @@ p { max-width: 74ch; }
   top: 20px;
   width: 7px;
   height: 7px;
-  border-radius: 2px;
+  border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--rule-strong);
 }
-/* the newest visible entry is the one the accent marks */
-.timeline__item--first::before { background: var(--accent); border-color: var(--accent); }
+.timeline__item--first::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px 0 color-mix(in oklab, var(--accent) 55%, transparent);
+}
 
-/* the filter's own hiding class, alongside the hidden attribute */
 .is-filtered { display: none !important; }
 
 .release { display: grid; gap: var(--s-4); padding: var(--s-5); }
@@ -1615,7 +1779,7 @@ p { max-width: 74ch; }
 .release__summary { font-size: 0.9rem; color: var(--ink-2); }
 .release__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 
-/* -------------- 15 project cards, features, pipeline, lists */
+/* -------------- 16 project cards, features, pipeline, lists */
 
 .project-card { display: grid; gap: var(--s-4); padding: var(--s-5); align-content: start; }
 
@@ -1626,15 +1790,14 @@ p { max-width: 74ch; }
   border-radius: 11px;
   display: block;
 }
-/* the text-only mark, for a project with no artwork of its own */
 .project-card__glyph {
   display: grid;
   place-items: center;
   width: 46px;
   height: 46px;
   border-radius: 11px;
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--accent-wash) 55%, var(--surface-2) 45%);
+  border: 1px solid color-mix(in oklab, var(--accent) 26%, var(--rule));
   color: var(--accent-ink);
   font-size: 1.1rem;
 }
@@ -1647,173 +1810,147 @@ p { max-width: 74ch; }
 
 .project-card__meta {
   display: grid;
-  gap: var(--s-3);
-  padding-top: var(--s-4);
   border-top: 1px solid var(--rule);
 }
+.project-card__metadata { display: none; }
 .project-card__meta > div { display: grid; gap: 0.15em; }
-
 .project-card__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: auto; }
 
 .project-hero__art { display: flex; justify-content: flex-end; }
 .project-hero__icon {
-  width: clamp(120px, 20vw, 190px);
-  height: auto;
-  aspect-ratio: 1;
-  border-radius: clamp(26px, 4.4vw, 42px);
+  width: clamp(72px, 10vw, 96px);
+  height: clamp(72px, 10vw, 96px);
+  border-radius: 22px;
   display: block;
+  box-shadow: 0 0 50px -18px color-mix(in oklab, var(--accent) 40%, transparent);
 }
 
-/* A feature is a bordered block, and when it is a link the border answers the
-   pointer. No icon circles, no tinted fills. */
 .feature {
   display: grid;
   gap: var(--s-3);
-  align-content: start;
   padding: var(--s-5);
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: var(--r);
-  border-top: 2px solid var(--accent);
-  transition: border-color var(--t-fast) var(--ease),
-              background-color var(--t-fast) var(--ease);
+  align-content: start;
+  color: inherit;
 }
-.feature > * { margin: 0; }
-.feature p { font-size: 0.875rem; color: var(--ink-2); }
-a.feature:hover { background: var(--surface-2); }
-a.feature:hover .small { color: var(--ink); }
+.feature:hover h3 { color: var(--brand-hover); }
 .feature__icon {
-  display: inline-flex;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: color-mix(in oklab, var(--accent-wash) 62%, var(--surface-2) 38%);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--rule));
   color: var(--accent-ink);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
-.feature__icon .btn__icon { width: 16px; height: 16px; }
 
-/* A numbered sequence. The numbers are the design. */
-/* A numbered sequence and a marked list. Both indent with padding and place the
-   marker absolutely.
-   They must NOT be `display: grid` on the <li>. A list item like
-
-     <li><strong>Orion</strong> — injection runtime by <a>theos</a>, as shipped…</li>
-
-   has FOUR children once ::before is counted: the marker, the <strong>, the text
-   run, and the <a>. Grid makes every one of them its own grid item, so the label
-   lands in column 2 while the description wraps to the next row in column 1 —
-   which stretches the `auto` column to the width of the longest sentence and
-   strands the label at the far right. Normal inline flow keeps a label and its
-   description together and wraps by itself at any width. */
-.pipeline { list-style: none; padding: 0; counter-reset: step; }
-.pipeline li {
-  counter-increment: step;
-  position: relative;
-  padding: var(--s-4) 0 var(--s-4) 2.6em;
-  border-top: 1px solid var(--rule);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-.pipeline li:last-child { border-bottom: 1px solid var(--rule); }
-.pipeline li::before {
-  content: counter(step, decimal-leading-zero);
-  position: absolute;
-  left: 0;
-  top: calc(var(--s-4) + 0.18em);
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  color: var(--ink-3);
-  letter-spacing: 0.06em;
-}
-/* a step's own heading, when the step needs one */
-.pipeline strong { color: var(--ink); font-weight: 600; }
-
-.checklist { list-style: none; padding: 0; display: grid; gap: var(--s-3); }
+/* two content-defined achievements lists: bullets like sentences, not cards */
+.checklist { list-style: none; padding: 0; }
 .checklist li {
   position: relative;
-  padding-left: 1.5em;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--ink-2);
+  padding-left: 1.9em;
 }
+.checklist li + li { margin-top: var(--s-2); }
 .checklist li::before {
   content: "";
   position: absolute;
   left: 0;
   top: 0.52em;
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  border: 1px solid var(--rule-strong);
-  background: var(--accent);
+  width: 0.9em;
+  height: 0.9em;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--accent) 20%, transparent);
+  border: 1.5px solid var(--accent);
 }
-/* the "does not do" list: an outline marker, so the two read as opposites */
-.checklist--no li::before { background: none; }
-/* the label a checklist item leads with stays with its description */
-.checklist strong { color: var(--ink); font-weight: 600; }
+.checklist--no li::before {
+  content: "\00d7";
+  width: auto;
+  height: auto;
+  background: none;
+  border: 0;
+  color: var(--bad);
+  font-weight: 700;
+  top: -0.02em;
+}
 
-/* ----------- 16 key/value, meta, checksum, disclosure, notes */
-
-.kv { display: grid; }
-.kv__row {
+.pipeline { list-style: none; padding: 0; counter-reset: pipe; display: grid; gap: var(--s-4); }
+.pipeline li {
+  position: relative;
+  counter-increment: pipe;
+  padding-left: 3em;
+}
+.pipeline li::before {
+  content: counter(pipe);
+  position: absolute;
+  left: 0;
+  top: 0;
   display: grid;
-  grid-template-columns: minmax(140px, 0.4fr) minmax(0, 1fr);
-  gap: var(--s-4);
-  padding: var(--s-3) 0;
-  border-top: 1px solid var(--rule);
-  font-size: 0.875rem;
-}
-.kv__row:last-child { border-bottom: 1px solid var(--rule); }
-.kv__k { color: var(--ink-3); }
-/* anywhere rather than break-word: these values include repo names, URLs and
-   hashes, and anywhere is what lowers min-content, so the row can shrink on a
-   phone instead of pushing the page sideways */
-.kv__v { color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
-
-/* a compact fact row inside a panel */
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-3) var(--s-6);
-  padding-top: var(--s-4);
-  border-top: 1px solid var(--rule);
-}
-.meta > div { display: grid; gap: 0.1em; }
-.meta dt, .meta__k {
+  place-items: center;
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--accent-wash) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 36%, var(--rule));
+  color: var(--accent-ink);
   font-family: var(--mono);
-  font-size: 0.66rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* -------------- 17 key/value, meta, checksum, disclosure, notes */
+
+.meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
+.meta > div { display: grid; gap: 0.15em; }
+.meta dt,
+.meta__k {
+  font-family: var(--mono);
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
-.meta__v { font-size: 0.85rem; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.meta dd,
+.meta__v {
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+.meta__v.mono { font-weight: 500; }
 
-/* A 64-character checksum next to a Copy button. The value wraps rather than
-   scrolls, because a wrapped hash is still readable and comparable while a
-   scrolling one hides half of itself. min-width: 0 is what lets it shrink past
-   its flex-basis, so the field never widens the page; flex-wrap then drops the
-   button onto its own line instead of pushing it out of the viewport. */
+.kv { display: grid; }
+.kv__row {
+  display: grid;
+  grid-template-columns: minmax(120px, 190px) minmax(0, 1fr);
+  gap: var(--s-4);
+  padding: 0.65em 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.kv__row:last-child { border-bottom: 1px solid var(--rule); }
+.kv__k { color: var(--ink-3); font-size: 0.85rem; }
+.kv__v { color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+
 .hash {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-2) var(--s-3);
-  padding: var(--s-3) var(--s-4);
-  background: var(--surface-2);
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.hash__label { color: var(--ink-3); font-size: 0.8rem; flex: none; }
+.hash__value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 0.5em 0.8em;
+  background: color-mix(in oklab, var(--surface-2) 62%, transparent);
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
-}
-.hash__value {
-  font-family: var(--mono);
-  font-size: 0.74rem;
-  line-height: 1.55;
   color: var(--ink-2);
-  overflow-wrap: anywhere;
-  min-width: 0;
-  flex: 1 1 24ch;
 }
 .hash .copy { flex: none; }
 
-/* A disclosure, styled as a row rather than a card, so a page of them stays
-   calm. The marker is a rotating chevron drawn in CSS. */
 .disclose { border-top: 1px solid var(--rule); }
 .disclose > summary {
   display: flex;
@@ -1825,6 +1962,7 @@ a.feature:hover .small { color: var(--ink); }
   color: var(--ink-2);
   cursor: pointer;
   list-style: none;
+  transition: color var(--t-fast) var(--ease);
 }
 .disclose > summary::-webkit-details-marker { display: none; }
 .disclose > summary::before {
@@ -1841,36 +1979,28 @@ a.feature:hover .small { color: var(--ink); }
 .disclose > summary:hover { color: var(--ink); }
 .disclose__body { padding-bottom: var(--s-4); display: grid; gap: var(--s-3); }
 
-/* Release notes come from an upstream author. They are sanitised to a tiny
-   fixed grammar by the renderer, and styled to read as quoted text. */
 .notes {
   font-size: 0.875rem;
   line-height: 1.65;
   color: var(--ink-2);
   padding-left: var(--s-4);
-  border-left: 2px solid var(--rule);
+  border-left: 2px solid var(--rule-strong);
   display: grid;
   gap: var(--s-3);
-  /* An upstream author can put a 200-character token or a bare URL in a release
-     note. The sanitiser keeps it as text, so the layout has to be able to break
-     it — otherwise one note pushes the whole page sideways. */
   overflow-wrap: anywhere;
 }
 .notes ul, .notes ol { padding-left: 1.2em; display: grid; gap: var(--s-1); }
-/* a heading from an upstream release note: a label, not an outline entry */
 .notes__h { font-weight: 600; color: var(--ink); }
 .notes code {
   padding: 0.1em 0.35em;
-  background: var(--surface-2);
+  background: color-mix(in oklab, var(--surface-2) 76%, transparent);
   border: 1px solid var(--rule);
   border-radius: var(--r-xs);
 }
 .notes-truncated { font-size: 0.8rem; color: var(--ink-3); }
 
-/* ------------------------------------------ 17 states and skeletons */
+/* --------------------------- 18 states and skeletons */
 
-/* An unavailable thing is stated, never faked with a dead button. The tone is
-   carried by the icon and one rule, so the panel itself stays neutral. */
 .state {
   display: grid;
   gap: var(--s-3);
@@ -1901,28 +2031,26 @@ a.feature:hover .small { color: var(--ink); }
 .state--error { border-left-color: var(--bad); }
 .state--error .state__icon { color: var(--bad); border-color: var(--bad); }
 
-/* Placeholders for the hydration fallback: a quiet pulse, no travelling
-   shimmer. They only ever appear if the site was deployed without rendering. */
 .sk-stack { display: grid; gap: var(--s-3); }
 .sk-row   { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .skeleton {
-  background: var(--rule);
+  background: color-mix(in oklab, var(--rule) 72%, transparent);
   border-radius: var(--r-xs);
   animation: sk-pulse 1.6s var(--ease) infinite;
 }
 .sk-line     { height: 12px; width: 100%; }
 .sk-line--sm { height: 9px; }
 .sk-line--lg { height: 26px; border-radius: var(--r-sm); }
-.sk-pill     { height: 20px; width: 92px; border-radius: var(--r-xs); }
-.sk-btn      { height: 40px; width: 148px; border-radius: var(--r-sm); }
-.sk-block    { height: 64px; width: 100%; border-radius: var(--r-sm); }
+.sk-pill     { height: 20px; width: 92px; border-radius: var(--r-pill); }
+.sk-btn      { height: 42px; width: 148px; border-radius: var(--r-pill); }
+.sk-block    { height: 64px; width: 100%; border-radius: var(--r); }
 .sk-w-40 { width: 40%; }
 .sk-w-50 { width: 50%; }
 .sk-w-60 { width: 60%; }
 
 @keyframes sk-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
-/* --------------------------------------------------------- 18 utilities */
+/* --------------------------------------------------------- 19 utilities */
 
 .mt-4 { margin-top: var(--s-4); }
 .mt-5 { margin-top: var(--s-5); }
@@ -1931,21 +2059,26 @@ a.feature:hover .small { color: var(--ink); }
 .mb-0 { margin-bottom: 0; }
 .mb-5 { margin-bottom: var(--s-5); }
 
-/* ------------------------------------------------------------ 19 reveal */
+/* -------------------------------------------------------- 20 reveal */
 
-/* A short, small rise as a block enters. Only armed when JavaScript is present,
-   so content is never hidden by a script that failed to load. */
+/* A short, small rise as a block enters, with a group stagger so compositions
+   arrive in order. Armed only when JavaScript is present. */
 .js .reveal {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 420ms var(--ease), transform 420ms var(--ease);
+  transform: translateY(14px);
+  transition: opacity 560ms var(--ease), transform 560ms var(--ease);
+  will-change: opacity, transform;
 }
-.js .reveal.is-in { opacity: 1; transform: none; }
+.js .reveal.is-in { opacity: 1; transform: none; will-change: auto; }
+.js [data-reveal-group] .reveal:nth-child(2)  { transition-delay: 70ms; }
+.js [data-reveal-group] .reveal:nth-child(3)  { transition-delay: 140ms; }
+.js [data-reveal-group] .reveal:nth-child(4)  { transition-delay: 210ms; }
+.js [data-reveal-group] .reveal:nth-child(5)  { transition-delay: 280ms; }
+.js [data-reveal-group] .reveal:nth-child(n+6) { transition-delay: 330ms; }
+.js .reveal.is-in { transition-delay: 0ms; }
 
-/* -------------------------------------------------------- 20 responsive */
+/* -------------------------------------------------------- 21 responsive */
 
-/* Tablet: the six-column footer and the three-column grids stop working long
-   before the nav does, so they go first. */
 @media (max-width: 1080px) {
   .footer__grid { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); }
 }
@@ -1954,49 +2087,26 @@ a.feature:hover .small { color: var(--ink); }
   .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero__grid { grid-template-columns: 1fr; gap: var(--s-7); }
   .hero__figure { justify-content: flex-start; }
-  .showcase { max-width: 260px; }
+  .showcase { max-width: 300px; }
   .project-hero__art { justify-content: flex-start; }
-
-  /* The facts strip becomes a list. Four 150px columns technically fit on a
-     tablet, but a mono label and its value do not read at that width, so the
-     dividers turn from vertical to horizontal instead of squeezing. */
   .hero__stats { grid-template-columns: 1fr; }
   .hero__stat { border-right: 0; border-bottom: 1px solid var(--rule); }
   .hero__stat:last-child { border-bottom: 0; }
-
-  /* the live-stats band follows the same rule: a list, not squeezed columns */
   .stats-band { grid-template-columns: 1fr; }
   .stats-band__item { border-right: 0; border-bottom: 1px solid var(--rule); }
   .stats-band__item:last-child { border-bottom: 0; }
 }
 
-/* The navigation collapses before the content does, and on its own breakpoint.
-   The full bar — brand, five links, the theme control, the GitHub link and the
-   download button — needs roughly 790px of content width. At 901px only about
-   40px of slack was left, which is inside the margin of error for font metrics
-   on an unknown platform, so the drawer takes over at 980px instead. Nothing
-   here is a fixed width, so nothing can force the page to scroll sideways. */
 @media (max-width: 980px) {
   .nav { gap: var(--s-3); }
   .nav__links { display: none; }
   .nav__toggle { display: inline-flex; }
   .nav__icon { display: none; }
   .nav__cta { display: none; }
-  /* The theme control moves into the drawer with the other actions. It would
-     still fit in the bar — brand + segments + burger needs about 242px against
-     280px of content width at 320px — but the GitHub link and the download
-     button go to the drawer at this width, and splitting the actions across two
-     places is worse than keeping them together. The drawer copy is labelled. */
   .js .nav__end .theme { display: none; }
 }
 
-/* Phone. Every multi-column grid becomes one column, and the hairline tables
-   become stacked rows — a narrow screen cannot show a label and a value side by
-   side without one of them wrapping badly. */
 @media (max-width: 900px) {
-  /* minmax(0, 1fr), not bare 1fr: a bare fr track keeps min-content as its
-     minimum, so one long unbreakable string (a repo name, a filename) could
-     push a single-column track past the viewport. The 0 floor removes that. */
   .grid--2, .grid--3, .split, .variant-grid { grid-template-columns: minmax(0, 1fr); }
   .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-5); }
   .footer__brand { grid-column: 1 / -1; }
@@ -2008,7 +2118,8 @@ a.feature:hover .small { color: var(--ink); }
   .search { flex: 1 1 auto; }
 
   .kv__row { grid-template-columns: 1fr; gap: var(--s-1); }
-  /* stacking a row that was aligned to its baseline must not right-align it */
+  .meta { flex-direction: column; }
+
   .download__head, .variant-family__head {
     flex-direction: column;
     align-items: stretch;
@@ -2020,8 +2131,6 @@ a.feature:hover .small { color: var(--ink); }
 }
 
 @media (max-width: 560px) {
-  /* the hero copy is shrink-to-fit on a wide screen, full width on a phone, so
-     a stacked button row actually spans the screen instead of the longest label */
   .hero__copy { justify-items: stretch; }
   .download__actions .btn, .btn-row > .btn, .state__actions .btn { width: 100%; }
   .download__actions, .btn-row { flex-direction: column; align-items: stretch; }
@@ -2032,10 +2141,10 @@ a.feature:hover .small { color: var(--ink); }
   .footer__legal { flex-direction: column; gap: var(--s-1); }
 }
 
-/* ------------------------ 21 reduced motion, forced colours, print */
+/* ------------------------ 22 reduced motion, forced colours, print */
 
-/* A visitor who asked for less motion gets none: no reveal, no transition, and
-   no star field at all — the canvas is removed rather than merely slowed. */
+/* A visitor who asked for less motion gets none: no reveal, no aurora, no
+   orbit ring, and no star field at all. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -2045,24 +2154,23 @@ a.feature:hover .small { color: var(--ink); }
   }
   .starfield { display: none !important; }
   .inverted > .starfield { display: none !important; }
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal { opacity: 1; transform: none; transition-delay: 0ms; }
   .skeleton { animation: none; opacity: 0.7; }
-  /* the changed-value highlight never animates under reduced motion — and the
-     JS module skips the whole animation anyway, so this is the belt to its
-     braces. */
   .stats-band__num--changed { animation: none; }
+  .aurora__beam, .showcase__frame::before { animation: none; }
 }
 
 /* Windows high-contrast: keep every boundary, drop every decoration. */
 @media (forced-colors: active) {
   .panel, .feature, .badge, .chip, .btn, .asset, .state, .hash,
   .showcase__frame, .search__input { border: 1px solid CanvasText; }
-  .starfield { display: none; }
+  .starfield, .aurora { display: none; }
+  .btn--primary { --btn-bg: ButtonFace; --btn-ink: ButtonText; }
+  .display.display--lit { background: none; -webkit-text-fill-color: CanvasText; }
   .badge__dot, .timeline__item::before, .checklist li::before { forced-color-adjust: none; }
 }
 
-/* Paper is paper: printing always uses the light set, whatever the screen was
-   showing, so a dark theme does not come out as a black rectangle. */
+/* Paper is paper: printing always uses the light set. */
 @media print {
   :root, html[data-theme="dark"], html[data-theme="light"], .inverted {
     color-scheme: light;
@@ -2078,9 +2186,12 @@ a.feature:hover .small { color: var(--ink); }
     --raised:      var(--l-raised);
     --brand:       var(--l-brand);
     --brand-hover: var(--l-brand-hi);
-    --accent:      var(--l-brand);
-    --accent-ink:  var(--l-brand);
-    --accent-wash: var(--l-wash);
+    --accent:      var(--l-accent);
+    --accent-ink:  var(--l-accent-ink);
+    --accent-2:    var(--l-accent-2);
+    --ice:         var(--l-ice);
+    --cyan:        var(--l-cyan);
+    --accent-wash: var(--l-accent-wash);
     --btn-solid:     var(--l-solid);
     --btn-solid-ink: var(--l-solid-ink);
     --btn-solid-hi:  var(--l-solid-hi);
@@ -2090,26 +2201,30 @@ a.feature:hover .small { color: var(--ink); }
     --star-intensity: 0;
   }
   .site-header, .nav__drawer, .starfield, .skip-link, .toolbar,
-  .footer__col, .nav__toggle, .theme { display: none !important; }
+  .footer__col, .nav__toggle, .theme, .aurora { display: none !important; }
   .page { min-height: 0; }
   body { background: #fff; color: #000; }
+  body::before, .site-footer::before, .site-footer::after { display: none; }
   .inverted { background: #fff; color: #000; }
-  .panel, .feature, .asset, .release, .variant, .showcase__frame {
+  .panel, .feature, .variant, .showcase__frame {
     border: 1px solid #ccc;
     background: none;
     box-shadow: none;
   }
+  .display, .display--lit { background: none; -webkit-text-fill-color: #000; color: #000; }
   .section, .hero { padding-block: 16px; border: 0; }
   a { color: #000; text-decoration: underline; }
-  .display, h1, h2, h3 { color: #000; }
+  h1, h2, h3 { color: #000; }
   .disclose > summary { display: none; }
   .disclose__body { display: block !important; }
   details { display: block; }
   details:not([open]) > .disclose__body { display: block !important; }
+  .asset { background: none; }
 }
-/* ============================================================================
+
+/* ==========================================================================
    Installer workshop — /install browser-local validation engine
-   ============================================================================ */
+   ========================================================================== */
 
 .inst-stage { position: relative; }
 .inst-workshop__h {
@@ -2146,7 +2261,7 @@ a.feature:hover .small { color: var(--ink); }
   flex-wrap: wrap;
   margin-block: 0.9em;
 }
-.inst-pick input[type="file"] { /* stays focusable for keyboard users */
+.inst-pick input[type="file"] {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -2156,7 +2271,7 @@ a.feature:hover .small { color: var(--ink); }
 }
 .inst-pick input[type="file"]:focus-visible + label,
 .inst-pick label:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 .inst-pick__name { word-break: break-all; }
@@ -2174,7 +2289,7 @@ a.feature:hover .small { color: var(--ink); }
 .inst-bar {
   width: 0%;
   height: 100%;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--btn-solid), var(--accent-2));
   border-radius: 2px;
   transition: width 200ms ease;
 }
@@ -2192,9 +2307,9 @@ a.feature:hover .small { color: var(--ink); }
   align-items: flex-start;
   gap: 0.7em;
   padding: 0.55em 0.7em;
-  background: var(--surface-2);
+  background: color-mix(in oklab, var(--surface-2) 62%, transparent);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: 8px;
 }
 .inst-row__body { font-size: 0.92em; }
 .inst-row__body .small { display: block; margin-block-start: 0.15em; }
@@ -2205,8 +2320,8 @@ a.feature:hover .small { color: var(--ink); }
   font-size: 0.72em;
   font-weight: 700;
   letter-spacing: 0.03em;
-  padding: 0.25em 0.55em;
-  border-radius: 4px;
+  padding: 0.25em 0.6em;
+  border-radius: var(--r-pill);
   border: 1px solid var(--rule-strong);
   white-space: nowrap;
   margin-block-start: 0.1em;
@@ -2236,8 +2351,3 @@ a.feature:hover .small { color: var(--ink); }
   color: var(--ink-3);
 }
 .inst-matrix tbody th { white-space: nowrap; font-weight: 600; }
-
-@media (prefers-reduced-motion: reduce) {
-  .inst-bar { transition: none; }
-  .inst-workshop__num { transition: none; }
-}

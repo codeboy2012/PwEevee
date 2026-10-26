@@ -65,8 +65,10 @@ server {
     location = /404.html { internal; }
 
     # The site loads no third-party resources: no CDN, no analytics, no fonts,
-    # no external scripts. This policy is therefore safe to enable as-is.
-    add_header Content-Security-Policy "default-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" always;
+    # no external scripts. One exception: the on-visit release-freshness check
+    # reads the public GitHub API (read-only, no token) — documented in
+    # docs/freshness.md. This policy is therefore safe to enable as-is.
+    add_header Content-Security-Policy "default-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header X-Content-Type-Options "nosniff" always;
 }
