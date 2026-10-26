@@ -164,6 +164,9 @@
   --t-fast: 140ms;
   --t-med:  260ms;
   --ease:   cubic-bezier(0.33, 1, 0.36, 1);
+  /* a restrained spring for the two gestures that can afford a hint of
+     overshoot: the accordion body and the mobile drawer. Nothing else. */
+  --ease-spring: cubic-bezier(0.22, 1.18, 0.36, 1);
 }
 
 /* ------------------------------------------------------ 02 the two themes */
@@ -339,6 +342,20 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: var(--s-6) 0; }
 
 /* the hidden attribute must win over an author display rule */
 [hidden] { display: none !important; }
+
+/* Microinteraction coherence: every interactive control protects its own
+   label from accidental drag-selection, kills the legacy touch delay, and
+   answers a press with the same one-pixel density dip. */
+.btn, .chip, .copy, .asset__copy, .theme__btn, .nav__icon, .nav__toggle,
+.nav__link, .sort__select, .search__input, .disclose > summary {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+.btn:active,
+.chip:active,
+.copy:active,
+.asset__copy:active { transform: translateY(1px); }
 
 ::selection { background: color-mix(in oklab, var(--accent) 80%, transparent); }
 
@@ -744,7 +761,8 @@ p { max-width: 74ch; }
               border-color var(--t-fast) var(--ease),
               color var(--t-fast) var(--ease),
               box-shadow var(--t-med) var(--ease),
-              filter var(--t-fast) var(--ease);
+              filter var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -842,10 +860,25 @@ p { max-width: 74ch; }
   color: var(--ink);
   border-color: var(--accent);
 }
-.copy[data-copied] {
+/* copied acknowledgement is one treatment on every control that copies: the
+   checksum pill in the hash reader and the small asset button alike */
+.copy[data-copied],
+.asset__copy[data-copied] {
   color: var(--accent-ink);
   border-color: var(--accent);
+}
+.copy[data-copied] {
   box-shadow: 0 0 14px -6px color-mix(in oklab, var(--accent) 62%, transparent);
+}
+
+/* controls whose own focus treatment already draws a strong ring keep their
+   outline off on the keyboard path too — one indicator, not two */
+.search__input:focus-visible,
+.sort__select:focus-visible { outline: none; }
+
+.copy:disabled, .asset__copy:disabled, .chip:disabled, .sort__select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* -------------------------------------------------- 09 badges and chips */
@@ -982,7 +1015,8 @@ p { max-width: 74ch; }
   transition: background-color var(--t-fast) var(--ease),
               color var(--t-fast) var(--ease),
               border-color var(--t-fast) var(--ease),
-              box-shadow var(--t-med) var(--ease);
+              box-shadow var(--t-med) var(--ease),
+              transform var(--t-fast) var(--ease);
 }
 .chip:hover {
   color: var(--ink);
@@ -1157,7 +1191,10 @@ p { max-width: 74ch; }
   -webkit-backdrop-filter: blur(18px) saturate(1.3);
           backdrop-filter: blur(18px) saturate(1.3);
 }
-.nav__drawer[data-open] { display: grid; gap: var(--s-1); }
+.nav__drawer[data-open] { display: grid; gap: var(--s-1); animation: drawer-in var(--t-med) var(--ease-spring) both; }
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateY(-8px); }
+}
 .nav__drawer .nav__link { padding: 0.62em 0.7em; font-size: 0.95rem; }
 .nav__drawer .nav__link[aria-current="page"]::after { display: none; }
 .nav__drawer .nav__link[aria-current="page"] {
@@ -1615,6 +1652,9 @@ html[data-fresh="offline"] [data-fresh-note] {
 }
 .asset__action { display: inline-flex; align-items: center; gap: var(--s-2); }
 .asset__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   appearance: none;
   padding: 0.42em 0.8em;
   min-height: 34px;
@@ -1626,10 +1666,12 @@ html[data-fresh="offline"] [data-fresh-note] {
   font-size: 0.74rem;
   font-family: var(--mono);
   cursor: pointer;
-  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
 }
-.asset__copy:hover,
-.asset__copy[data-copied] { color: var(--ink); border-color: var(--accent); }
+.asset__copy__icon { width: 12px; height: 12px; flex: none; opacity: 0.8; }
+.asset__copy:hover, .asset__copy[data-copied] { color: var(--ink); border-color: var(--accent); }
+.asset__copy[data-copied] { color: var(--accent-ink); }
 .asset:hover { background: color-mix(in oklab, var(--accent-wash) 30%, transparent); }
 .asset + .asset { border-top: 1px solid var(--rule); }
 .asset__kind {
@@ -2042,6 +2084,15 @@ html:not(.js) .sort { display: none; }
 .disclose[open] > summary::before { transform: rotate(45deg); }
 .disclose > summary:hover { color: var(--ink); }
 .disclose__body { padding-bottom: var(--s-4); display: grid; gap: var(--s-3); }
+/* the body answers opening with one short settle: opacity plus a 4px slide,
+   transform+opacity only, so nothing can reflow or hide behind the sticky
+   header while it plays. Reduced motion neutralises it globally. */
+.disclose[open] > .disclose__body {
+  animation: disclose-in var(--t-med) var(--ease-spring) both;
+}
+@keyframes disclose-in {
+  from { opacity: 0; transform: translateY(-4px); }
+}
 
 .notes {
   font-size: 0.875rem;

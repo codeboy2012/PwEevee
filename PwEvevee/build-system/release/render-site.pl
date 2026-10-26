@@ -1228,7 +1228,13 @@ sub asset_list {
                 ($a->{sha256}
                     ? qq{<button class="asset__copy" type="button" data-copy="@{[ h($a->{sha256}) ]}" }
                     . qq{aria-label="Copy the SHA-256 checksum of @{[ h($a->{name}) ]}"}
-                    . qq{ title="Copy the full SHA-256 checksum">SHA-256 &#9110;</button>}
+                    . qq{ title="Copy the full SHA-256 checksum">}
+                    . '<span data-copy-label>SHA-256</span>'
+                    . '<svg class="asset__copy__icon" viewBox="0 0 16 16" aria-hidden="true"'
+                    . ' fill="none" stroke="currentColor" stroke-width="1.4">'
+                    . '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/>'
+                    . '<path d="M3 10.5v-6A1.5 1.5 0 0 1 4.5 3h6"/>'
+                    . '</svg></button>'
                     : ''),
                 qq{<a class="btn btn--outline btn--sm" href="@{[ attr($a->{download_url}) ]}" rel="noopener" }
                 . qq{aria-label="Download @{[ h($a->{name}) ]}">Download</a>},
