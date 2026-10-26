@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/codeboy2012/PwEevee/refs/heads/main/website/assets/icon-512.png" width="160" alt="PwEevee">
+  <img src="https://raw.githubusercontent.com/codeboy2012/PwEevee/refs/heads/main/website/assets/brand/pweevee-app-icon.png" width="160" alt="PwEevee">
 </p>
 
 <h1 align="center">PwEevee</h1>

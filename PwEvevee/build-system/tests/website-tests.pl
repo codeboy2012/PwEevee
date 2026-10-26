@@ -1253,17 +1253,17 @@ if (-f "$OUT/$LOGO" && -s "$OUT/$LOGO") {
     for my $f (@html) {
         my $body = slurp($f);
         utf8::decode($body);
-        ok($body =~ m{<link rel="icon" type="image/png"[^>]*href="/assets/icon-32\.png"},
-           "$f uses the logo-derived favicon");
-        ok($body =~ m{<link rel="apple-touch-icon" href="/assets/icon-180\.png">},
-           "$f declares the logo-derived Apple touch icon");
+        ok($body =~ m{<link rel="icon" type="image/png" href="/assets/brand/pweevee-app-icon\.png">},
+           "$f uses the app icon artwork as the favicon");
+        ok($body =~ m{<link rel="apple-touch-icon" href="/assets/brand/pweevee-app-icon\.png">},
+           "$f declares the app icon artwork as the Apple touch icon");
         ok($body !~ m{href="/assets/favicon\.svg"},
            "$f no longer links the superseded SVG mark");
         # the nav and footer wordmarks each carry the mark
         my $marks = () = $body =~ m{class="brand__mark"}g;
         ok($marks >= 2, "$f shows the brand mark in the nav and the footer", "found $marks");
-        ok($body =~ m{class="brand__mark" src="/assets/icon-32\.png"},
-           "$f brand mark comes from the official logo");
+        ok($body =~ m{class="brand__mark" src="/assets/brand/pweevee-app-icon\.png"},
+           "$f brand mark comes from the app icon artwork");
     }
 
     # hero figure — one image, at full resolution, and nothing derived from it

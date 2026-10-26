@@ -139,15 +139,15 @@ for my $slug (qw(pweevee spotipw eeveespotify)) {
 }
 my $HAS_ART = keys %ART ? 1 : 0;
 
-# Icon sizes derived from the official logo by make-brand-assets.pl. Used for the
-# favicon, the Apple touch icon and the small in-page marks, where pulling the
-# full-resolution logo would be wasteful.
-my %ICON = map { $_ => (-f "$OUT/assets/icon-$_.png" ? "/assets/icon-$_.png" : undef) }
-           qw(32 180 512);
+# Icon sizes derived from the official logo by make-brand-assets.pl remain on
+# disk (assets/icon-{32,180,512}.png — downscale the procedural mark, kept for
+# tooling and back-compat), but the rendered site no longer links them: per the
+# 2026-10-25 icon revert every PwEevee mark serves the app icon artwork below.
 
-# The artwork that HONESTLY DEPICTS the app icon inside PwEevee IPAs: a restyle
-# derived from the Spotify icon (Spotify's mark — third-party artwork, shown
-# only where the page says "App icon"). Never used as the PwEevee brand mark.
+# The artwork that depicts the app icon inside PwEevee IPAs: a restyle derived
+# from the Spotify icon (Spotify's mark — third-party artwork). Since the icon
+# revert it is ALSO the site-wide mark: the favicon, the Apple touch icon, the
+# small nav/footer brand marks and the release-panel badge all serve it.
 my %APPICON;
 for my $slug (qw(pweevee)) {
     for my $ext (qw(png webp)) {
@@ -156,18 +156,6 @@ for my $slug (qw(pweevee)) {
     }
 }
 
-# If the logo has been replaced since the icons were derived, say so — otherwise
-# the favicon would silently keep showing the previous artwork.
-if ($ART{pweevee} && $ICON{32}) {
-    my $logo_mtime = (stat("$OUT" . $ART{pweevee}))[9] // 0;
-    my $icon_mtime = (stat("$OUT/assets/icon-32.png"))[9] // 0;
-    warn "!! the logo is newer than the derived icon sizes.\n"
-       . "   Run: perl PwEvevee/build-system/release/make-brand-assets.pl\n"
-        if $logo_mtime > $icon_mtime + 1;
-} elsif ($ART{pweevee} && !$ICON{32}) {
-    warn "!! the logo is present but the icon sizes have not been derived yet.\n"
-       . "   Run: perl PwEvevee/build-system/release/make-brand-assets.pl\n";
-}
 my $SITE_URL  = $SITE->{canonical_url} || 'https://pweevee.skytweak.dpdns.org/';
 my $OWN_REPO  = own_repo_url();
 
@@ -424,26 +412,23 @@ sub expand {
 
 # ============================================================ components
 
-# The small mark beside the wordmark in the nav and footer. Prefers the derived
-# 32px icon (a downscale of the official logo) over the full-resolution file, so
-# the nav does not pull a 1280px image on every page.
+# The small mark beside the wordmark in the nav and footer, and — since the icon
+# revert — the favicon, apple-touch icon and release badge too: all serve the
+# app icon artwork.
 sub brand_mark {
-    my $src = $ICON{32} // $ART{pweevee} // '/assets/favicon.svg';
+    my $src = $APPICON{pweevee} // $ART{pweevee} // '/assets/favicon.svg';
     return qq{<img class="brand__mark" src="@{[ attr($src) ]}" alt="" aria-hidden="true" }
          . qq{width="28" height="28" decoding="async">};
 }
 
-# <link> tags for the favicon and Apple touch icon. Falls back to the SVG mark
-# only if the derived sizes have not been generated yet.
+# <link> tags for the favicon and Apple touch icon — both point at the app icon
+# artwork. Falls back to the SVG mark only if that file is missing.
 sub icon_links {
     my @out;
-    if ($ICON{32} || $ICON{512}) {
-        push @out, qq{<link rel="icon" type="image/png" sizes="32x32" href="$ICON{32}">}
-            if $ICON{32};
-        push @out, qq{<link rel="icon" type="image/png" sizes="512x512" href="$ICON{512}">}
-            if $ICON{512};
-        push @out, qq{<link rel="apple-touch-icon" href="$ICON{180}">}
-            if $ICON{180};
+    my $app = $APPICON{pweevee};
+    if ($app) {
+        push @out, qq{<link rel="icon" type="image/png" href="$app">};
+        push @out, qq{<link rel="apple-touch-icon" href="$app">};
     } elsif (-f "$OUT/assets/favicon.svg") {
         push @out, '<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">';
     }
@@ -549,12 +534,12 @@ sub c_brand_showcase {
         '</figure>');
 }
 
-# The small logo that labels a release/download panel. Uses the derived 32px icon
-# for PwEevee so the panel does not pull the full-resolution file; other projects
-# use their artwork if present, and otherwise keep the text-only glyph.
+# The small logo that labels a release/download panel. Since the icon revert it
+# serves the app icon artwork for PwEevee; other projects use their artwork if
+# present, and otherwise keep the text-only glyph.
 sub project_badge {
     my ($p) = @_;
-    my $src = ($p->{slug} // '') eq 'pweevee' ? ($ICON{32} // $ART{pweevee})
+    my $src = ($p->{slug} // '') eq 'pweevee' ? ($APPICON{pweevee} // $ART{pweevee})
                                               : $ART{ $p->{slug} // '' };
     return qq{<img class="download__logo" src="@{[ attr($src) ]}" alt="" aria-hidden="true" }
          . qq{width="22" height="22" decoding="async"> }

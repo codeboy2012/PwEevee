@@ -9,8 +9,9 @@
 #     and has exactly the expected pixel dimensions
 #   * PwEvevee/brand-icons/pweevee-icon.png matches its manifest sha256+size
 #     (the build validates this again at package time)
-#   * website assets reference PwEevee's own icon set; no Spotify-mark file
-#     is used as PwEevee's brand asset anywhere in the website tree
+#   * website assets serve PwEevee's app icon artwork as the site-wide mark
+#     (favicon, apple-touch, nav/footer marks); no Spotify-mark file is wired in
+#     under a Spotify name anywhere in the website tree
 #   * determinism: make-app-icon.pl run twice produces byte-identical outputs
 #     — verified against an explicit backup; any divergence is restored and
 #     reported as a failure, so the committed files are never left changed
@@ -89,9 +90,11 @@ sub basename___ {
   }
 }
 
-# ---------- 3. Spotify mark is not used as the PwEevee brand mark ----------
+# ---------- 3. no Spotify-named asset file in the website ----------
 {
-  # No spotify-marked image asset lives in the website assets/brand-icons dirs
+  # The site-wide mark is the app icon artwork (assets/brand/pweevee-app-icon.png
+  # — Spotify-derived, deliberately named "pweevee-app-icon"). This check stays
+  # a filename-hygiene guard: no asset whose name contains "spotify" is shipped.
   my @suspects;
   find({ wanted => sub {
            return unless -f $_;
@@ -116,17 +119,19 @@ sub basename___ {
            }
          }, no_chdir => 1 }, catfile($ROOT, 'website'));
   my $root_re = quotemeta($ROOT);
-  ok(!@asset_refs, 'no Spotify-mark asset file is wired into the website') or push @failures, map {"  $_"} @asset_refs;
+  ok(!@asset_refs, 'no Spotify-named asset file is wired into the website') or push @failures, map {"  $_"} @asset_refs;
 }
 
 # ---------- 4. website references PwEevee's own icons ----------
 {
   my $index = _read(catfile($ROOT, 'website', 'index.html'));
-  ok(index($index, '/assets/icon-32.png') >= 0,  'rendered website links the 32px PwEevee icon (favicon)');
-  ok(index($index, '/assets/icon-512.png') >= 0, 'rendered website links the 512px PwEevee icon (installable)');
-  ok(index($index, '/assets/icon-180.png') >= 0, 'rendered website links the 180px PwEevee icon (apple-touch)');
+  ok(index($index, '/assets/brand/pweevee-app-icon.png') >= 0,
+     'rendered website links the app icon artwork as the site mark (favicon/apple-touch)');
+  ok($index !~ m{/assets/icon-(?:32|180|512)\.png},
+     'the rendered index no longer links the derived procedural icon sizes');
   ok($index !~ m{spotify\S*\.(?:png|svg|ico)}i, 'no Spotify-marked image filename appears in the rendered index');
-  for my $asset ('icon-512.png', 'icon-180.png', 'icon-32.png', 'favicon.svg') {
+  for my $asset ('icon-512.png', 'icon-180.png', 'icon-32.png', 'favicon.svg',
+                 'brand/pweevee-app-icon.png') {
     ok(-f catfile($WEBAS, $asset), 'website asset present: ' . $asset);
   }
 }
