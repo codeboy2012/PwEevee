@@ -2040,8 +2040,8 @@ ok(defined resolve('/install'), 'the install guide route resolves');
             }
             ok($home =~ /browser never calls GitHub/,
                'the band states explicitly that the page loads a shared snapshot');
-            ok($home =~ /updated hourly/,
-               'the band labels its freshness as hourly');
+            ok($home =~ /updated every 15 min/,
+               'the band labels its freshness as every-15-minutes');
         }
     }
 

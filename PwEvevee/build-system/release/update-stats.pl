@@ -44,7 +44,7 @@
 # Conditional requests: the stored ETag per repository is sent as
 # If-None-Match; a 304 keeps the stored numbers untouched. An etag is stored
 # only when the server actually sent one — never fabricated. That keeps the
-# anonymous rate budget (60/h) safe for hourly runs.
+# anonymous rate budget (60/h) safe for the 15-minute cadence (conditional GETs are 304s that do not burn the anonymous core budget).
 #
 # Options (same shape as update-releases.pl):
 #   --out PATH        output file (default website/data/stats.json)

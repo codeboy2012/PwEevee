@@ -630,7 +630,8 @@ sub c_build_facts {
 # Live GitHub repository statistics rendered from website/data/stats.json.
 # A project whose stats did not resolve does not appear at all: the band never
 # shows a fabricated zero. The refresh timestamp is explicit; these numbers
-# are as fresh as the last hourly update run, not a real-time query.
+# are as fresh as the most recent update run (every 15 minutes), not a
+# real-time query.
 sub c_project_stats {
     my @stats;
 
@@ -683,7 +684,7 @@ sub c_project_stats {
     if (my $gen = $STATS->{generated_at}) {
         $html .= '<p class="stats-band__fresh">'
                . 'Stats refreshed <time datetime="' . h($gen) . '">'
-               . h(fmt_date($gen)) . '</time> (updated hourly). '
+               . h(fmt_date($gen)) . '</time> (updated every 15 min). '
                . 'This page loads a shared snapshot; your browser never calls GitHub.</p>';
     }
     return $html;

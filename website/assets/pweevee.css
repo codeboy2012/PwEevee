@@ -1227,7 +1227,7 @@ p { max-width: 74ch; }
 /* ---- the live repository statistics band ([component:project-stats]) ---- */
 
 /* A second, tighter facts strip: the numbers GitHub publishes about the
-   repository itself, refreshed hourly by a scheduled job that writes a shared
+   repository itself, refreshed every 15 minutes by a scheduled job that writes a shared
    snapshot. The page loads that snapshot already rendered — the browser never
    calls GitHub, so nothing reflows while loading and the band needs no
    skeleton state. font-variant-numeric keeps the digit widths fixed so the

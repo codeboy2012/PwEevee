@@ -7,8 +7,7 @@
 #
 # Runs update-stats.pl (GitHub repository stats + download aggregates from the
 # tracked release history) and then re-renders website/ so the new numbers are
-# actually visible. This is the one command a person runs; the hourly schedule
-# lives in .github/workflows/update-stats.yml, which commits only when the
+# actually visible. This is the one command a person runs; this 15-minute schedule lives in .github/workflows/update-stats.yml, which commits only when the
 # observable statistics actually changed.
 #
 # Options (passed through to update-stats.pl):
