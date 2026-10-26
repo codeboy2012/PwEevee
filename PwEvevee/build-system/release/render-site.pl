@@ -71,6 +71,37 @@ my $OUT = 'website';
 # it is hand-maintained. Edit website-src/assets/* and re-run this script.
 my @COPIED = copy_assets();
 
+# ------------------------------------------------------------------
+# Cache-busting versions for the source-owned assets.
+#
+# The deployed site sits behind Cloudflare (and ordinary browser caches), so
+# without a URL change a returning visitor can end up with fresh HTML and a
+# cached, older stylesheet or script — the two no longer agree and components
+# render unstyled. Busting on content hash makes every deploy self-invalidating:
+# a changed file gets a new URL, so the old cached copy is never consulted, and
+# an unchanged file keeps the same URL so its cache stays useful.
+#
+# The hash is computed from the OUTPUT file (the bytes that will actually be
+# served), not the source, so generated artwork is covered by the same rule.
+# ------------------------------------------------------------------
+use Digest::SHA qw(sha256_hex);
+use File::Find;
+my %ASSET_V;
+find({
+    no_chdir => 1,
+    wanted   => sub {
+        return if -d $File::Find::name;
+        (my $name = $_) =~ s{^.*/}{};
+        return if $name =~ /^\./;
+        open my $h, '<:raw', $File::Find::name or die "hash $File::Find::name: $!";
+        local $/; my $bytes = <$h>; close $h;
+        $ASSET_V{$name} = substr(sha256_hex($bytes), 0, 8);
+    },
+}, "$OUT/assets");
+
+# Appends the version query to relative /assets/… references. Absolute
+# references (og:image, sitemap) keep canonical URLs and are intentionally
+# untouched, as are links that already carry a query.
 # ---------------------------------------------------------------- data
 
 my $MODEL = read_json("$OUT/data/projects.json");
@@ -253,6 +284,19 @@ for my $file (@pages) {
     die "$SRC/layout.html: no {{content}} placeholder\n" if $at < 0;
     my $doc = substr($shell, 0, $at) . $content
             . substr($shell, $at + length("\0CONTENT\0"));
+
+    # cache-bust the copied assets (no-op for any URL the map has no entry for).
+    # All capture context is copied into lexicals FIRST: an inner substitution
+    # would otherwise clobber $1/$2/$& before they are used.
+    $doc =~ s{(href|src)="/assets/([^"?]+)"}{
+        my ($attr, $path) = ($1, $2);
+        my $name = $path;
+        $name =~ s{^.*/}{};
+        my $orig = qq{$attr="/assets/$path"};
+        defined $ASSET_V{$name}
+            ? qq{$attr="/assets/$path?v=$ASSET_V{$name}"}
+            : $orig
+    }ge;
 
     make_path(dir_of($target));
     utf8::encode($doc);          # pages are written as UTF-8 bytes

@@ -29,17 +29,17 @@
 
 <!-- Icons are the official PwEevee logo. The small sizes are downscales of the
      same file, produced by make-brand-assets.pl; the artwork is not altered. -->
-<link rel="icon" type="image/png" href="/assets/brand/pweevee-app-icon.png">
-<link rel="apple-touch-icon" href="/assets/brand/pweevee-app-icon.png">
+<link rel="icon" type="image/png" href="/assets/brand/pweevee-app-icon.png?v=ff096019">
+<link rel="apple-touch-icon" href="/assets/brand/pweevee-app-icon.png?v=ff096019">
 
 <!-- Applies a stored theme override before the first paint. Blocking and placed
      ahead of the stylesheet on purpose: a deferred script would run too late and
      the wrong theme would flash. It is an external same-origin file so the strict
      Content-Security-Policy needs no 'unsafe-inline'. With JavaScript off the
      theme still follows prefers-color-scheme, defaulting to dark. -->
-<script src="/assets/theme.js"></script>
+<script src="/assets/theme.js?v=01949b41"></script>
 
-<link rel="stylesheet" href="/assets/pweevee.css">
+<link rel="stylesheet" href="/assets/pweevee.css?v=695de95e">
 </head>
 <body>
 
@@ -75,7 +75,7 @@
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="/" aria-label="PwEevee — home">
-      <img class="brand__mark" src="/assets/brand/pweevee-app-icon.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+      <img class="brand__mark" src="/assets/brand/pweevee-app-icon.png?v=ff096019" alt="" aria-hidden="true" width="28" height="28" decoding="async">
       <span class="brand__name">PwEevee</span>
     </a>
 
@@ -289,7 +289,7 @@
     <div class="footer__grid">
       <div class="footer__brand">
         <a class="brand" href="/" aria-label="PwEevee — home">
-          <img class="brand__mark" src="/assets/brand/pweevee-app-icon.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+          <img class="brand__mark" src="/assets/brand/pweevee-app-icon.png?v=ff096019" alt="" aria-hidden="true" width="28" height="28" decoding="async">
           <span class="brand__name">PwEevee</span>
         </a>
         <p class="footer__about">
@@ -385,7 +385,7 @@
 
 </div>
 
-<script src="/assets/pweevee.js" defer></script>
-<script src="/assets/installer.js" defer></script>
+<script src="/assets/pweevee.js?v=cb120376" defer></script>
+<script src="/assets/installer.js?v=6c5e3038" defer></script>
 </body>
 </html>

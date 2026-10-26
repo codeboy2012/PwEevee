@@ -1157,15 +1157,15 @@ for my $f (@html) {
     utf8::decode($b);
     my ($head) = $b =~ /<head>(.*?)<\/head>/s;
     $head = '' unless defined $head;
-    ok($head =~ m{<script src="/assets/theme\.js"></script>},
+    ok($head =~ m{<script src="/assets/theme\.js(\?v=[0-9a-f]+)?"></script>},
        "$f loads the theme applier in <head>");
-    ok($head !~ m{<script[^>]*\bsrc="/assets/theme\.js"[^>]*\b(?:defer|async)},
+    ok($head !~ m{<script[^>]*\bsrc="/assets/theme\.js[^"]*"[^>]*\b(?:defer|async)},
        "$f does not defer the theme applier, which would let the wrong theme paint");
     # it has to run before the stylesheet paints anything
     ok(index($head, '/assets/theme.js') < index($head, '/assets/pweevee.css'),
        "$f runs the applier ahead of the stylesheet");
     # and the theme must not depend on the deferred main script
-    ok($b =~ m{<script src="/assets/pweevee\.js" defer></script>},
+    ok($b =~ m{<script src="/assets/pweevee\.js(\?v=[0-9a-f]+)?" defer></script>},
        "$f still defers the main script");
     ok($b =~ /<meta name="color-scheme" content="dark light">/,
        "$f advertises both themes, dark first");
@@ -2419,7 +2419,7 @@ my @ids = qw(installer-clear file-ipa file-profile file-p12
 for my $id (@ids) {
     ok(index($install_page, qq{id="$id"}) >= 0, "workshop element present on /install: #$id");
 }
-ok($install_page =~ m{<script src="/assets/installer\.js" defer></script>},
+ok($install_page =~ m{<script src="/assets/installer\.js(\?v=[0-9a-f]+)?" defer></script>},
    '/install loads the local-only engine with defer');
 ok(index($install_page, 'aria-live="polite"') >= 0,
    'workshop result regions are announced to screen readers');
