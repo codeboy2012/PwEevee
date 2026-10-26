@@ -1849,7 +1849,7 @@ html:not(.js) .sort { display: none; }
   width: 1px;
   background: linear-gradient(180deg, var(--rule-strong), var(--rule) 60%, transparent);
 }
-.timeline__item { position: relative; }
+.timeline__item { position: relative; min-width: 0; }
 .timeline__item::before {
   content: "";
   position: absolute;
@@ -1869,7 +1869,7 @@ html:not(.js) .sort { display: none; }
 
 .is-filtered { display: none !important; }
 
-.release { display: grid; gap: var(--s-4); padding: var(--s-5); }
+.release { display: grid; gap: var(--s-4); padding: var(--s-5); min-width: 0; }
 .release__head {
   display: flex;
   flex-wrap: wrap;
@@ -1879,7 +1879,7 @@ html:not(.js) .sort { display: none; }
 }
 .release__ident { display: grid; gap: 0.2em; min-width: 0; }
 .release__version { font-family: var(--mono); font-size: 1rem; font-weight: 600; }
-.release__name { font-size: 0.875rem; color: var(--ink-2); }
+.release__name { font-size: 0.875rem; color: var(--ink-2); overflow-wrap: anywhere; }
 .release__when { font-size: 0.8rem; color: var(--ink-3); font-family: var(--mono); }
 .release__badges { display: flex; flex-wrap: wrap; gap: var(--s-2); flex: none; }
 .release__summary { font-size: 0.9rem; color: var(--ink-2); }
@@ -2342,6 +2342,30 @@ html:not(.js) .sort { display: none; }
   .footer__legal { flex-direction: column; gap: var(--s-1); }
 }
 
+/* Coarse pointers (phones, tablets) get comfortable touch targets without
+   changing the compact sizes a mouse pointer enjoys. */
+@media (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+  }
+  .btn--sm {
+    min-height: 44px;
+    padding-block: 0.65em;
+  }
+  .copy {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.45em 1em;
+  }
+  .chip {
+    min-height: 44px;
+  }
+  .nav__toggle {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 /* ------------------------ 22 reduced motion, forced colours, print */
 
 /* A visitor who asked for less motion gets none: no reveal, no aurora, no
@@ -2556,3 +2580,17 @@ html:not(.js) .sort { display: none; }
   color: var(--ink-3);
 }
 .inst-matrix tbody th { white-space: nowrap; font-weight: 600; }
+/* narrow phones: the certificate matrix is a wide table by nature, so at this
+   size it stops preserving a single-row header layout and instead compresses:
+   the row header may wrap, cells take minimal padding, and the scroll wrapper
+   keeps whatever width is still needed — readable first, scrolled second */
+@media (max-width: 560px) {
+  .inst-matrix { font-size: 0.78rem; }
+  .inst-matrix th,
+  .inst-matrix td { padding: 0.45em 0.5em; }
+  .inst-matrix tbody th { white-space: normal; }
+  .inst-matrix thead th { font-size: 0.68rem; }
+  /* the wrapper tells touch users the row really scrolls instead of
+     pretending the table fits */
+  .inst-matrix-wrap { -webkit-overflow-scrolling: touch; }
+}
