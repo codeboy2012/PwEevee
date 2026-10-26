@@ -1,0 +1,237 @@
+# Keep the published PwEevee app source in step with published releases.
+#
+# On every release publication this workflow:
+#   1. resolves the release (the one that triggered it, or tag input / latest);
+#   2. downloads its .ipa assets and recomputes each asset's SHA-256;
+#   3. reads each IPA's Payload/<App>.app/Info.plist (bundleIdentifier, host
+#      Spotify version + build, MinimumOSVersion) with plist-facts.pl — the
+#      same binary-plist reader the local audit tooling uses;
+#   4. merges those facts into website/data/appsource-plists.json keyed by
+#      asset SHA-256 (re-running replaces the same key, never duplicates);
+#   5. refreshes the GitHub release data (update-releases.pl);
+#   6. regenerates the published source (update-appsource.pl), which rejects
+#      any version it cannot fully verify and writes atomically only after
+#      validation;
+#   7. re-validates the written file and commits ONLY the appsource files when
+#      they actually changed.
+#
+# Fail-safe: a missing IPA, an unreadable Info.plist or a failed validation
+# aborts the job before any commit — the previously published source and its
+# plist facts stay untouched, so a broken release can never overwrite a good
+# source. The only credential is the default GITHUB_TOKEN.
+#
+# macOS-15 runner: the extracted Info.plist is a binary plist and
+# `plutil -convert json` is the Apple-documented reader available there; the
+# same fields are cross-checked against plist-facts.pl output below.
+
+name: App source update
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to process (e.g. v2.2.0-pre). Empty = latest published release.'
+        required: false
+        default: ''
+
+# Least privilege: the only write this job can do is a content commit.
+permissions:
+  contents: write
+
+concurrency:
+  group: appsource-update
+  cancel-in-progress: false
+
+env:
+  # Must equal update-appsource.pl's $SOURCE_URL_PATH root: the site the
+  # published source lives on. The deep-link buttons on /downloads encode the
+  # same URL.
+  FACTS: website/data/appsource-plists.json
+
+jobs:
+  update-source:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Check out the site sources
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Resolve the release to process
+        id: rel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          elif [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            TAG=$(gh api "repos/${{ github.repository }}/releases?per_page=1" --jq '.[0].tag_name')
+          fi
+          echo "App source update: processing release $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Download the release IPA assets and verify them against the release record
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          TAG='${{ steps.rel.outputs.tag }}'
+          work=/tmp/appsource-ipas
+          rm -rf "$work" && mkdir -p "$work"
+          gh api "repos/${{ github.repository }}/releases/tags/$TAG" > "$work/rel.json"
+
+          python3 - "$work" <<'PY'
+          import json, sys
+          work = sys.argv[1]
+          rel = json.load(open(f'{work}/rel.json'))
+          ipas = [a for a in rel['assets'] if a['name'].lower().endswith('.ipa')]
+          if not ipas:
+              sys.exit('Release has no .ipa asset at all')
+          with open(f'{work}/assets.tsv', 'w') as f:
+              for a in ipas:
+                  f.write(f"{a['browser_download_url']}\t{a['name']}\t{a['size']}\n")
+          PY
+
+          ok=0
+          while IFS=$'\t' read -r URL NAME SIZE; do
+            [ -n "$URL" ] || continue
+            SAFE=$(printf '%s' "$NAME" | tr -c 'A-Za-z0-9._-' '_')
+            echo "Downloading $NAME ..."
+            curl -sSL --retry 3 -o "$work/$SAFE.ipa" "$URL"
+            # sanity: the bytes must arrive complete (GitHub reports the size)
+            ACTUAL=$(stat -f%z "$work/$SAFE.ipa")
+            if [ "$ACTUAL" != "$SIZE" ]; then
+              echo "::warning::$NAME arrived at $ACTUAL bytes, GitHub said $SIZE — skipping this asset"
+              rm -f "$work/$SAFE.ipa"
+              continue
+            fi
+            ok=$((ok+1))
+          done < "$work/assets.tsv"
+          [ "$ok" -gt 0 ] || { echo "::error::No IPA asset of release $TAG could be downloaded complete — aborting without touching the published source"; exit 1; }
+
+      - name: Read each IPA's Info.plist and merge verified facts into the registry
+        run: |
+          set -eu
+          work=/tmp/appsource-ipas
+          python3 - "$work" "${{ steps.rel.outputs.tag }}" <<'PY'
+          import json, os, subprocess, sys
+          work, tag = sys.argv[1], sys.argv[2]
+          facts_path = 'website/data/appsource-plists.json'
+          with open(facts_path) as f:
+              data = json.load(f)
+          verified = data.setdefault('verified', {})
+
+          wanted = ['CFBundleIdentifier', 'CFBundleName',
+                    'CFBundleShortVersionString', 'CFBundleVersion',
+                    'MinimumOSVersion']
+          merged = 0
+          for line in open(f'{work}/assets.tsv'):
+              url, name, size = (line.rstrip('\n').split('\t') + ['',''])[:3]
+              if not url: continue
+              safe = ''.join(c if c.isalnum() or c in '._-' else '_' for c in name)
+              path = f'{work}/{safe}.ipa'
+              if not os.path.exists(path): continue
+
+              sha = subprocess.run(['shasum', '-a', '256', path],
+                                   capture_output=True, text=True, check=True).stdout.split()[0]
+              subprocess.run(['unzip', '-q', '-o', path, 'Payload/*/Info.plist',
+                              '-d', f'{work}/x'], check=True)
+              hits = subprocess.run(['find', f'{work}/x', '-name', 'Info.plist',
+                                     '-path', '*Payload*'], capture_output=True,
+                                    text=True, check=True).stdout.split()
+              # exactly the main app'splist: Payload/<App>.app/Info.plist
+              main = [h for h in hits if h.count('/Info.plist') == 1 and '/Payload/' in h
+                      and h.endswith('.app/Info.plist')]
+              if len(main) != 1:
+                  sys.exit(f'{name}: expected exactly one Payload/<App>.app/Info.plist, found {len(main)}')
+              out = subprocess.run(
+                  ['perl', 'PwEvevee/build-system/release/plist-facts.pl', main[0], *wanted],
+                  capture_output=True, text=True, check=True).stdout
+              facts = json.loads(out)
+              missing = [k for k in ('CFBundleIdentifier','CFBundleShortVersionString','CFBundleVersion') if not facts.get(k)]
+              if missing:
+                  sys.exit(f'{name}: Info.plist lacks {missing} — refusing to record unverifiable facts')
+              entry = {
+                  'asset_name': name,
+                  **facts,
+                  'verified_at': subprocess.run(
+                      ['date', '-u', '+%Y-%m-%dT%H:%M:%SZ'],
+                      capture_output=True, text=True).stdout.strip(),
+                  'evidence': f'appsource-update.yml: downloaded release {tag} asset, hash recomputed in CI',
+              }
+              verified[sha] = entry        # same sha re-processed = same key replaced
+              merged += 1
+              subprocess.run(['rm', '-rf', f'{work}/x'])
+
+          if merged == 0:
+              sys.exit('No IPA asset produced (verified) Info.plist facts — registry untouched')
+          with open(facts_path, 'w') as f:
+              json.dump(data, f, indent=2, sort_keys=True)
+              f.write('\n')
+          print(f'appsource registry: {merged} asset(s) verified and merged under {tag}')
+          PY
+
+      - name: Refresh release data and regenerate the published source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          # release data first: the source lists release facts (sizes, URLs,
+          # published dates) that must include the release that just published
+          perl PwEvevee/build-system/release/update-releases.pl
+          perl PwEvevee/build-system/release/update-appsource.pl
+
+      - name: Validate the published source before committing anything
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          # 1. the generator's own --check pass (schema + ordering + cross-checks)
+          perl PwEvevee/build-system/release/update-appsource.pl --check
+          # 2. the written file must be JSON and parse back identically
+          python3 - <<'PY'
+          import json, sys
+          with open('website/pweevee/apps.json') as f:
+              s = json.load(f)
+          required = {'name': type('str'), 'identifier': type('str'), 'apps': list}
+          assert isinstance(s.get('apps'), list) and s['apps'], 'apps array missing/empty'
+          assert isinstance(s.get('news'), list), 'news must be a list'
+          assert not s.get('apps')[0].get('marketplaceID'), 'PAL-only field leaked in'
+          for a in s['apps']:
+              for k in ('name','bundleIdentifier','developerName','localizedDescription','iconURL','versions'):
+                  assert a.get(k), f'app missing {k}'
+              seen = set()
+              vdates = []
+              for v in a['versions']:
+                  for k in ('version','date','downloadURL','size'):
+                      assert v.get(k) is not None, f'version missing {k}'
+                  assert v['downloadURL'].startswith('https://')
+                  assert isinstance(v['size'], int) and v['size'] > 0
+                  assert v['version'] not in seen, 'duplicate version'
+                  seen.add(v['version'])
+                  vdates.append(v['date'])
+              assert vdates == sorted(vdates, reverse=True), 'versions not newest-first'
+          print('published source validates:', s['name'], '-', len(s['apps']), 'app(s)')
+          PY
+
+      - name: Commit only when the generated files actually changed
+        run: |
+          set -eu
+          CHANGED=$(git status --porcelain -- website/data/appsource-plists.json website/pweevee/apps.json website/data/releases.json)
+          if [ -z "$CHANGED" ]; then
+            echo "Generated app-source files unchanged since the last snapshot — nothing to commit."
+            exit 0
+          fi
+          echo "$CHANGED"
+          git config user.name  "pweevee-appsource-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add website/data/appsource-plists.json website/pweevee/apps.json website/data/releases.json
+          git commit -m "data(appsource): regenerate PwEevee app source from release ${{ steps.rel.outputs.tag }}"
+          git push origin main

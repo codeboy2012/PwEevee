@@ -33,6 +33,76 @@ description: Download the newest PwEevee release straight from its GitHub releas
   </div>
 </section>
 
+<!-- The official PwEevee app source: one JSON file generated from verified
+     release data, formatted for AltStore Classic and SideStore. The deep links
+     below encode the source URL exactly as https://pweevee.skytweak.dpdns.org/pweevee/apps.json.
+     They can only open in a store app that is ALREADY installed — a custom URL
+     scheme has no effect from a browser on a device where the app is missing. -->
+<section class="section section--seam" id="app-source">
+  <div class="wrap">
+    <div class="section__head">
+      <p class="eyebrow">In-app source</p>
+      <h2>Add PwEevee to your sideloading app.</h2>
+      <p class="lead">
+        The official PwEevee app source is a single JSON file, generated from the same verified
+        release data the rest of this site reads. Add it to <strong>AltStore Classic</strong> or
+        <strong>SideStore</strong> and the apps it lists become installable from inside that app.
+      </p>
+    </div>
+
+    <div class="split">
+      <div class="panel pad">
+        <h3>Add the source</h3>
+        <p class="small dim mt-4">
+          Both buttons open the same source:
+          <code class="break">https://pweevee.skytweak.dpdns.org/pweevee/apps.json</code>
+        </p>
+        <div class="btn-row mt-4">
+          <a class="btn btn--primary" rel="noopener"
+             href="sidestore://source?url=https%3A%2F%2Fpweevee.skytweak.dpdns.org%2Fpweevee%2Fapps.json">
+            <span>Add to SideStore</span>
+          </a>
+          <a class="btn btn--outline" rel="noopener"
+             href="altstore://source?url=https%3A%2F%2Fpweevee.skytweak.dpdns.org%2Fpweevee%2Fapps.json">
+            <span>Add to AltStore</span>
+          </a>
+        </div>
+      </div>
+      <div class="panel pad">
+        <h3>Inspect it yourself</h3>
+        <p class="small dim mt-4">
+          The file is plain JSON — version, size, bundle identifier and SHA-256 of every listed
+          build come straight from the GitHub release and the IPA inside it.
+        </p>
+        <div class="btn-row mt-4">
+          <a class="btn btn--outline" rel="noopener"
+             href="https://pweevee.skytweak.dpdns.org/pweevee/apps.json">
+            <span>View Source JSON</span>
+          </a>
+          <button class="btn btn--outline" type="button"
+                  data-copy="https://pweevee.skytweak.dpdns.org/pweevee/apps.json">
+            <span data-copy-label>Copy Source URL</span>
+          </button>
+          <a class="btn btn--outline" href="/releases">
+            <span>Browse Releases</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout mt-6">
+      <p class="mb-0">
+        <strong>The store app must already be installed.</strong> These buttons use that app's
+        private URL scheme (<code>sidestore://</code>, <code>altstore://</code>); on a device
+        without the app they simply do nothing. Where a browser shows a confirmation dialog first,
+        accept it. The source lists only versions whose IPA metadata was verified out of the
+        actual file, newest first, and it does not replace the manual download-and-sign flow
+        described above.
+      </p>
+    </div>
+  </div>
+</section>
+
 <section class="section section--seam">
   <div class="wrap">
     <div class="section__head">

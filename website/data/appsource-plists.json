@@ -1,0 +1,56 @@
+{
+   "_comment": "Per-asset Info.plist facts read straight out of the downloaded release IPA (Payload/*/Info.plist, binary plist parsed the same way build-system/lib/bplist.pm reads them). Keyed by the asset's SHA-256 so a release can never be matched to the wrong extraction. schema holds the SideStore/AltStore-app-level metadata that is not inside Info.plist. Every new release's workflow entry is appended by .github/workflows/appsource-update.yml after the IPA is downloaded and its hash is recomputed.",
+   "schema": 1,
+   "verified": {
+      "a76b469a8291d6650026ef1355b77ead37efcc9250517aaf057a6e6b1dab3996": {
+         "asset_name": "PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
+         "bundleIdentifier": "com.spotify.client",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.90",
+         "CFBundleVersion": "919002269",
+         "MinimumOSVersion": "16.1",
+         "verified_at": "2026-10-26T00:00:00Z",
+         "evidence": "audit/ipas/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90 (extraction of the release download; hash cross-checked against SHA256SUMS.txt)"
+      },
+      "e6f73ab9ca78e00a07c27996a4fada4aa5cc3f0b8bf0dea65604eaf8d28c5b6b": {
+         "asset_name": "skywatch-spotify-9.1.88-watchfix.ipa",
+         "bundleIdentifier": "com.skywatch.spotify",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.88",
+         "CFBundleVersion": "918802209",
+         "MinimumOSVersion": "16.1",
+         "verified_at": "2026-10-26T00:00:00Z",
+         "evidence": "downloaded release asset v2.1.0-pre, hash recomputed locally"
+      },
+      "1fff261d89e085e11dbf234ae1205c82c42ee144f31b23b92f24631a6cfe688f": {
+         "asset_name": "EeveeSpotifyv7.0.0.ipa",
+         "bundleIdentifier": "com.spotify.client",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.88",
+         "CFBundleVersion": "918802209",
+         "MinimumOSVersion": "15.0",
+         "verified_at": "2026-10-26T00:00:00Z",
+         "evidence": "downloaded release asset v2.0.0, hash recomputed locally"
+      },
+      "8f29fae6681e99a90f69f6e6f7165d87f192bc761388867eb08e0ad0e4d115d6": {
+         "asset_name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
+         "bundleIdentifier": "com.spotify.client",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.78",
+         "CFBundleVersion": "9.1.78",
+         "MinimumOSVersion": "15.0",
+         "verified_at": "2026-10-26T00:00:00Z",
+         "evidence": "downloaded release asset v2.0.0, hash recomputed locally"
+      },
+      "10529b3b37f75929ebe2385fd0e92e086b175303968d23b539a06388b2ef6925": {
+         "asset_name": "PwEeveeBeta2.ipa",
+         "bundleIdentifier": "com.spotify.client",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.76",
+         "CFBundleVersion": "9.1.76",
+         "MinimumOSVersion": "7.0",
+         "verified_at": "2026-10-26T00:00:00Z",
+         "evidence": "downloaded release asset v0.22.0-alpha.2, hash recomputed locally"
+      }
+   }
+}
