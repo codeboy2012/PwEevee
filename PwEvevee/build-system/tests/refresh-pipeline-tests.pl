@@ -591,6 +591,37 @@ ok($tree_hash->($SITE) eq $before_digest_only, 'C4 --digest-only does not touch 
     }
 }
 
+# ============================================================ D. browser check
+
+section('D. the on-visit recheck cannot overwrite the rendered snapshot');
+
+{
+    # The browser half of the freshness story: it may report a newer release and
+    # link to it, and it must never be able to do more than that. Scoped to the
+    # freshSession module, since the rest of the asset legitimately mentions
+    # download URLs (the copy tools, the installer workshop).
+    my $js = slurp("$ROOT/website-src/assets/pweevee.js") // '';
+    my ($mod) = $js =~ /(function freshSession\b.*?\}\(\)\);)/s;
+    ok(defined $mod && length($mod) > 300, 'D0 the on-visit freshness module was found',
+       'length ' . (defined $mod ? length($mod) : 'undef'));
+    $mod //= '';
+
+    ok($mod =~ /upstream <= h\.epoch\)\s*return/,
+       'D1 a payload that is not strictly newer than the rendered epoch is ignored, '
+     . 'so an equal-or-older reply can never replace the page snapshot');
+    ok($mod =~ /rel\.draft\)\s*throw/,
+       'D2 a draft release is rejected by the recheck, as it is by the renderer');
+    ok($mod =~ /credentials:\s*['"]omit['"]/ && $mod !~ /Authorization|Bearer|GITHUB_TOKEN/i,
+       'D3 the recheck stays anonymous: no credentials, no token, nothing uploaded');
+    ok($mod !~ /download_url|sha256/i,
+       'D4 the recheck never rewrites a download URL or a hash line from browser-side data');
+    ok($mod =~ /a\.href\s*=\s*rel\.html_url/,
+       'D5 what it does offer is the authoritative release page, not a rewritten download');
+    ok($mod =~ /data-fresh-state['"],\s*failures\s*\?\s*'offline'/,
+       'D6 a failed check is reported as offline and the rendered values stand, '
+     . 'instead of presenting a false successful refresh');
+}
+
 # ---------------------------------------------------------------- summary
 
 print "\n" . ('-' x 62) . "\n";
