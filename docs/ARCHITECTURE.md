@@ -42,7 +42,7 @@ finished IPA blobs.
 | `PwEvevee/build-system/package/make-deb.pl` | byte-exact .deb generator (ar + ustar + LZMA), no post-patching |
 | `PwEvevee/build-system/package/resolve-deps.pl` | dependency resolver; duplicates fail the build |
 | `PwEvevee/build-system/validate/validate-macho.pl`, `PwEvevee/build-system/validate/validate-ipa.pl` | binary and filesystem validation |
-| `PwEvevee/build-system/tests/` | automated tests: `deb-format-test.pl` (30 checks), `build-tests.pl` (14 checks), `website-tests.pl` (469 checks) |
+| `PwEvevee/build-system/tests/` | automated tests: `deb-format-test.pl` (30 checks), `build-tests.pl` (14 checks), `website-tests.pl` (4,396 checks) |
 | `PwEvevee/build-system/release/make-release.pl` | release registration + 6-month retention sweep + index.json |
 | `PwEvevee/build-system/release/update-releases.pl` | fetches the newest published GitHub release per project → `website/data/releases.json` |
 | `PwEvevee/build-system/release/render-site.pl` | renders the whole website from `website-src/` + the generated data |
@@ -54,7 +54,7 @@ finished IPA blobs.
 | `releases/` | `current/` (downloadable), `metadata/` (kept forever), `archive/` |
 | `dist/` | build outputs + `build-manifest.json` |
 | `docs/` | project documentation (architecture, build, troubleshooting, development) |
-| `docs/spoti.pw-builds/` | pristine git clone of the upstream builds repo — reference only, never modified |
+| `docs/spoti.pw-builds/` | *optional, not part of the repository* — a local pristine git clone of the upstream builds repo, useful as a reference when tracing payloads. The gitlink entry was dropped in `43a92ce`, so a fresh clone of this repository does not contain it. |
 
 ## The pipeline (PwEvevee/build-system/unified.sh)
 
@@ -182,6 +182,9 @@ website-src/layout.html + pages/*.html ──► render-site.pl ──► websit
 
 ## Import/reference policy
 
-`docs/spoti.pw-builds/` is a pristine clone (git metadata intact). It is never edited,
-never built from, and never pushed to. It exists so the integrated payloads can always
-be traced back to the exact upstream tree they came from.
+`docs/spoti.pw-builds/` is an optional local pristine clone (git metadata intact),
+**not a tracked path**: it was added as a gitlink in `fa025a3` and removed in
+`43a92ce`, so it is absent from a fresh clone. When a maintainer keeps one locally it is
+never edited, never built from, and never pushed to; it exists so integrated payloads can
+be traced back to the exact upstream tree they came from. Nothing in the build depends on
+it — the pinned components and their per-file SHA-256 manifests are in `PwEvevee/`.

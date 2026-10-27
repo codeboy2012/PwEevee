@@ -144,7 +144,7 @@ description: The PwEevee compatibility centre — every claim's status as Verifi
         <p class="small dim mt-5 mb-0">
           The full check set &mdash; including what each check can and cannot conclude, and what
           &ldquo;unable to verify&rdquo; means &mdash; is documented in
-          <a href="https://github.com/codeboy2012/spoti.pw-builds/blob/main/docs/installer/architecture.md" rel="noopener">
+          <a href="https://github.com/codeboy2012/PwEevee/blob/main/docs/installer/architecture.md" rel="noopener">
             <code>docs/installer/architecture.md</code></a> in the repository.
         </p>
       </div>
@@ -282,6 +282,18 @@ description: The PwEevee compatibility centre — every claim's status as Verifi
   <div class="wrap">
     <h2 class="h-sub">Known issues and explicit limits</h2>
     <div class="grid grid--2 mt-5">
+      <div class="panel panel--hover pad">
+        <h3>Authentication does not work on iOS 17</h3>
+        <ul class="checklist mt-5">
+          <li><strong>Spotify login and signup return a &ldquo;Spotify server error.&rdquo;</strong>
+              on the iPhone SE (2nd generation) running iOS 17; the exact device build is named in
+              the release notes. The app installs, launches and the rest of the build behaves as
+              documented &mdash; authentication does not. This is a known issue of this release,
+              acknowledged for a future update; it is not a signing problem, and a successful
+              launch is not treated as proof of full compatibility. No other iOS version was
+              tested, so none is claimed.</li>
+        </ul>
+      </div>
       <div class="panel panel--hover pad">
         <h3>Known and documented</h3>
         <ul class="checklist mt-5">

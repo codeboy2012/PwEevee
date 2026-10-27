@@ -218,8 +218,10 @@ App:
     Pages.m        the Appearance card with Redesigned UI, the Player and Lyrics pages, which Navbar page opens
     About/         the update check against the repo's GitHub Releases, the Updates page it fills (the state, and
                    the changelog of every release newer than the build, a line per commit) and the sheet a newer
-                   release brings up on its own a few seconds after Spotify opens, once per release; backup, the
-                   signing warning and the Mod page with the reset
+                   release brings up on its own a few seconds after Spotify opens, once per release; the release
+                   channel the check listens to (SGUpdateChannels), whose three rows -- Stable, Nightly and Alpha
+                   -- each cache their own answer apart from the others'; backup, the signing warning and the Mod
+                   page with the reset
     Onboarding/    the welcome page over Home on the first launch, with Redesigned UI, offered again from the Mod page
 
 Every key a feature stores starts with `spotifyglass.`, whatever it holds: Reset all settings on
@@ -284,7 +286,16 @@ Auto / Off / On control per flag (a text field for the number and text ones), an
 from the releases Release Please cuts, with Check now, the release to get, all the releases and Tell
 me when one is out, the sheet a newer release brings up a few seconds after Spotify opens), the
 build and Spotify's version, the site and the repo, the welcome tour again and Reset all
-settings. A flag switch on a page forces that one flag and off leaves Spotify's own value, so the All
+settings. The Updates page opens on an Update channel card of three rows: Stable (the default,
+published releases only), Nightly (development builds; none are published yet, so it answers
+"up to date" against nothing rather than guessing) and Alpha (experimental builds, the earliest
+and most frequent). A release reaches a channel by its tag alone -- the title never decides, since
+the repo has put an upstream component's version (" SpoTi.pw 0.22.0-alpha.2") into a -pre release's
+title -- and draft, beta, pre and rc releases reach no channel at all, so none of them is ever
+claimed as an update. Each channel stores its own answer and checked time, so switching reads off
+the Releases of the channel moved to, never whatever the old one had cached; Alpha and Nightly ask
+before they take over, Stable takes a tap, and the check for the chosen channel runs the moment
+the tap lands. A flag switch on a page forces that one flag and off leaves Spotify's own value, so the All
 flags page is where a flag goes back to Auto. Spotify ships its newer design behind several flags at
 once, and the redesign is built on it (the glass navigation bar, the new player slider, the sheet style
 player, the queue and Connect sheets, the redesigned player header, the sleep timer's options sheet):

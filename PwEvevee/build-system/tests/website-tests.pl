@@ -294,31 +294,39 @@ ok($alt_raw !~ m{api\.github\.com}, 'the AltSource data is not confused with the
            'the source is identified as SideloadLabs', $src->{source_name});
 
         my @variants = @{ $src->{variants} || [] };
-        ok(@variants >= 4, 'at least the four published variants were parsed',
+        ok(@variants >= 1, 'the upstream AltSource published variants were parsed',
            'found ' . scalar @variants);
 
-        # The four builds must be understood as variants, not as repositories.
-        my %seen = map { $_->{name} => $_ } @variants;
-        for my $name ('EeveeSpotifyReincarnated', 'EeveeSpotifyReincarnated(PATCHED)',
-                      'ESR Liquid Glass', 'ESR Liquid Glass Patched') {
-            ok($seen{$name}, "AltSource variant parsed: $name");
+        # Every build must be understood as a variant, not as a repository, and the
+        # Standard/Patched classifier must follow the published name. Upstream
+        # changes this list over time (the Liquid Glass pair was withdrawn in
+        # 2026-10, leaving the mainline and PATCHED builds), so these assertions
+        # hold for whatever upstream currently publishes instead of freezing a
+        # list of names that upstream owns.
+        for my $v (@variants) {
+            ok(defined $v->{name} && length $v->{name}, 'every variant carries a name');
+            my $name_says_patched = ($v->{name} =~ /patched/i) ? 1 : 0;
+            ok(($v->{patched} ? 1 : 0) == $name_says_patched,
+               "variant '$v->{name}': Patched is derived from the published name");
         }
-        ok(!$seen{'EeveeSpotifyReincarnated'}{patched},
+        ok(scalar(grep { !$_->{patched} } @variants) >= 1,
            'the mainline build is understood as the Standard variant');
-        ok($seen{'EeveeSpotifyReincarnated(PATCHED)'}{patched},
-           'the PATCHED build is understood as the Patched variant');
-        ok($seen{'ESR Liquid Glass Patched'}{patched},
-           'the Liquid Glass Patched build is understood as the Patched variant');
 
         my @families = @{ $src->{families} || [] };
-        ok(scalar @families == 2, 'the variants group into two families',
+        ok(scalar @families >= 1, 'the variants group into families',
            'found ' . scalar @families);
+        my $in_families = 0;
         for my $f (@families) {
-            ok(scalar @{ $f->{variants} || [] } == 2,
-               "family '$f->{label}' offers a Standard and a Patched variant");
-            ok(($f->{variants}[0]{variant} // '') eq 'standard',
+            my @fv = @{ $f->{variants} || [] };
+            $in_families += scalar @fv;
+            ok(@fv >= 1 && @fv <= 2,
+               "family '$f->{label}' offers at most a Standard and a Patched variant");
+            ok(($fv[0]{variant} // '') eq 'standard',
                "family '$f->{label}' lists Standard first");
         }
+        ok($in_families == scalar @variants,
+           'every published variant belongs to exactly one family',
+           "$in_families of " . scalar @variants);
 
         # Every fact the UI shows must be present, and never invented.
         for my $v (@variants) {
@@ -1412,8 +1420,13 @@ for my $s (@{ $alt_data->{sources} || [] }) {
     $alt_urls{ $_->{download_url} } = 1 for @{ $s->{variants} || [] };
 }
 ok(scalar keys %gh_asset_urls > 0, 'the generated data provides real GitHub asset URLs');
-ok(scalar keys %alt_urls == 4, 'the generated data provides the four AltSource variant URLs',
-   'found ' . scalar keys %alt_urls);
+my $alt_variant_total = 0;
+for my $s (@{ $alt_data->{sources} || [] }) {
+    $alt_variant_total += scalar @{ $s->{variants} || [] };
+}
+ok(scalar keys %alt_urls == $alt_variant_total,
+   'every published AltSource variant has its own download URL',
+   'urls ' . scalar(keys %alt_urls) . ' for ' . $alt_variant_total . ' variants');
 
 my %checked;
 my $download_buttons = 0;
@@ -1606,7 +1619,7 @@ ok($layout_out =~ m{github\.com/SideloadLabs/SideloasLabs-AltSource},
    'the footer links the AltSource repository with its upstream spelling');
 
 my $dlpage = $dl;
-for my $want ('github.com/codeboy2012/spoti.pw-builds',
+for my $want ('github.com/codeboy2012/PwEevee',
               'github.com/skopevoj/spoti.pw',
               'github.com/SideloadLabs/EeveeSpotifyReincarnated') {
     ok(index($dlpage, $want) >= 0, "the downloads page links $want");
@@ -1622,10 +1635,17 @@ for my $page ("$OUT/downloads/index.html", "$OUT/projects/eeveespotify/index.htm
     ok($body =~ /variant-family/, "$page renders the variant families");
     ok($body =~ /class="variant\b/, "$page renders variant cards");
 
+    # The page must show everything the generated data carries — no more, no
+    # fewer. Upstream decides how many variants exist; the page must follow.
+    my ($esrc) = grep { ($_->{slug} // '') eq 'eeveespotify' } @{ $alt_data->{sources} || [] };
+    my $want_families = scalar @{ $esrc->{families} || [] };
+    my $want_cards    = scalar @{ $esrc->{variants} || [] };
     my $families = () = $body =~ /class="variant-family /g;
-    ok($families == 2, "$page shows both variant families", "found $families");
+    ok($families == $want_families, "$page shows every variant family the data has",
+       "found $families of $want_families");
     my $cards = () = $body =~ /class="panel panel--hover variant /g;
-    ok($cards == 4, "$page shows all four variants", "found $cards");
+    ok($cards == $want_cards, "$page shows every variant the data has",
+       "found $cards of $want_cards");
 
     # each variant must state what it is and offer the real URL
     for my $url (sort keys %alt_urls) {
@@ -1877,8 +1897,8 @@ for my $f (@html) {
 {
     ok($home =~ /Enjoying PwEevee\?/, 'the home page asks for a star, in plain words');
     ok($home =~ /Star PwEevee on GitHub/, 'the star button is labelled');
-    ok($home =~ m{href="https://github\.com/codeboy2012/spoti\.pw-builds"[^>]*>\s*<span aria-hidden="true">&\#9733;</span>}
-       || $home =~ m{<a class="btn btn--primary" href="https://github\.com/codeboy2012/spoti\.pw-builds"},
+    ok($home =~ m{href="https://github\.com/codeboy2012/PwEevee"[^>]*>\s*<span aria-hidden="true">&\#9733;</span>}
+       || $home =~ m{<a class="btn btn--primary" href="https://github\.com/codeboy2012/PwEevee"},
        'the star button points at the real repository, not an invented one');
     # no pressure
     for my $guilt ('please donate', 'if you care', 'support us or', 'we need you') {
@@ -2572,6 +2592,25 @@ section('8b. statistics count-up animation');
     my $n_hooks = () = $downloads =~ /data-fresh-repo="[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+"/g;
     ok($n_hooks >= 2,
        "downloads page card rows carry version/date freshness hooks (found $n_hooks)");
+
+    my $releases_page = slurp('website/releases/index.html');
+    my $timeline_hooks = () = $releases_page =~ /data-fresh-repo="[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+"\s+data-fresh-kind="version"\s+data-fresh-epoch="\d+"/g;
+    my $timeline_items = () = $releases_page =~ /data-release-item/g;
+    ok($timeline_hooks == $timeline_items && $timeline_items > 0,
+       "every /releases timeline item carries a live version hook ($timeline_hooks of $timeline_items)");
+
+    # an empty repo attribute would make the module fetch a malformed URL
+    for my $page ($home, $downloads, $releases_page) {
+        ok($page !~ /data-fresh-repo=""/,
+           'no rendered page emits an empty data-fresh-repo attribute');
+    }
+
+    # the module mirrors the rendered v-prefix instead of landing a bare
+    # 2.0.1 beside its own old v2.0.0 (docs/freshness.md)
+    ok($mod =~ /'v' \+ fresh/,
+       'a v-prefixed rendered version keeps its prefix when updated live');
+    ok($mod =~ /Newer: ' \+ fresh/,
+       'the newer-release badge says the version the page now shows');
 
     # session discipline: nav around the site must not pile up upstream requests
     ok($mod =~ /seen\.all/,

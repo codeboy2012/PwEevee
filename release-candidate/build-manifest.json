@@ -1,27 +1,63 @@
 {
   "project": "pweevee-unified (spoti.pw + EeveeSpotify integration build)",
   "spotify_version": "9.1.90",
-  "spotipw_version": "0.22.0",
-  "spotipw_commit": "43a92ce",
+  "spotify_build": "919002269",
+  "spotipw_version": "3.1.0",
+  "spotipw_commit": "unknown (migrated source tree, no git metadata; source manifest sha256 2ffe977aa3437709a5e86b051bfe7ce10accc6412d5f9d68059315628c102155)",
   "eevee_version": "7.0.0",
   "eevee_commit": "unknown (binary release 6.6.8-selfcontained.1)",
-  "build_date": "2026-10-25T05:51:30Z",
-  "ipa_path": "release-candidate/PwEevee-0.22.0-rc1-unified-Spotify-9.1.90.ipa",
-  "ipa_sha256": "9845b1c325ac0b042e129bb892103975daed80becea0122c4977ce743ed55415",
-  "ipa_size": 338031911,
+  "build_date": "2026-10-27T16:02:00Z",
+  "public_version": "3.1.0",
+  "ipa_path": "dist/PwEevee-3.1.0.ipa (delivered copy: C:\\Users\\sleepy\\Downloads\\PwEevee-3.1.0.ipa)",
+  "ipa_sha256": "fd3f41e21b93a1585492c2a45112715dd9183c1f7b7370074e91866210f87dc2",
+  "ipa_size": 147039801,
+  "ipa_members": 1193,
+  "packaging": {
+    "method": "single-member swap into the validated migrated 3.1.0 app IPA, then deflate repack (zip -r -X)",
+    "baseline_ipa": "dist/pweevee-3.1.0-unified-Spotify-9.1.90-migrated.ipa",
+    "baseline_sha256": "aa31425dbbc92d8a3b05e85a46cad2e29447411c6c25fd1fc7e9bb2cea8039e6",
+    "member_delta": "1 changed (Payload/Spotify.app/Frameworks/spotifyglass.dylib); 0 removed; 1 cosmetic directory entry added",
+    "host_binary_sha256_prefix": "7e63fa23be1d8541",
+    "host_binary_ncmds": 154,
+    "host_platform": "iOS (LC_BUILD_VERSION platform 2)"
+  },
   "dylibs": ["spotifyglass.dylib", "EeveeSpotify.dylib"],
   "frameworks": ["CydiaSubstrate.framework", "EeveeSwiftProtobuf.framework", "Orion.framework"],
   "bundles": ["EeveeSpotify.bundle"],
-  "brand_icon": "pweevee-icon.png (CFBundleAlternateIcons; original PwEevee artwork, see PwEvevee/brand-icons/manifest.json)",
+  "brand_icon": "pweevee-icon.png (CFBundleAlternateIcons; 143 app-root PNGs, original PwEevee artwork, see PwEvevee/brand-icons/manifest.json)",
   "resources": {
-    "eevee_icons": 142,
+    "eevee_icons": 143,
     "load_commands": 5
+  },
+  "embedded_dylib": {
+    "sha256": "45242a9fffaf81f0da5b11883fd029a713ab1d980ac89c7ba8267ce5b54ceb24",
+    "size": 3245280,
+    "implementation_guard": "9 required markers present, 2 forbidden markers absent (PwEvevee/components/spotipw/manifest.json)",
+    "substrate_edge": "@rpath/CydiaSubstrate.framework/CydiaSubstrate (rootless; no absolute /Library dependency)",
+    "signature": "ad-hoc codesign, CodeDirectory v0x20400 flags=0x2, identifier spotifyglass.dylib.47ba6b93; codesign --verify: valid on disk, satisfies its Designated Requirement",
+    "why_this_object": "clean Theos rebuild of the confirmed migrated source tree (rm -rf .theos && make); byte-identical __TEXT/__DATA sections to the crash-fix (5efc..., unsigned) and deb (9475..., invalid '.unsigned' CodeDirectory) objects, but the only one carrying a codesign-valid signature; the earlier crash-fix IPA embedded an unsigned build and the migrated baseline embedded a build with the absolute Substrate path",
+    "superseded_objects": {
+      "5efc001e3b693b8d96d6f278c18cf6dce329df8cead367f854a0baf74a94f0e8": "crash-fix IPA embedded; no LC_CODE_SIGNATURE at all",
+      "60efaf4201a20bece8f465eeaa216d975279f59fca4b9594535a397cdafbabca": "earlier -src build; differs from the pin only by LC_UUID + signature",
+      "9475c1ef6e10049fd1299bd7c67a43ebb21f37e974648ad26d6acd0709777813": "dylib packaged in com.spotipw_3.1.0_iphoneos-arm64.deb; CodeDirectory flags=0 and '.unsigned' identifier, codesign reports no signature",
+      "e74b6876068be19e54b246fb75ebb6013279ade88d2dc67a9e3918526d9ded97": "migrated baseline IPA embedded; absolute /Library Substrate path (the launch-crash root cause)"
+    }
+  },
+  "signing": {
+    "nested_dylib": "ad-hoc signed by the Theos 'Signing spotifyglass' step (via the builder's ldid shim mapping to codesign -f -s -)",
+    "app_bundle": "not re-signed end to end; the sideloader re-signs the whole payload at install",
+    "installability": "not claimed: an ad-hoc signature does not by itself make the IPA installable on a device"
   },
   "validation": {
     "archive": true,
     "mach_o": true,
     "dependencies": true,
+    "dependencies_strict_all": true,
     "resources": true,
-    "ipa": true
-  }
+    "ipa": true,
+    "embedded_artifact": true,
+    "embedded_artifact_test": "PwEvevee/build-system/tests/embedded-artifact-test.pl (26 checks with PWEEVEE_IPA_HOST=1)"
+  },
+  "device_verified": false,
+  "device_blocker": "no physical iPhone/iPad attached to the build host; only simulators are present, and the artifact is a device-slice iOS build (LC_BUILD_VERSION platform 2) with a jailbreak-injected tweak"
 }

@@ -32,8 +32,9 @@ part of the project, not a footnote.
 5. **Byte-exactness where it matters.** The deb generator reproduces the reference
    package's `data.tar.lzma` byte-for-byte; the injector reproduces the proven
    executable's load-command block exactly (ncmds 153, sizeofcmds 16680).
-6. **Never touch the reference.** `docs/spoti.pw-builds/` is a pristine clone; nothing
-   writes there, nothing builds from it.
+6. **Never touch the reference.** `docs/spoti.pw-builds/` is an *optional local* pristine
+   clone (its gitlink entry was dropped in `43a92ce`, so it is not in the repository);
+   nothing writes there, nothing builds from it.
 7. **No secrets.** No credentials, tokens, certificates or personal data in the
    repository, ever.
 

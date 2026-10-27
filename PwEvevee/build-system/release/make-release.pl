@@ -79,7 +79,7 @@ my $card = {
   hosted        => $in_window ? 'website' : 'github',
   past_retention => !$in_window,
   retention_months => $retain_months,
-  github_releases => 'https://github.com/codeboy2012/spoti.pw-builds/releases',
+  github_releases => 'https://github.com/codeboy2012/PwEevee/releases',
 };
 
 # metadata is written always; the downloadable copy only while in the window

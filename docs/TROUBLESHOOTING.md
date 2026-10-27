@@ -138,6 +138,38 @@ That state only appears when `render-site.pl` has not run against current data, 
 page shipped with an empty data region and the browser fallback took over. Run
 `scripts/update-releases.sh` and redeploy `website/`.
 
+## A sideloaded build will not launch until Developer Mode is on (iOS 16+)
+
+**Cause:** the app is *development-signed* by the signer (AltStore/SideStore/Feather/Sideloadly all
+sign with your Apple ID's development profile). Since iOS 16, iOS refuses to run locally installed
+development-signed apps unless Developer Mode is enabled on the device — Apple's own wording is that
+it "grant[s] or den[y] permission for locally installed apps to run" and covers "installing an `.ipa`
+file with Apple Configurator". Nothing in the PwEevee IPA causes this: the file ships with no
+provisioning profile and no certificate-backed signature at all (see
+[developer-mode-audit-3.1.0.md](../release-candidate/developer-mode-audit-3.1.0.md)).
+
+**Fix:** Settings → **Privacy & Security** → **Developer Mode** → on → **Restart** → after reboot
+confirm **Enable** and enter the passcode. The switch only appears once the device has been
+paired/trusted once, so install the app first if you cannot see it. Separately, trust the signing
+certificate via Settings → **General → VPN & Device Management** (a different gate, needed either way).
+
+**Do not** try to remove the requirement by stripping signatures or editing entitlements — it is a
+device policy tied to the profile type, and those edits only break the install. Free Apple ID builds
+expire after 7 days; re-install from the signer weekly (Developer Mode itself can stay on).
+
+## Spotify login or signup returns a "Spotify server error" (iOS 17)
+
+**Cause:** a known defect of the 3.1.0 build, reproduced on an **iPhone SE (2nd generation)
+running iOS 17.8.1**. It is not a signing, provisioning or Developer Mode problem, so
+re-signing or re-installing does not clear it.
+
+**Status:** acknowledged and carried for a future update. Authentication is listed as **not
+working on iOS 17** wherever compatibility is claimed, and the build is not presented as
+fully compatible on the strength of a launch alone. No other iOS version was tested.
+
+**Do not** re-install repeatedly or re-sign to try to clear it — the failure is in the
+build's authentication path, not in your installation.
+
 ## Device testing
 
 The build is validated structurally, but only a device run proves the app: Eevee's

@@ -436,7 +436,7 @@ TXT
 sub own_repo_url {
     my $p = $PROJECT{pweevee};
     my $gh = $p && ref $p->{github} eq 'HASH' ? $p->{github} : undef;
-    return 'https://github.com/codeboy2012/spoti.pw-builds'
+    return 'https://github.com/codeboy2012/PwEevee'
         unless $gh && $gh->{owner} && $gh->{repo};
     return "https://github.com/$gh->{owner}/$gh->{repo}";
 }
@@ -1434,6 +1434,15 @@ sub history_card {
           . 'Download ' . h(kind_label($primary)) . '</a>'
         : '';
 
+    # The version text carries the on-visit freshness hook (see docs/freshness.md):
+    # each timeline item can be told a newer release exists, one request per repo
+    # in total, without ever rewriting this page's download links or hashes.
+    my $fresh_version = $g->{repo}
+        ? "<span data-fresh-repo=\"" . h($g->{repo}) . "\" data-fresh-kind=\"version\""
+          . " data-fresh-epoch=\"@{[ ($r->{published_epoch} // 0) ]}\">"
+          . h($r->{version_label} // $r->{version}) . "</span>"
+        : h($r->{version_label} // $r->{version});
+
     # The filter attributes live on the timeline wrapper (see c_release_history),
     # not here: hiding the wrapper also hides the timeline marker beside it.
     return join('',
@@ -1441,7 +1450,7 @@ sub history_card {
           '<div class="release__head">',
             '<div class="release__ident">',
               '<h3 class="release__version">', h($p->{name}), ' ',
-                h($r->{version_label} // $r->{version}), '</h3>',
+                $fresh_version, '</h3>',
               ($r->{name} && $r->{name} ne $r->{version}
                   ? '<p class="release__name">' . h($r->{name}) . '</p>' : ''),
               '<p class="release__when">', h($r->{published_label}),

@@ -21,6 +21,40 @@ Background facts with citations: [taurus-rc/reports/distribution-readiness.md](.
 | Apple-issued distribution App Store profile | unsupported | store-signed flow requires Apple's servers; sideloading is a different path |
 | TrollStore-consumed builds | out of scope of the website signer path | profile-less; flags in the matrix docs only |
 
+### A.1 Developer Mode on iOS 16+ (added 2026-10-27)
+
+**Apple-documented:** Developer Mode (Settings → Privacy & Security) "grant[s] or den[y] permission
+for locally installed apps to run" and covers "installing an `.ipa` file with Apple Configurator"; it
+does not affect "ordinary installation techniques, such as buying apps from the App Store or
+participating in a TestFlight team"
+(<https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device>). Apple's
+registered-device page adds: *"To run your iOS, iPadOS, visionOS, or watchOS app that you install
+from an iOS Package Archive, enable Developer Mode on that device"* — in the same section that
+describes the **ad hoc** profile.
+
+Consequences for this matrix:
+
+- **Every locally installed credential class above** — free Personal Team, paid development, and the
+  ad hoc path — is inside Developer Mode's documented scope. Test the expectation as
+  *Developer Mode required* unless a device proves otherwise on the actual iOS version.
+- The bullet `TrollStore-consumed builds` is the only profile-less path, and it is not an
+  Apple-sanctioned distribution route (CoreTrust exploit, iOS ≤ 17.0).
+- iOS 16+ also needs the separate certificate-trust step (Settings → General → VPN & Device
+  Management), which is required with or without Developer Mode.
+- Evidence class: **Apple-documented** for the requirement and its scope; **expected** for the ad hoc
+  exception question (Apple does not state either way; Google Firebase documents a "Developer Mode
+  Required" launch error for ad hoc–provisioned apps on iOS 16+). Full audit:
+  [developer-mode-audit-3.1.0.md](../../release-candidate/developer-mode-audit-3.1.0.md).
+
+## A.2 Known issue carried for a future update (added 2026-10-27)
+
+**iPhone SE (2nd generation), iOS 17.8.1 — Spotify login and signup currently return a
+"Spotify server error."** Reproduced on the device named above; acknowledged for a future
+update. The build installs and launches, but **authentication does not work on iOS 17** in
+this release, so no iOS version is marked as fully compatible on the strength of a launch
+alone. This is recorded here, in the release notes, in
+[docs/TROUBLESHOOTING.md](../TROUBLESHOOTING.md) and on the website's compatibility page.
+
 ## B. Per-check results the /install validator produces
 
 | Check | What it does | Result values |

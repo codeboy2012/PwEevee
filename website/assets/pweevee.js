@@ -990,7 +990,7 @@
           'unaffected — you can always get them straight from GitHub.</p>' +
           '<div class="state__actions">' +
             '<button class="btn btn--outline" type="button" data-retry>Try again</button>' +
-            '<a class="btn btn--quiet" href="https://github.com/codeboy2012/spoti.pw-builds/releases" ' +
+            '<a class="btn btn--quiet" href="https://github.com/codeboy2012/PwEevee/releases" ' +
               'rel="noopener">View GitHub releases</a>' +
           '</div>' +
         '</div>';
@@ -1002,7 +1002,7 @@
     }
 
     function showMissing(region, entry) {
-      var url = (entry && entry.releases_url) || 'https://github.com/codeboy2012/spoti.pw-builds/releases';
+      var url = (entry && entry.releases_url) || 'https://github.com/codeboy2012/PwEevee/releases';
       region.innerHTML =
         '<div class="state state--warn">' +
           '<div class="state__icon" aria-hidden="true">?</div>' +
@@ -1190,9 +1190,20 @@
         cache: 'no-store',
         referrerPolicy: 'strict-origin-when-cross-origin'
       }).then(function (res) {
+        /* /releases/latest returns 404 when the repo has no publishable
+           latest release at all — a prerelease-only or cleaned-up upstream.
+           That is not an outage: the rendered data stands, the repo window
+           is recorded so we do not re-ask for a while, and the page is not
+           branded offline. */
+        if (res.status === 404) {
+          seen.repos[repo] = Date.now(); remember();
+          settle(true);
+          return;
+        }
         if (!res.ok) throw new Error(String(res.status));
         return res.json();
       }).then(function (rel) {
+        if (!rel) return;
         if (!rel || !rel.tag_name || rel.draft) throw new Error('bad payload');
         seen.repos[repo] = Date.now(); remember();
         apply(repo, rel);
@@ -1222,7 +1233,14 @@
           h.node.textContent = 'Released ' + fmtDate(rel.published_at);
           return;
         }
-        h.node.textContent = tagName(rel);
+        /* Every rendered version on the site is v-prefixed when the tag is
+           digit-led (v2.0.0), so an update keeps that prefix instead of
+           landing a bare 2.0.1 beside its own old v2.0.0. */
+        var fresh = tagName(rel);
+        if (/^v/i.test(String(h.node.textContent || '').trim()) && /^\d/.test(fresh)) {
+          fresh = 'v' + fresh;
+        }
+        h.node.textContent = fresh;
         if (h.kind !== 'panel') return;
         /* A full release panel gets one badge: honest about what changed,
            pointing to the authoritative source, never rewriting downloads. */
@@ -1232,7 +1250,7 @@
           a.className = 'badge badge--fresh';
           a.href = rel.html_url;
           a.rel = 'noopener';
-          a.textContent = 'Newer: ' + tagName(rel) + ' on GitHub';
+          a.textContent = 'Newer: ' + fresh + ' on GitHub';
           h.badges.appendChild(a);
         }
       });
