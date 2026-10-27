@@ -17,8 +17,28 @@ It is the reference implementation note for the `freshSession` module in
 | Layer                 | What it refreshes                                     | When it runs                                  | Credentials |
 |-----------------------|-------------------------------------------------------|-----------------------------------------------|-------------|
 | **Render**            | Releases, AltSource variants, download links, SHA-256 | Site build (manual or update scripts)          | none needed |
-| **Scheduled refresh** | Repository statistics + rendered site                 | Every 15 min in CI (`update-stats.yml`)        | `GITHUB_TOKEN`, server-side only |
+| **Scheduled refresh** | Releases, repository statistics, AltSource, every page | Every 15 min, server-side (`scripts/refresh-site.sh` on the web host) | none needed; `GITHUB_TOKEN` optional |
+| **Repository snapshot** | The same tree, committed                            | GitHub Actions `website-refresh.yml`, best effort | `GITHUB_TOKEN`, CI only |
 | **On-visit check**    | Visible version/date text of a rendered release       | Once per browser session, per page opened      | none — anonymous |
+
+## Who owns the schedule
+
+The fifteen-minute cadence is owned by the host that serves the site: a cron
+entry on the web host runs `scripts/refresh-site.sh --publish <docroot>`, which
+refreshes releases, statistics and the AltSource, re-renders every page,
+validates the result with `website-tests.pl` and only then swaps the document
+root. That is the only path that can change what a visitor is served, and it
+runs on a machine that is always on — see `docs/homelab-deployment.md`.
+
+GitHub Actions runs the same pipeline in `website-refresh.yml` to keep the
+*repository* in step, but it is not the freshness promise: GitHub schedules
+`schedule` workflows on a best-effort basis and coalesces or delays them. On
+this repository the `*/15` cron was measured being served roughly every four to
+six hours, which is normal GitHub behaviour — which is exactly why the live
+refresh does not depend on it. Both schedulers use the same script, and the
+workflow commits only when `data-digest.pl` shows an observable change, so the
+two never fight: one refreshes the served site, the other keeps the committed
+snapshot honest.
 
 The render layer is the only thing that decides what a download button offered,
 what a SHA-256 line says, and what the AltStore source contains. The on-visit
@@ -125,7 +145,7 @@ per repo, and only repos that answered with anything are updated.
 | Latest published release, versions, dates, notes | GitHub Releases API (write path: `update-releases.pl`) | scheduled update cycle + release publishes |
 | Download URLs and SHA-256         | GitHub release assets (verified at build/render time) | the render layer, never the browser |
 | AltStore/SideStore source JSON    | `update-appsource.pl`, from verified IPA facts     | release-triggered workflow only |
-| Repository stars/forks/downloads  | GitHub API (aggregate stats)                       | 15-minute scheduled workflow |
+| Repository stars/forks/downloads  | GitHub API (aggregate stats)                       | the same 15-minute refresh (`update-stats.pl`) |
 | AltSource variants for EeveeSpotify | SideloadLabs published AltSource (read-only)      | scheduled update cycle |
 
 ## What the browser may never do

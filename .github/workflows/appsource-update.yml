@@ -121,7 +121,7 @@ jobs:
           set -eu
           work=/tmp/appsource-ipas
           python3 - "$work" "${{ steps.rel.outputs.tag }}" <<'PY'
-          import json, os, subprocess, sys
+          import json, os, re, subprocess, sys
           work, tag = sys.argv[1], sys.argv[2]
           facts_path = 'website/data/appsource-plists.json'
           with open(facts_path) as f:
@@ -146,9 +146,15 @@ jobs:
               hits = subprocess.run(['find', f'{work}/x', '-name', 'Info.plist',
                                      '-path', '*Payload*'], capture_output=True,
                                     text=True, check=True).stdout.split()
-              # exactly the main app'splist: Payload/<App>.app/Info.plist
-              main = [h for h in hits if h.count('/Info.plist') == 1 and '/Payload/' in h
-                      and h.endswith('.app/Info.plist')]
+              # Exactly the main app's plist: Payload/<App>.app/Info.plist and
+              # nothing deeper. The `unzip` glob above lets '*' cross directory
+              # separators, so a build that also carries a nested app bundle
+              # (observed on the host Spotify IPA) extracts more than one
+              # Info.plist; matching by path depth keeps the main app
+              # unambiguous instead of failing the whole release.
+              main = [h for h in hits
+                      if re.fullmatch(r'Payload/[^/]+\.app/Info\.plist',
+                                      os.path.relpath(h, f'{work}/x').replace(os.sep, '/'))]
               if len(main) != 1:
                   sys.exit(f'{name}: expected exactly one Payload/<App>.app/Info.plist, found {len(main)}')
               out = subprocess.run(

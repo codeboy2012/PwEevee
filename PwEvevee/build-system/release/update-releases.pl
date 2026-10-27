@@ -49,7 +49,14 @@ use PwHttp qw(http_init http_get http_head http_cleanup);
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
 
-my $API   = 'https://api.github.com';
+# RELEASES_API_BASE is a test seam, not a configuration knob: the refresh-pipeline
+# suite points it at a local 127.0.0.1 mock so the real selection rules (newest
+# published release wins; a draft is never considered; a release flagged
+# prerelease, or tagged with a -pre/-beta/-alpha/-rc suffix, is presented only
+# when the repository has no stable release at all) are exercised
+# deterministically instead of against live GitHub. Mirrors STATS_API_BASE in
+# update-stats.pl.
+my $API   = $ENV{RELEASES_API_BASE} || 'https://api.github.com';
 my $TRUE  = JSON::PP::true;
 my $FALSE = JSON::PP::false;
 

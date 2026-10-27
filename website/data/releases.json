@@ -1,16 +1,54 @@
 {
-   "generated_at": "2026-10-27T20:53:19Z",
+   "generated_at": "2026-10-27T22:03:08Z",
    "generator": "PwEvevee/build-system/release/update-releases.pl",
    "projects": [
       {
          "available": true,
          "history": [
             {
+               "asset_count": 2,
+               "assets": [
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_count": 2,
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/com.spotify.client_9.1.90_und3fined.ipa",
+                     "kind": "ipa",
+                     "name": "com.spotify.client_9.1.90_und3fined.ipa",
+                     "sha256": "409601a58953818eea17edb92963d10256ae6fcf00c69954105e5becc08ec296",
+                     "size": 153481523,
+                     "size_label": "146 MB",
+                     "updated_at": "2026-10-27T20:51:54Z"
+                  },
+                  {
+                     "content_type": "application/x-itunes-ipa",
+                     "download_count": 2,
+                     "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/PwEevee-3.1.0.ipa",
+                     "kind": "ipa",
+                     "name": "PwEevee-3.1.0.ipa",
+                     "sha256": "fd3f41e21b93a1585492c2a45112715dd9183c1f7b7370074e91866210f87dc2",
+                     "size": 147039801,
+                     "size_label": "140 MB",
+                     "updated_at": "2026-10-27T20:51:03Z"
+                  }
+               ],
+               "author": "codeboy2012",
+               "name": "PwEevee v3.1.0",
+               "notes": "# PwEevee 3.1.0 — Major Feature Release\r\n\r\nPwEevee 3.1.0 is a major feature release focused on performance, customization, lyrics, lock-screen improvements, audio features, and downloads. Built around Spotify **9.1.90**, this release brings together requested features, improvements from the Vitrine project, and Pixie Download Manager's native Spotify offline-download functionality.\r\n\r\n## Downloads\r\n\r\n- **PwEevee 3.1.0** — `PwEevee-3.1.0.ipa` (140.23 MB)  \r\n  The PwEevee release IPA with the integrated features and customizations.\r\n\r\n- **Clean Decrypted Spotify 9.1.90** — `com.spotify.client_9.1.90_und3fined.ipa` (146.37 MB)  \r\n  The clean, decrypted Spotify 9.1.90 IPA used as the base for PwEevee. It is decrypted but otherwise unmodified and does not include EeveeSpotify or other tweaks. It is provided separately for users who need the clean IPA for compatible tools such as Chroma.\r\n\r\n## What's New\r\n\r\n### Performance and Quality of Life\r\n\r\n- Improved performance and responsiveness.\r\n- Faster interactions and loading.\r\n- Performance optimizations intended to reduce battery usage.\r\n- General stability improvements and bug fixes.\r\n- More requested features and quality-of-life settings.\r\n- An option to disable automatic UI hiding.\r\n- More ways to customize the app's navigation and appearance.\r\n\r\n### Native Downloads — Pixie Download Manager\r\n\r\nPwEevee integrates **Pixie Download Manager v1.3**, built on the Vitrine project and targeting Spotify 9.1.90.\r\n\r\n- Native Spotify offline downloads for tracks, albums, and playlists.\r\n- Download the album associated with the currently playing track directly from the manager.\r\n- Redesigned download controls and album actions.\r\n- Improved playlist and mix headers where Spotify provides both Add and Download controls.\r\n- Download status and related diagnostics available through Vitrine settings.\r\n- Offline-device management, including identifying the current registration and removing entries.\r\n- Optional diagnostics, with a single action to export JSON diagnostic logs.\r\n- English interface.\r\n\r\nDownloads are stored in Spotify's offline storage for playback within Spotify. Exporting ordinary MP3, M4A, or OGG files is not implemented.\r\n\r\n**Download performance:** The reported estimate is approximately 45–75 MB for around 100 songs, depending on the content and download conditions. Actual storage use can vary.\r\n\r\nThe native download integration is based on [[Glongq/Vitrine-Pixie](https://github.com/Glongq/Vitrine-Pixie)](https://github.com/Glongq/Vitrine-Pixie). Its published IPA download and update information are available through the [[project's Telegram post](https://t.me/glongqforks/5)](https://t.me/glongqforks/5). The repository contains source code and patches rather than hosted IPA files.\r\n\r\n### Lyrics\r\n\r\n- Word-by-word lyrics highlighting, with surrounding lines visually softened.\r\n- Tap a lyric line to jump to that point in the song.\r\n- Line-by-line translations.\r\n- Lyrics translations into other languages when supported.\r\n- Genius annotations for selected lyric lines.\r\n- Improved Arabic and Hebrew text direction.\r\n- Dedicated landscape lyrics layout, designed specifically for landscape rather than stretching the portrait interface.\r\n- Return to portrait mode without losing your place in the player.\r\n- Improved lock-screen lyrics presentation.\r\n\r\n### Landscape Lyrics\r\n\r\n- A dedicated full-screen landscape lyrics experience.\r\n- Larger lyrics spanning the screen width.\r\n- Controls that appear when touched.\r\n- A layout designed specifically for landscape use.\r\n- Returning to portrait restores the player experience.\r\n\r\n### Sing and Vocal Controls\r\n\r\n- Adjust vocal volume from full volume down to silent, where supported.\r\n- Sing along with lyrics that remain synchronized with playback.\r\n- With compatible AirPods and supported spatial-audio functionality, vocals can remain positioned in front of the listener as they turn their head.\r\n\r\nAvailability depends on device hardware, audio configuration, and feature support.\r\n\r\n### Lock Screen Customization\r\n\r\n- Lyrics displayed on the lock screen, with the current line updating during playback.\r\n- Multiple lock-screen presentation styles.\r\n- Animated cover support where available.\r\n- More customization for the lock-screen artwork.\r\n\r\nAdditional styles may be possible through compatible customization tools, but unintegrated Workshop themes are not included in this release.\r\n\r\n### Animated Album Artwork\r\n\r\n- Animated album covers in the player and on album pages where supported.\r\n- Improved presentation for animated artwork.\r\n- Live Activity controls and information, where supported, including playback controls, queue information, or a sleep timer.\r\n- Like and dislike actions from supported lock-screen controls.\r\n\r\n### Artist Pages\r\n\r\n- Improved artist-page presentation with prominent artwork and artist names.\r\n- Easier access to liked songs from an artist.\r\n- A more cohesive visual experience across supported artist pages.\r\n\r\n### Web Player and Remote Viewing\r\n\r\nThe associated web-player functionality can show the currently playing content on another screen, including artwork and lyrics, where configured and supported.\r\n\r\n- Open a link on a laptop or TV to view the current playback information.\r\n- View word-by-word lyrics and animated artwork where supported.\r\n- Keep audio playback on the phone.\r\n- Browser-based controls are available only when enabled and permitted by the user.\r\n- No additional installation is required on the viewing screen.\r\n\r\n### Audio Controls and Effects\r\n\r\n- Playback speed adjustment while preserving pitch where supported.\r\n- Pitch adjustment while preserving tempo where supported.\r\n- Reverb.\r\n- Equalizer (EQ).\r\n- Bass boost.\r\n- Compander.\r\n- Convolver.\r\n- AutoEQ headphone correction.\r\n- Customizable sound presets.\r\n\r\nExample preset styles include Warm, Bass, Vocal, Electronic, and Late Night.\r\n\r\nThe availability and quality of individual effects may vary by device and implementation.\r\n\r\nCredits and source information are listed below.\r\n\r\n## Fixed Issues\r\n\r\n- **App icon changes in LiveContainer:** Addressed the reported `Need an imageRef` exception. See [[Issue #1](https://github.com/codeboy2012/PwEevee/issues/1)](https://github.com/codeboy2012/PwEevee/issues/1).\r\n- **Song downloads:** [Issue #2](https://github.com/codeboy2012/PwEevee/issues/2) was marked resolved. See [Issue #2](https://github.com/codeboy2012/PwEevee/issues/2).\r\n- **Lock screen:** Fixed lock-screen bugs.\r\n- Additional bug fixes and performance improvements.\r\n\r\n## Website and Documentation\r\n\r\nWebsite and documentation updates are included as part of PwEevee 3.1.0. These updates are part of the main release and do not constitute a separate website release.\r\n\r\nUpdates include documentation revisions, improved consistency across project pages, and updated project and download references where applicable.\r\n\r\n## Compatibility and Known Issues\r\n\r\n- **iOS 17.8.1:** PwEevee has been reported to launch successfully on an iPhone SE (2nd generation) with Developer Mode enabled. Spotify login and account registration encountered server errors on this device. This issue remains unresolved and is planned for investigation in a future update.\r\n- **iOS 27.2 Developer Beta RC:** PwEevee has been tested on an iPhone 17 Pro Max, where the reported Spotify login and registration errors do not occur.\r\n- **Testing coverage:** No other devices have been tested. Compatibility and runtime behavior may vary depending on iOS version, device, and installation method.\r\n- **Pixie Download Manager:** The integration targets Spotify 9.1.90 and a specific Vitrine source revision. Other Spotify binaries require a separate compatibility port.\r\n- **Jailbreak builds:** The linked Pixie jailbreak packages are from a previous release and have not been rebuilt from the v1.3 sources. The regular IPA has been tested through LiveContainer and SideStore; the jailbreak version has not been tested on a jailbroken device.\r\n- Long-term offline license renewal has not been verified.\r\n\r\n## Issue Tracking\r\n\r\n- [[#1 — Crash When Changing the App Icon in LiveContainer](https://github.com/codeboy2012/PwEevee/issues/1)](https://github.com/codeboy2012/PwEevee/issues/1) — Reported as fixed.\r\n- [[#2 — Can't Download Songs](https://github.com/codeboy2012/PwEevee/issues/2)](https://github.com/codeboy2012/PwEevee/issues/2) — Marked as resolved.\r\n- [[#3 — Request for a Clean Decrypted Spotify 9.1.90 IPA](https://github.com/codeboy2012/PwEevee/issues/3)](https://github.com/codeboy2012/PwEevee/issues/3) — Closed as not planned because the request was considered outside the scope of PwEevee.\r\n\r\n## Credits and Sources\r\n\r\n- **PwEevee:** [[codeboy2012/PwEevee](https://github.com/codeboy2012/PwEevee)](https://github.com/codeboy2012/PwEevee)\r\n- **Vitrine:** [[My-Name-Is-Jeff/vitrine](https://github.com/My-Name-Is-Jeff/vitrine)](https://github.com/My-Name-Is-Jeff/vitrine)\r\n- **Pixie Download Manager:** [[Glongq/Vitrine-Pixie](https://github.com/Glongq/Vitrine-Pixie)](https://github.com/Glongq/Vitrine-Pixie)\r\n- **Pixie IPA download and updates:** [[Glongq's Telegram post](https://t.me/glongqforks/5)](https://t.me/glongqforks/5)\r\n- **Upstream spoti.pw:** [[skopevoj/spoti.pw](https://github.com/skopevoj/spoti.pw)](https://github.com/skopevoj/spoti.pw)\r\n- **Previous download-manager work:** [[Glongq/EeveeSpotifyReincarnated](https://github.com/Glongq/EeveeSpotifyReincarnated)](https://github.com/Glongq/EeveeSpotifyReincarnated)\r\n\r\nVitrine retains credit for the base tweak and redesign. Pixie development, integration, and builds are credited to OpenAI Codex under Glongq's direction, with device testing and feedback from Glongq. Existing source notices and GPL-3.0 licensing information are retained in the [[Vitrine-Pixie repository](https://github.com/Glongq/Vitrine-Pixie/blob/main/LICENSE)](https://github.com/Glongq/Vitrine-Pixie/blob/main/LICENSE).\r\n\r\n## Release Information\r\n\r\n**Version:** 3.1.0  \r\n**Release type:** Major feature release  \r\n**Spotify base:** 9.1.90  \r\n**Pixie Download Manager:** v1.3  \r\n**Website:** Updates included in the main release; no separate website release.\r\n\r\nThank you to everyone who reported bugs, requested features, and contributed feedback. PwEevee 3.1.0 brings together a redesigned experience, richer lyrics and lock-screen features, audio customization, and native Spotify offline downloads.\r\n\r\n**Full Changelog:** https://github.com/codeboy2012/PwEevee/compare/v2.2.0-pre...3.1.0",
+               "prerelease": false,
+               "published_at": "2026-10-27T21:44:22Z",
+               "published_epoch": 1793137462,
+               "published_label": "27 October 2026",
+               "summary": "PwEevee 3.1.0 is a major feature release focused on performance, customization, lyrics, lock-screen improvements, audio features, and downloads. Built around Spotify 9.1.90, this release…",
+               "url": "https://github.com/codeboy2012/PwEevee/releases/tag/3.1.0",
+               "version": "3.1.0",
+               "version_label": "v3.1.0"
+            },
+            {
                "asset_count": 4,
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 60,
+                     "download_count": 61,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
                      "kind": "ipa",
                      "name": "PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
@@ -119,7 +157,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 127,
+                     "download_count": 128,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.78_No_Watch.ipa",
@@ -422,53 +460,42 @@
          ],
          "issues_url": "https://github.com/codeboy2012/PwEevee/issues",
          "latest": {
-            "asset_count": 3,
+            "asset_count": 2,
             "assets": [
                {
                   "content_type": "application/x-itunes-ipa",
-                  "download_count": 127,
-                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
+                  "download_count": 2,
+                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/com.spotify.client_9.1.90_und3fined.ipa",
                   "kind": "ipa",
-                  "name": "com.spotify.client_9.1.78_No_Watch.ipa",
-                  "sha256": "b03c869e0811634d94f90fd66fa57d0d4ec0c839324381c5f89ee67e5a0b4db4",
-                  "size": 176784338,
-                  "size_label": "169 MB",
-                  "updated_at": "2026-10-06T01:48:48Z"
+                  "name": "com.spotify.client_9.1.90_und3fined.ipa",
+                  "sha256": "409601a58953818eea17edb92963d10256ae6fcf00c69954105e5becc08ec296",
+                  "size": 153481523,
+                  "size_label": "146 MB",
+                  "updated_at": "2026-10-27T20:51:54Z"
                },
                {
                   "content_type": "application/x-itunes-ipa",
-                  "download_count": 125,
-                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
+                  "download_count": 2,
+                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/PwEevee-3.1.0.ipa",
                   "kind": "ipa",
-                  "name": "EeveeSpotifyv7.0.0.ipa",
-                  "sha256": "1fff261d89e085e11dbf234ae1205c82c42ee144f31b23b92f24631a6cfe688f",
-                  "size": 139507438,
-                  "size_label": "133 MB",
-                  "updated_at": "2026-10-06T01:47:02Z"
-               },
-               {
-                  "content_type": "application/x-itunes-ipa",
-                  "download_count": 130,
-                  "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
-                  "kind": "ipa",
-                  "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
-                  "sha256": "8f29fae6681e99a90f69f6e6f7165d87f192bc761388867eb08e0ad0e4d115d6",
-                  "size": 161793103,
-                  "size_label": "154 MB",
-                  "updated_at": "2026-10-06T01:46:57Z"
+                  "name": "PwEevee-3.1.0.ipa",
+                  "sha256": "fd3f41e21b93a1585492c2a45112715dd9183c1f7b7370074e91866210f87dc2",
+                  "size": 147039801,
+                  "size_label": "140 MB",
+                  "updated_at": "2026-10-27T20:51:03Z"
                }
             ],
             "author": "codeboy2012",
-            "name": "PwEevee v2.0.0 | SpoTi.pw v50.0 Integration",
-            "notes": "# PwEevee v2.0.0\r\n\r\n> **Major Release — EeveeSpotify 7.0.0**\r\n\r\nPwEevee **v2.0.0** is a major update that brings the project to the new **EeveeSpotify 7.0.0** generation, with a large number of new features, a redesigned experience, Liquid Glass support, Spotify version spoofing, and many stability and UI improvements.\r\n\r\nThis release is a **major overhaul** from the previous v1.x builds.\r\n\r\n## ⭐ Recommended Build\r\n\r\n### `EeveeSpotifyv7.0.0.ipa`\r\n\r\n**154 MB — 161,793,103 bytes**\r\n\r\nThis is the **recommended PwEevee build**.\r\n\r\nIt provides the new EeveeSpotify 7.0.0 experience while avoiding the additional restrictions introduced by the newer SpoTi.pw releases.\r\n\r\n### Highlights\r\n\r\n-  EeveeSpotify **7.0.0**\r\n-  **Liquid Glass** support\r\n-  Redesigned settings experience\r\n-  Updated customization system\r\n-  Enhanced lyrics and karaoke features\r\n-  Custom lyrics improvements\r\n-  Tab customization\r\n-  Appearance customization\r\n-  Player customization\r\n-  App flag tool\r\n-  Privacy and stability improvements\r\n-  Updated iOS 26/27 experience\r\n-  Major underlying updates from previous versions\r\n\r\n**This is the build we recommend for most users.**\r\n\r\n---\r\n\r\n## Optional Combined Build\r\n\r\n### `SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`\r\n\r\n**133 MB — 139,507,438 bytes**\r\n\r\nThis build combines:\r\n\r\n- **SpoTi.pw 0.50.0**\r\n- **EeveeSpotify 7.0.0**\r\n\r\nIt provides a larger portion of the functionality available through the SpoTi.pw + EeveeSpotify combination.\r\n\r\nHowever, **this build is optional and is not our primary recommendation**.\r\n\r\nThe newer SpoTi.pw releases have introduced paid/premium functionality, so users looking for the best free experience should generally use the **EeveeSpotify 7.0.0 build** instead.\r\n\r\n> **Important:** The combined build does **not** contain every feature from SpoTi.pw 0.50.0.\r\n\r\n---\r\n\r\n## Why EeveeSpotify Is Recommended\r\n\r\nPwEevee's goal is to provide a powerful Spotify customization experience without requiring users to rely on paid functionality.\r\n\r\nThe standalone EeveeSpotify 7.0.0 build already provides a substantial feature set, including:\r\n\r\n- Liquid Glass\r\n- Spotify version spoofing\r\n- Advanced appearance customization\r\n- Tab customization\r\n- Custom lyrics\r\n- Karaoke / lyrics enhancements\r\n- Player customization\r\n- Remote feature flags\r\n- Extensive settings customization\r\n- Privacy and stability improvements\r\n\r\nFor most users, **EeveeSpotify 7.0.0 is the build to install.**\r\n\r\n---\r\n\r\n## Version Information\r\n\r\n| Component | Version |\r\n|---|---|\r\n| **PwEevee** | **v2.0.0** |\r\n| **EeveeSpotify** | **v7.0.0** |\r\n| **SpoTi.pw** | **v0.50.0** *(combined build only)* |\r\n| **Primary build** | EeveeSpotify 7.0.0 |\r\n| **Combined build** | SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0 |\r\n\r\n---\r\n\r\n##  Important\r\n\r\nPwEevee v2.0.0 is a major release and has undergone significant changes from v1.x.\r\n\r\nCompatibility can vary depending on:\r\n\r\n- Spotify version\r\n- iOS version\r\n- Device\r\n- Sideloading method\r\n- Signing environment\r\n- Installed tweaks\r\n- Whether the combined build is being used\r\n\r\nIf you encounter an issue, please include:\r\n\r\n1. Your iOS version\r\n2. Your Spotify version\r\n3. Which PwEevee IPA you installed\r\n4. Your signing/sideloading method\r\n5. What happened\r\n6. Any relevant crash or installation logs\r\n\r\n---\r\n\r\n## Downloads\r\n\r\n###  Recommended\r\n\r\n**`EeveeSpotifyv7.0.0.ipa`**\r\n\r\nEeveeSpotify 7.0.0 standalone build with Liquid Glass, Spotify version spoofing, customization features, lyrics enhancements, and the updated EeveeSpotify experience.\r\n\r\n### Optional\r\n\r\n**`SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa`**\r\n\r\nCombined SpoTi.pw 0.50.0 + EeveeSpotify 7.0.0 build.\r\n\r\n> **Recommendation:** Start with the standalone EeveeSpotify 7.0.0 build.\r\n\r\n---\r\n\r\n## What's New in v2.0.0\r\n\r\nThis release represents a major evolution of PwEevee.\r\n\r\nThe project has moved from the older v1.x integration toward the significantly newer **EeveeSpotify 7.0.0** codebase, bringing a redesigned interface, Liquid Glass support, Spotify version spoofing, expanded customization, improved lyrics functionality, remote configuration capabilities, and numerous stability improvements.\r\n\r\n**v2.0.0 is the recommended starting point for new PwEevee users.**",
+            "name": "PwEevee v3.1.0",
+            "notes": "# PwEevee 3.1.0 — Major Feature Release\r\n\r\nPwEevee 3.1.0 is a major feature release focused on performance, customization, lyrics, lock-screen improvements, audio features, and downloads. Built around Spotify **9.1.90**, this release brings together requested features, improvements from the Vitrine project, and Pixie Download Manager's native Spotify offline-download functionality.\r\n\r\n## Downloads\r\n\r\n- **PwEevee 3.1.0** — `PwEevee-3.1.0.ipa` (140.23 MB)  \r\n  The PwEevee release IPA with the integrated features and customizations.\r\n\r\n- **Clean Decrypted Spotify 9.1.90** — `com.spotify.client_9.1.90_und3fined.ipa` (146.37 MB)  \r\n  The clean, decrypted Spotify 9.1.90 IPA used as the base for PwEevee. It is decrypted but otherwise unmodified and does not include EeveeSpotify or other tweaks. It is provided separately for users who need the clean IPA for compatible tools such as Chroma.\r\n\r\n## What's New\r\n\r\n### Performance and Quality of Life\r\n\r\n- Improved performance and responsiveness.\r\n- Faster interactions and loading.\r\n- Performance optimizations intended to reduce battery usage.\r\n- General stability improvements and bug fixes.\r\n- More requested features and quality-of-life settings.\r\n- An option to disable automatic UI hiding.\r\n- More ways to customize the app's navigation and appearance.\r\n\r\n### Native Downloads — Pixie Download Manager\r\n\r\nPwEevee integrates **Pixie Download Manager v1.3**, built on the Vitrine project and targeting Spotify 9.1.90.\r\n\r\n- Native Spotify offline downloads for tracks, albums, and playlists.\r\n- Download the album associated with the currently playing track directly from the manager.\r\n- Redesigned download controls and album actions.\r\n- Improved playlist and mix headers where Spotify provides both Add and Download controls.\r\n- Download status and related diagnostics available through Vitrine settings.\r\n- Offline-device management, including identifying the current registration and removing entries.\r\n- Optional diagnostics, with a single action to export JSON diagnostic logs.\r\n- English interface.\r\n\r\nDownloads are stored in Spotify's offline storage for playback within Spotify. Exporting ordinary MP3, M4A, or OGG files is not implemented.\r\n\r\n**Download performance:** The reported estimate is approximately 45–75 MB for around 100 songs, depending on the content and download conditions. Actual storage use can vary.\r\n\r\nThe native download integration is based on [[Glongq/Vitrine-Pixie](https://github.com/Glongq/Vitrine-Pixie)](https://github.com/Glongq/Vitrine-Pixie). Its published IPA download and update information are available through the [[project's Telegram post](https://t.me/glongqforks/5)](https://t.me/glongqforks/5). The repository contains source code and patches rather than hosted IPA files.\r\n\r\n### Lyrics\r\n\r\n- Word-by-word lyrics highlighting, with surrounding lines visually softened.\r\n- Tap a lyric line to jump to that point in the song.\r\n- Line-by-line translations.\r\n- Lyrics translations into other languages when supported.\r\n- Genius annotations for selected lyric lines.\r\n- Improved Arabic and Hebrew text direction.\r\n- Dedicated landscape lyrics layout, designed specifically for landscape rather than stretching the portrait interface.\r\n- Return to portrait mode without losing your place in the player.\r\n- Improved lock-screen lyrics presentation.\r\n\r\n### Landscape Lyrics\r\n\r\n- A dedicated full-screen landscape lyrics experience.\r\n- Larger lyrics spanning the screen width.\r\n- Controls that appear when touched.\r\n- A layout designed specifically for landscape use.\r\n- Returning to portrait restores the player experience.\r\n\r\n### Sing and Vocal Controls\r\n\r\n- Adjust vocal volume from full volume down to silent, where supported.\r\n- Sing along with lyrics that remain synchronized with playback.\r\n- With compatible AirPods and supported spatial-audio functionality, vocals can remain positioned in front of the listener as they turn their head.\r\n\r\nAvailability depends on device hardware, audio configuration, and feature support.\r\n\r\n### Lock Screen Customization\r\n\r\n- Lyrics displayed on the lock screen, with the current line updating during playback.\r\n- Multiple lock-screen presentation styles.\r\n- Animated cover support where available.\r\n- More customization for the lock-screen artwork.\r\n\r\nAdditional styles may be possible through compatible customization tools, but unintegrated Workshop themes are not included in this release.\r\n\r\n### Animated Album Artwork\r\n\r\n- Animated album covers in the player and on album pages where supported.\r\n- Improved presentation for animated artwork.\r\n- Live Activity controls and information, where supported, including playback controls, queue information, or a sleep timer.\r\n- Like and dislike actions from supported lock-screen controls.\r\n\r\n### Artist Pages\r\n\r\n- Improved artist-page presentation with prominent artwork and artist names.\r\n- Easier access to liked songs from an artist.\r\n- A more cohesive visual experience across supported artist pages.\r\n\r\n### Web Player and Remote Viewing\r\n\r\nThe associated web-player functionality can show the currently playing content on another screen, including artwork and lyrics, where configured and supported.\r\n\r\n- Open a link on a laptop or TV to view the current playback information.\r\n- View word-by-word lyrics and animated artwork where supported.\r\n- Keep audio playback on the phone.\r\n- Browser-based controls are available only when enabled and permitted by the user.\r\n- No additional installation is required on the viewing screen.\r\n\r\n### Audio Controls and Effects\r\n\r\n- Playback speed adjustment while preserving pitch where supported.\r\n- Pitch adjustment while preserving tempo where supported.\r\n- Reverb.\r\n- Equalizer (EQ).\r\n- Bass boost.\r\n- Compander.\r\n- Convolver.\r\n- AutoEQ headphone correction.\r\n- Customizable sound presets.\r\n\r\nExample preset styles include Warm, Bass, Vocal, Electronic, and Late Night.\r\n\r\nThe availability and quality of individual effects may vary by device and implementation.\r\n\r\nCredits and source information are listed below.\r\n\r\n## Fixed Issues\r\n\r\n- **App icon changes in LiveContainer:** Addressed the reported `Need an imageRef` exception. See [[Issue #1](https://github.com/codeboy2012/PwEevee/issues/1)](https://github.com/codeboy2012/PwEevee/issues/1).\r\n- **Song downloads:** [Issue #2](https://github.com/codeboy2012/PwEevee/issues/2) was marked resolved. See [Issue #2](https://github.com/codeboy2012/PwEevee/issues/2).\r\n- **Lock screen:** Fixed lock-screen bugs.\r\n- Additional bug fixes and performance improvements.\r\n\r\n## Website and Documentation\r\n\r\nWebsite and documentation updates are included as part of PwEevee 3.1.0. These updates are part of the main release and do not constitute a separate website release.\r\n\r\nUpdates include documentation revisions, improved consistency across project pages, and updated project and download references where applicable.\r\n\r\n## Compatibility and Known Issues\r\n\r\n- **iOS 17.8.1:** PwEevee has been reported to launch successfully on an iPhone SE (2nd generation) with Developer Mode enabled. Spotify login and account registration encountered server errors on this device. This issue remains unresolved and is planned for investigation in a future update.\r\n- **iOS 27.2 Developer Beta RC:** PwEevee has been tested on an iPhone 17 Pro Max, where the reported Spotify login and registration errors do not occur.\r\n- **Testing coverage:** No other devices have been tested. Compatibility and runtime behavior may vary depending on iOS version, device, and installation method.\r\n- **Pixie Download Manager:** The integration targets Spotify 9.1.90 and a specific Vitrine source revision. Other Spotify binaries require a separate compatibility port.\r\n- **Jailbreak builds:** The linked Pixie jailbreak packages are from a previous release and have not been rebuilt from the v1.3 sources. The regular IPA has been tested through LiveContainer and SideStore; the jailbreak version has not been tested on a jailbroken device.\r\n- Long-term offline license renewal has not been verified.\r\n\r\n## Issue Tracking\r\n\r\n- [[#1 — Crash When Changing the App Icon in LiveContainer](https://github.com/codeboy2012/PwEevee/issues/1)](https://github.com/codeboy2012/PwEevee/issues/1) — Reported as fixed.\r\n- [[#2 — Can't Download Songs](https://github.com/codeboy2012/PwEevee/issues/2)](https://github.com/codeboy2012/PwEevee/issues/2) — Marked as resolved.\r\n- [[#3 — Request for a Clean Decrypted Spotify 9.1.90 IPA](https://github.com/codeboy2012/PwEevee/issues/3)](https://github.com/codeboy2012/PwEevee/issues/3) — Closed as not planned because the request was considered outside the scope of PwEevee.\r\n\r\n## Credits and Sources\r\n\r\n- **PwEevee:** [[codeboy2012/PwEevee](https://github.com/codeboy2012/PwEevee)](https://github.com/codeboy2012/PwEevee)\r\n- **Vitrine:** [[My-Name-Is-Jeff/vitrine](https://github.com/My-Name-Is-Jeff/vitrine)](https://github.com/My-Name-Is-Jeff/vitrine)\r\n- **Pixie Download Manager:** [[Glongq/Vitrine-Pixie](https://github.com/Glongq/Vitrine-Pixie)](https://github.com/Glongq/Vitrine-Pixie)\r\n- **Pixie IPA download and updates:** [[Glongq's Telegram post](https://t.me/glongqforks/5)](https://t.me/glongqforks/5)\r\n- **Upstream spoti.pw:** [[skopevoj/spoti.pw](https://github.com/skopevoj/spoti.pw)](https://github.com/skopevoj/spoti.pw)\r\n- **Previous download-manager work:** [[Glongq/EeveeSpotifyReincarnated](https://github.com/Glongq/EeveeSpotifyReincarnated)](https://github.com/Glongq/EeveeSpotifyReincarnated)\r\n\r\nVitrine retains credit for the base tweak and redesign. Pixie development, integration, and builds are credited to OpenAI Codex under Glongq's direction, with device testing and feedback from Glongq. Existing source notices and GPL-3.0 licensing information are retained in the [[Vitrine-Pixie repository](https://github.com/Glongq/Vitrine-Pixie/blob/main/LICENSE)](https://github.com/Glongq/Vitrine-Pixie/blob/main/LICENSE).\r\n\r\n## Release Information\r\n\r\n**Version:** 3.1.0  \r\n**Release type:** Major feature release  \r\n**Spotify base:** 9.1.90  \r\n**Pixie Download Manager:** v1.3  \r\n**Website:** Updates included in the main release; no separate website release.\r\n\r\nThank you to everyone who reported bugs, requested features, and contributed feedback. PwEevee 3.1.0 brings together a redesigned experience, richer lyrics and lock-screen features, audio customization, and native Spotify offline downloads.\r\n\r\n**Full Changelog:** https://github.com/codeboy2012/PwEevee/compare/v2.2.0-pre...3.1.0",
             "prerelease": false,
-            "published_at": "2026-10-06T01:48:48Z",
-            "published_epoch": 1791251328,
-            "published_label": "6 October 2026",
-            "summary": "Major Release — EeveeSpotify 7.0.0 PwEevee v2.0.0 is a major update that brings the project to the new EeveeSpotify 7.0.0 generation, with a large number of new features, a redesigned…",
-            "url": "https://github.com/codeboy2012/PwEevee/releases/tag/v2.0.0",
-            "version": "v2.0.0",
-            "version_label": "v2.0.0"
+            "published_at": "2026-10-27T21:44:22Z",
+            "published_epoch": 1793137462,
+            "published_label": "27 October 2026",
+            "summary": "PwEevee 3.1.0 is a major feature release focused on performance, customization, lyrics, lock-screen improvements, audio features, and downloads. Built around Spotify 9.1.90, this release…",
+            "url": "https://github.com/codeboy2012/PwEevee/releases/tag/3.1.0",
+            "version": "3.1.0",
+            "version_label": "v3.1.0"
          },
          "name": "PwEevee",
          "releases_url": "https://github.com/codeboy2012/PwEevee/releases",
@@ -809,7 +836,7 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-27T20:53:19Z"
+         "stale_since": "2026-10-27T22:03:07Z"
       },
       {
          "available": true,
@@ -819,7 +846,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
-                     "download_count": 6402,
+                     "download_count": 6411,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -830,7 +857,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
-                     "download_count": 1400,
+                     "download_count": 1403,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
@@ -841,7 +868,7 @@
                   },
                   {
                      "content_type": "text/plain",
-                     "download_count": 2610,
+                     "download_count": 2617,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -1191,7 +1218,7 @@
             "assets": [
                {
                   "content_type": "application/octet-stream",
-                  "download_count": 6402,
+                  "download_count": 6411,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -1202,7 +1229,7 @@
                },
                {
                   "content_type": "application/octet-stream",
-                  "download_count": 1400,
+                  "download_count": 1403,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
@@ -1213,7 +1240,7 @@
                },
                {
                   "content_type": "text/plain",
-                  "download_count": 2610,
+                  "download_count": 2617,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                   "kind": "other",
                   "name": "txt.txt",
