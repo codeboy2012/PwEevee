@@ -1,5 +1,5 @@
 {
-   "generated_at": "2026-10-27T22:03:08Z",
+   "generated_at": "2026-10-27T22:14:44Z",
    "generator": "PwEvevee/build-system/release/update-releases.pl",
    "projects": [
       {
@@ -836,7 +836,7 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-27T22:03:07Z"
+         "stale_since": "2026-10-27T22:14:44Z"
       },
       {
          "available": true,
@@ -846,7 +846,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
-                     "download_count": 6411,
+                     "download_count": 6412,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -1218,7 +1218,7 @@
             "assets": [
                {
                   "content_type": "application/octet-stream",
-                  "download_count": 6411,
+                  "download_count": 6412,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
