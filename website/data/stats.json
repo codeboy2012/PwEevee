@@ -69,7 +69,7 @@
       "release_data_generated_at": "2026-10-25T20:40:01Z",
       "total": 52910
    },
-   "generated_at": "2026-10-27T08:18:55Z",
+   "generated_at": "2026-10-27T14:50:22Z",
    "generator": "PwEevee/build-system/release/update-stats.pl",
    "metric_notes": {
       "downloads": "sum of per-asset download_count over the release history tracked in website/data/releases.json (across all projects)",
@@ -82,19 +82,19 @@
    "repos": [
       {
          "available": true,
-         "downloads_total": 696,
-         "etag": "\"769685f0920ef45d7cb574b2e8999b05a3bdc9e3f48acff6d11294cf59279095\"",
-         "fetched_at": "2026-10-27T08:18:54Z",
+         "downloads_total": 706,
+         "etag": "\"e1100cd735e9ec6f80f2ac51b514adfb593d8632402f37b1ccc010b034c09ef3\"",
+         "fetched_at": "2026-10-27T14:50:20Z",
          "forks": 2,
          "homepage": "https://pweevee.skytweak.dpdns.org/",
          "name": "PwEevee",
          "open_issues": 0,
-         "pushed_at": "2026-10-27T02:28:15Z",
+         "pushed_at": "2026-10-27T08:18:57Z",
          "repo": "codeboy2012/spoti.pw-builds",
          "repo_url": "https://github.com/codeboy2012/spoti.pw-builds",
          "slug": "pweevee",
          "stale": false,
-         "stars": 12,
+         "stars": 13,
          "subscribers": 1,
          "topics": [
             "altstore",
@@ -124,16 +124,16 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-27T08:18:54Z",
+         "stale_since": "2026-10-27T14:50:21Z",
          "stars": 0,
          "subscribers": 0
       },
       {
          "available": true,
          "downloads_total": 53000,
-         "etag": "\"54b93c60d605b6b8057a0d0d4e4db877a39f2a0800b5cfd038966fbac6949d1b\"",
-         "fetched_at": "2026-10-27T08:18:55Z",
-         "forks": 4892,
+         "etag": "\"28c414cad5d02239b6d8bcf2928dd518aea882f44cd5b6b23f6a6f2475ff0b02\"",
+         "fetched_at": "2026-10-27T14:50:22Z",
+         "forks": 4910,
          "homepage": "https://github.com/SideloadLabs/Eevee-Alt-Source/raw/refs/heads/main/apps.json",
          "name": "EeveeSpotify",
          "open_issues": 34,
@@ -142,7 +142,7 @@
          "repo_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated",
          "slug": "eeveespotify",
          "stale": false,
-         "stars": 1411,
+         "stars": 1416,
          "subscribers": 17,
          "topics": []
       }
