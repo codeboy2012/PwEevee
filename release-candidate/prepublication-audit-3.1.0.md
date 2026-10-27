@@ -291,3 +291,41 @@ continue to state this; the version-free wording added in §3 preserves it acros
    visible.
 
 Nothing above was executed by this pass.
+
+---
+
+## Addendum — 2026-10-27, after this report was written
+
+At the maintainer's request the cleanup was committed and pushed:
+
+- Commit `2a59e0c` on `main`, 50 files, pushed to `origin/main`.
+  Scope: README release section, retired repository slug (site generator, release
+  metadata, regenerated website), branding/notice corrections in the active docs, the
+  regenerated website output, the new `prepublication-tests.pl`, and this report plus the
+  progress log. Deliberately **not** included: `PwEvevee/components/**` (the dylib pin and
+  component manifest), `unified.sh`, `macho.pm`, `watch/watchfix.sh`, `brand-icons/manifest.json`,
+  the tracked `Spotipw/` tree, and the untracked guard suites — all still uncommitted,
+  awaiting the maintainer's decision.
+- The push had to be rebased: the statistics workflow had already pushed eight automated
+  `data(stats)` commits whose snapshot still used the pre-fix `projects.json`, so it
+  re-introduced the retired slug as a repository key. The stats were regenerated with
+  `update-stats.pl` against the corrected `projects.json` (slug-free keys) and the site
+  re-rendered with `render-site.pl` so the rendered numbers match the committed stats; both
+  changes are folded into `0251869`. A companion commit makes
+  `pweevee-1.1.0-beta-tests.pl` skip (exit 0) when its subject — the superseded 1.1.0-beta
+  deb in git-ignored `dist/` — is absent, instead of failing on a clean checkout; an
+  explicitly passed path still hard-fails.
+- The committed tree was re-verified in a detached worktree (so uncommitted files could not
+  mask a rule violation): `prepublication-tests.pl` 27 checks, `website-tests.pl` 4,396
+  checks, `readme-updater-tests.pl` 29 checks, `appsource-tests.pl` 118 checks,
+  `brand-asset-tests.pl` 38 checks — all pass. The whole suite is green in that worktree:
+  **13 suites pass, 2 self-declare skips, 0 fail** (`build-tests.pl`'s input-IPA sections and
+  the superseded beta suite; the three dylib guard suites are untracked, so a clean checkout
+  has 15 suites, not 18).
+- The earlier statement in this report that nothing was committed describes the cleanup pass
+  itself; the commits above were created afterwards, on request. The report sections above
+  the addendum are unchanged from the state they describe.
+
+Still true after the push: no GitHub release was created, no tag was created, the 3.1.0 IPA
+is not published anywhere, and installation, launch and runtime behaviour remain unverified
+on hardware.

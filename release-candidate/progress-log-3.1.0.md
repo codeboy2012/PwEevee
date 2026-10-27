@@ -165,3 +165,30 @@ Report: `release-candidate/prepublication-audit-3.1.0.md`.
 - Open for the maintainer: the tracked `Spotipw/` tree is the old lineage (site update
   endpoint + `spoti.pw` identity) and is **not** the build source — the shipped dylib comes
   from `taurus-rc/source`. The app source also lists a "watchfix experimental" entry.
+
+### Committed and pushed (2026-10-27)
+
+Maintainer asked for the cleanup to land. Commit `0251869` on `main` (50 files) — README
+release section, retired repository slug, branding/notice corrections, regenerated website,
+new `prepublication-tests.pl`, this log and the audit report. Pushed to `origin/main`.
+
+The push was rebased onto eight automated `data(stats)` commits the refresh workflow had
+pushed meanwhile; their snapshot still used the pre-fix `projects.json` and so re-introduced
+the retired slug as a repository key. Stats regenerated with `update-stats.pl` (slug-free
+keys, fresh numbers) and the site re-rendered with `render-site.pl` so the rendered numbers
+match the committed stats — both folded into `0251869`. A companion commit makes
+`tests/pweevee-1.1.0-beta-tests.pl` skip (exit 0) when its superseded subject deb (kept in
+git-ignored `dist/`) is absent; an explicitly passed path still hard-fails.
+
+Excluded from that commit (still uncommitted, maintainer's call): `PwEevee/components/**`
+(the dylib pin + component manifest + package control), `PwEevee/build-system/unified.sh`,
+`lib/macho.pm`, `watch/watchfix.sh`, `brand-icons/manifest.json`, the tracked `Spotipw/`
+tree, and the untracked `dylib-guard-test.pl` / `embedded-artifact-test.pl` /
+`bundle-deps-tests.pl` / `validate-bundle-deps.pl` plus their fixtures. (Those guard suites
+are untracked because they assert the new dylib pin, which is uncommitted too.)
+
+Re-verified in a detached worktree at the pushed tree: `prepublication-tests.pl` 27 checks,
+`website-tests.pl` 4,396 checks, `readme-updater-tests.pl` 29 checks, `appsource-tests.pl`
+118 checks, `brand-asset-tests.pl` 38 checks. Whole suite in that worktree: **13 pass, 2
+self-declared skips, 0 fail** (a clean checkout has 15 suites — the three dylib guard suites
+are untracked). Release not published; device behaviour still unverified.
