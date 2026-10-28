@@ -55,12 +55,12 @@ performed; wherever that matters it is stated.
 | File | Why |
 |---|---|
 | `scripts/refresh-health.pl` (new) | Incident state across runs (consecutive failures, first failure, last success, last notified), notification decisions with a cooldown, recovery detection, status merge, secret redaction, tolerant handling of corrupt state/status. |
-| `scripts/refresh-notify.sh` (new) | One configurable endpoint; payload shape chosen from the URL (Slack / Discord / ntfy / generic JSON); URL never printed; message redacted; distinct exit codes (`0` sent, `2` unconfigured, `3` failed). |
+| `scripts/refresh-notify.sh` (new) | One configurable endpoint; payload shape chosen from the URL (Slack / Discord / ntfy / generic JSON); URL never printed; message redacted; distinct exit codes (`0` sent, `2` unconfigured, `3` failed); `--check` reports service/format/config mode without the URL, and `--check --send-test` sends one labelled test and reports the HTTP result. |
 | `scripts/refresh-cron.sh` (new, tracked) | The wrapper was previously only on the host. Now versioned: absolute paths, lock-skip recorded as `skipped`, stage recorded on every failure, health update and alert after each run, notification errors never change the run's exit status. `PWEEVEE_SITE_DIR` exists so the tests can drive the real wrapper. |
 | `scripts/refresh-site.sh` | Records the failing stage (`releases`, `stats`, `altsource`, `render`, `validate`, `publish`) in the status file; keeps every existing key. |
 | `PwEvevee/build-system/release/update-stats.pl` | The 304 path keeps `stale: false` so an unchanged record has one stable shape. |
 | `PwEvevee/build-system/release/data-digest.pl` | `pushed_at` is normalized for change detection: it is repository bookkeeping, never rendered, and it moves on the snapshot commit itself. |
-| `PwEvevee/build-system/tests/refresh-pipeline-tests.pl` | 173 checks (179 on Linux) with new sections E–H: incident decisions, the wrapper end to end against a stub tree and a mock endpoint, the schedule contract, and the notifier's payloads/redaction. |
+| `PwEvevee/build-system/tests/refresh-pipeline-tests.pl` | 181 checks (187 on Linux) with new sections E–H: incident decisions, the wrapper end to end against a stub tree and a mock endpoint, the schedule contract, and the notifier's payloads/redaction. |
 | `docs/homelab-deployment.md` | Scheduler, boot survival, deployment of the trio, notification configuration, dedup/recovery, diagnosis, and the verification table below. |
 
 ## 3. Scheduling
@@ -83,11 +83,17 @@ Installed user crontab (unchanged by this work):
 
 ## 4. Notifications
 
-- **Channel:** none is configured on this host today — there is no `mail`,
-  `msmtp`, `ntfy` client, or existing webhook, and no credentials for one were
-  available. The interface is complete and the value is the only missing input:
+- **Channel:** none is configured on this host, and none could be authorised
+  here. A fresh audit found no `mail`/`msmtp`, no ntfy or Gotify server (native
+  or container), no existing webhook config, and no credential for one. The
+  only mail service present is Mailpit on `127.0.0.1:8025`, which is a local
+  *catcher* another service uses for test mail — it cannot deliver to a person,
+  and is explicitly documented as not a destination.
+  The interface is complete and the value is the only missing input:
   `PWEEVEE_NOTIFY_URL` in `~/.config/pweevee-site/notify.conf` (mode 0600), or
-  in the environment.
+  in the environment. `refresh-notify.sh --check` now reports
+  `configured=no`, the expected path, and exit 2 from the cron environment
+  without printing anything secret, so activation is verifiable in one command.
 - **Payload:** auto-detected — `hooks.slack.com` → `{"text":…}`,
   `discord.com` → `{"content":…}`, `*ntfy*` → plain body with `Title`/`Tags`
   headers, anything else → `{"title","text","source"}`.
@@ -114,8 +120,8 @@ Commands, run from the repository root:
 |---|---|
 | `perl PwEvevee/build-system/tests/*.pl` (all 19, one by one) | all PASS |
 | `perl PwEvevee/build-system/tests/website-tests.pl` | `OK 4409 checks passed` |
-| `perl PwEvevee/build-system/tests/refresh-pipeline-tests.pl` (workstation) | `OK 173 checks passed` |
-| same suite, from a fresh `git archive` of `main` on the host | `OK 179 checks passed` (the `flock` lock checks run there) |
+| `perl PwEvevee/build-system/tests/refresh-pipeline-tests.pl` (workstation) | `OK 181 checks passed` |
+| same suite, from a fresh `git archive` of `main` on the host | `OK 187 checks passed` (the `flock` lock checks run there) |
 
 Negative controls (each mutation applied to a copy, suite rerun, file restored
 byte-identically):
@@ -137,7 +143,7 @@ invalid arguments, and that a failed delivery cannot mask the pipeline failure.
 
 Deployed trio (sha256): `refresh-cron.sh` `7141542448c897e0d25c1ae870e1b4fc39717a725b35504199a4e7f6519fa9ff`,
 `refresh-health.pl` `9160520e48c0b109ddaecc86897c8854c4dd6a4beb20396b5240e7512aff98ee`,
-`refresh-notify.sh` `5301ff4c6118b78ce1fad7e1fb44e91b3acb085ad97863e9a00ea35ea7bc5b59`.
+`refresh-notify.sh` `f261abd1f2a68e0b8782beea7c91f83096ef27c1266421b4a3fe582169f1f682`.
 Local and remote hashes matched after upload.
 
 | Check | Result |
@@ -186,9 +192,12 @@ that is the documented fail-open behaviour, not a refresh failure.
    not an observation. If a reboot is acceptable, the check afterwards is:
    `crontab -l`, `systemctl is-active cron`, and a `refresh.log` line within
    fifteen minutes.
-2. **No notification endpoint is configured.** Until `PWEEVEE_NOTIFY_URL` is
-   set, failures are recorded as `not-configured` and nobody is told. The
-   delivery path itself is verified against a loopback endpoint on the host.
+2. **No notification endpoint is configured**, so this task's delivery proof is
+   still outstanding. Until `PWEEVEE_NOTIFY_URL` is set, failures are recorded
+   as `not-configured` and nobody is told. The delivery path itself is verified
+   against loopback endpoints (first failure, cooldown, recovery), and
+   `--check`/`--send-test` are in place so the remaining step is: create the
+   destination, write the one line, run `--check --send-test`, confirm receipt.
 3. The three `bin/` scripts are deployed copies; a change to them requires the
    copy step in the operator doc. They are hash-checked after deployment but the
    host does not verify them automatically.

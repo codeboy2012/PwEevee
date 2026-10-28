@@ -1123,6 +1123,72 @@ section('H. the notifier picks a payload shape and never leaks the endpoint');
         ok($out =~ /^format=ntfy\n/, 'H8 the endpoint may come from the 0600 config file');
     }
 
+    # ---- H9: the path cron will actually use --------------------------------
+    # cron sets HOME and nothing else, so the default path must resolve there;
+    # the check must confirm that without printing the secret path of the URL.
+    my $fakehome   = "$G/fakehome";
+    my $default_cf = "$fakehome/.config/pweevee-site/notify.conf";
+    make_path("$fakehome/.config/pweevee-site");
+    spew($default_cf, "PWEEVEE_NOTIFY_URL=https://discord.com/api/webhooks/123/sekrithookpath\n");
+    chmod 0600, $default_cf;
+
+    my ($h9rc, $h9) = do {
+        delete local $ENV{PWEEVEE_NOTIFY_URL};
+        delete local $ENV{PWEEVEE_NOTIFY_CONF};
+        local $ENV{HOME}               = $fakehome;
+        local $ENV{XDG_CONFIG_HOME}    = '';
+        my $o = qx{bash scripts/refresh-notify.sh --check 2>&1};
+        (($? >> 8), $o);
+    };
+    ok($h9rc == 0 && $h9 =~ /^configured=yes/m && $h9 =~ /^source=file/m,
+       'H9 the default config path is found with only HOME set (as cron runs it)', $h9);
+    ok($h9 =~ /^format=discord/m, 'H9 ... and the payload shape follows from it');
+    ok(index($h9, 'sekrithookpath') < 0,
+       'H9 ... while the check never prints the webhook path');
+
+    # ---- H10: permissions are reported --------------------------------------
+    chmod 0644, $default_cf;
+    my ($h10rc, $h10) = do {
+        delete local $ENV{PWEEVEE_NOTIFY_URL};
+        delete local $ENV{PWEEVEE_NOTIFY_CONF};
+        local $ENV{HOME}            = $fakehome;
+        local $ENV{XDG_CONFIG_HOME} = '';
+        my $o = qx{bash scripts/refresh-notify.sh --check 2>&1};
+        (($? >> 8), $o);
+    };
+    ok($h10rc == 0 && $h10 =~ /^config_mode=644/m,
+       'H10 the check reports the config file mode');
+    ok($h10 =~ /warning=.*chmod 600/,
+       'H10 ... and warns when group or others can read it');
+    chmod 0600, $default_cf;
+
+    # ---- H11: an unreadable config is "not configured", not a crash --------
+    {
+        local $ENV{PWEEVEE_NOTIFY_URL}  = '';
+        local $ENV{PWEEVEE_NOTIFY_CONF} = "$G";   # a directory: -r but no key
+        my $o = qx{bash scripts/refresh-notify.sh --check 2>&1};
+        ok(($? >> 8) == 2 && $o =~ /^configured=no/m,
+           'H11 a config with no usable value reports not-configured', $o);
+    }
+
+    # ---- H12: a test send says what actually happened -----------------------
+    {
+        local $ENV{PWEEVEE_NOTIFY_URL}  = 'http://127.0.0.1:9/hook';
+        local $ENV{PWEEVEE_NOTIFY_CONF} = "$G/none.conf";
+        local $ENV{PWEEVEE_NOTIFY_TIMEOUT} = 3;
+        my $o = qx{bash scripts/refresh-notify.sh --send-test 2>&1};
+        ok(($? >> 8) == 3 && $o =~ /^delivery=failed/m,
+           'H12 --send-test reports a failure instead of pretending it was sent', $o);
+    }
+
+    # ---- H13: --check without an endpoint -----------------------------------
+    {
+        local $ENV{PWEEVEE_NOTIFY_URL}  = '';
+        local $ENV{PWEEVEE_NOTIFY_CONF} = "$G/none.conf";
+        my $o = qx{bash scripts/refresh-notify.sh --check 2>&1};
+        ok(($? >> 8) == 2 && $o =~ /^configured=no/m,
+           'H13 --check exits 2 when nothing is configured', $o);
+    }
 }
 
 # ---------------------------------------------------------------- summary

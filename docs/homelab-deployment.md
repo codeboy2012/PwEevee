@@ -96,36 +96,78 @@ Alert policy, implemented once in `scripts/refresh-health.pl`:
 | No endpoint configured | recorded as `not-configured`; the failure itself is unchanged |
 | Delivery returns an error | recorded as `failed`; the incident stays open and retries after the cooldown |
 
-Configure it with one value, kept out of the repository:
+### Activating alerts
+
+Nothing is delivered until one value exists. It is read on every run, so there is
+no restart and no cron change — the next quarter-hour picks it up.
+
+Pick a destination the operator already receives:
+
+| Destination | What to create | URL shape |
+|---|---|---|
+| Discord (simplest) | Server settings → Integrations → Webhooks → New webhook, in a private channel | `https://discord.com/api/webhooks/<id>/<token>` |
+| ntfy | an unguessable topic on your own ntfy server, or on `ntfy.sh` | `https://ntfy.sh/<topic>` |
+| Slack | an Incoming Webhook for one channel | `https://hooks.slack.com/services/…` |
+| Anything else | an HTTP endpoint that accepts a JSON POST | `https://…` |
+
+The webhook URL is a credential: anyone holding it can post to that channel.
+Write it without putting it in shell history or in this repository:
 
 ```bash
 install -d -m 700 ~/.config/pweevee-site
-printf 'PWEEVEE_NOTIFY_URL=%s\n' 'https://…' > ~/.config/pweevee-site/notify.conf
-chmod 600 ~/.config/pweevee-site/notify.conf
+umask 077
+read -rsp 'webhook URL: ' U && printf 'PWEEVEE_NOTIFY_URL=%s
+' "$U" > ~/.config/pweevee-site/notify.conf
+unset U
 ```
 
-`PWEEVEE_NOTIFY_URL` in the environment wins over the file. The payload shape is
-chosen from the endpoint, so no schema has to be described: Slack
-(`hooks.slack.com`) gets `{"text":…}`, Discord gets `{"content":…}`, an ntfy
-topic gets a plain body with `Title`/`Tags` headers, and anything else gets
-`{"title","text","source"}`. The URL is never printed, logged, or written to
-the status file, and message text is redacted before it leaves the process.
+`read -s` does not echo the value and does not write it to history.
 
-Test the wiring without sending anything:
+Confirm the wiring without revealing the URL:
 
 ```bash
-PWEEVEE_NOTIFY_URL='https://…' PWEEVEE_NOTIFY_TITLE='test' \
-  PWEEVEE_NOTIFY_TEXT='wiring check' bash scripts/refresh-notify.sh --dry-run
+~/pweevee-site/bin/refresh-notify.sh --check
+# configured=yes
+# service=discord.com
+# format=discord
+# source=file
+# config_mode=600
+# delivery=not-tested
 ```
 
-Exit statuses are distinct on purpose: `0` delivered, `2` nothing configured,
-`3` delivery failed. `refresh-status.json` reports the same three outcomes, so
-"no alert arrived" is never ambiguous. To see what the last run did:
+Send a labelled test and see the real result:
 
 ```bash
-cat ~/pweevee-site/logs/refresh-status.json ~/pweevee-site/logs/refresh-health.json
-tail -30 ~/pweevee-site/logs/refresh.log
+~/pweevee-site/bin/refresh-notify.sh --check --send-test
+# ... delivery=ok http=204
 ```
+
+A 2xx proves the service accepted the POST, not that a person read it; receipt
+is the operator's confirmation. `--check` exits `2` when nothing is configured
+and `3` when the configured endpoint cannot be reached.
+
+To rotate, re-run the `read` line; to disable, delete the file or leave the value
+empty. The payload shape is chosen from the endpoint — Slack
+(`hooks.slack.com`) gets `{"text":…}`, Discord `{"content":…}`, an ntfy topic a
+plain body with `Title`/`Tags` headers, anything else
+`{"title","text","source"}`. The URL is never printed, logged, or stored in the
+status file, and message text is redacted before it leaves the process.
+
+### Troubleshooting
+
+| Symptom | Meaning |
+|---|---|
+| `configured=no`, exit 2 | no file, or no `PWEEVEE_NOTIFY_URL` line in it; runs record `not-configured` and send nothing |
+| `configured=no`, `reason=…not an http(s) URL` | the value is malformed — no quotes needed, no `export ` prefix inside the file |
+| `warning=…readable by group or others` | `chmod 600 ~/.config/pweevee-site/notify.conf` |
+| `delivery=failed http=404` | wrong webhook path (Discord invalidates a webhook when its channel is deleted) |
+| `delivery=failed http=401/403` | the token was revoked or the app removed |
+| `delivery=failed` with no code | DNS/network unreachable from the host |
+| Alerts arrive, `notification.status` says `failed` | the POST failed after the health record; the log line above has the reason |
+| Nothing arrives, `notification.status` says `ok` | the service accepted it — look at the channel, not the pipeline |
+
+Mailpit on `127.0.0.1:8025` is a local mail *catcher* used by another service on
+this host. It is not a delivery channel and must not be used as one.
 
 Rollback: each swap backs the previous docroot up to
 `backups/site-<UTC-stamp>.tar.gz` (the newest ten are kept).
@@ -258,7 +300,7 @@ committed tree at `b54d298`, on this host.
 ## What the hardened refresh has been verified doing (2026-10-28)
 
 Runner: the deployed trio (sha256 `71415424…` cron, `9160520e…` health,
-`5301ff4c…` notify), driven by the real cron entry and by hand under `env -i`.
+`f261abd1…` notify), driven by the real cron entry and by hand under `env -i`.
 
 | Check | Result |
 |---|---|
@@ -272,6 +314,7 @@ Runner: the deployed trio (sha256 `71415424…` cron, `9160520e…` health,
 | Recovery | `notify:1 kind:recovery`, text `after 3 failed run(s)`, one POST; incident then `none` |
 | Lock held | `skipped`, `stage: lock`, `consecutive_failures` unchanged, no alert |
 | No endpoint configured | `notification.status: not-configured`; the failure itself is unchanged and nothing is sent |
+| `refresh-notify.sh --check` in the cron environment | `configured=no`, exit 2, config path reported; no secret printed |
 | Delivery returns 500 | `notification.status: failed`, incident stays open, the pipeline's own exit code and error note are untouched |
 | Secret hygiene | the endpoint URL never appears in `refresh.log` or in the status file; a URL/token in an error is stored as `<url>` / `<redacted>` |
 | Unattended cron | the scheduled run picks up `origin/main` and writes the same health fields; no interactive environment involved |
