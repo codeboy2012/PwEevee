@@ -29,6 +29,7 @@ finished IPA blobs.
 | Path | What it is |
 |---|---|
 | `Spotipw/` | the upstream spoti.pw project kept intact under its own identity: `tweak/` (theos tweak source), `extension/`, `harness/`, `vendor/`, `scripts/`, `ipa/`, Makefile, LICENSE, upstream docs and release tooling |
+| `taurus-rc/source/` | the migrated PwEevee product source that produced the shipped `spotifyglass.dylib`, Safari extension and Downloads engine: Theos tweak sources, extension, tools, tests and build configuration. Its public version is `public-version.txt`; the inherited upstream line is `version.txt`. |
 | `Evevee Spotify/component/` | Eevee payload from the self-contained deb: `package/dynamic-libraries/EeveeSpotify.dylib` (+ plist filter), `frameworks/{Orion,EeveeSwiftProtobuf}.framework`, `bundles/EeveeSpotify.bundle`, `resources/` (142 icon PNGs), `manifest.json` with per-file SHA-256 |
 | `Evevee Spotify/component/extract-components.pl` | rebuilds `Evevee Spotify/component/` and `PwEvevee/components/spotipw/` from `Evevee Spotify/source-artifacts/` |
 | `Evevee Spotify/source-artifacts/` | audited binary inputs (debs/IPAs) + legacy Perl tools |
