@@ -51,6 +51,26 @@
          "MinimumOSVersion": "7.0",
          "verified_at": "2026-10-26T00:00:00Z",
          "evidence": "downloaded release asset v0.22.0-alpha.2, hash recomputed locally"
+      },
+      "fd3f41e21b93a1585492c2a45112715dd9183c1f7b7370074e91866210f87dc2": {
+         "asset_name": "PwEevee-3.1.0.ipa",
+         "bundleIdentifier": "com.spotify.client",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.90",
+         "CFBundleVersion": "919002269",
+         "MinimumOSVersion": "16.1",
+         "verified_at": "2026-10-27T00:00:00Z",
+         "evidence": "verified release candidate C:/Users/sleepy/Downloads/PwEevee-3.1.0.ipa (SHA-256 recomputed locally; Payload/Spotify.app/Info.plist extracted)"
+      },
+      "7708e238053aed81e664b53cdc72eb2577a28bdaa6fc8a3ab4f7ba03c61c5084": {
+         "asset_name": "PwEevee-3.1.5.ipa",
+         "bundleIdentifier": "com.spotify.client",
+         "CFBundleName": "Spotify",
+         "CFBundleShortVersionString": "9.1.90",
+         "CFBundleVersion": "919002269",
+         "MinimumOSVersion": "16.1",
+         "verified_at": "2026-10-27T00:00:00Z",
+         "evidence": "published PwEevee-3.1.5.ipa (SHA-256 recomputed locally; Payload/Spotify.app/Info.plist extracted)"
       }
    }
 }

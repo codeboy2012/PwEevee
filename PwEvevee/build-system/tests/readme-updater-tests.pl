@@ -5,7 +5,7 @@
 #
 # Scenarios, all offline (the updater gets --offline and a fixture
 # releases.json, so no network is touched and no release is published):
-#   1. stable release with an .ipa asset  -> block filled, IPA link present
+#   1. stable release with a canonical PwEevee-X.Y.Z.ipa -> link present
 #   2. prerelease-only dataset            -> updater refuses (exit != 0)
 #   3. draft-only dataset                 -> updater refuses
 #   4. stable release without IPA assets  -> graceful 'no IPA asset' text
@@ -45,8 +45,8 @@ my $STABLE = {
     releases => [ {
         name => 'PwEevee v2.0.1', tag_name => 'v2.0.1', url => 'https://github.com/codeboy2012/PwEevee/releases/tag/v2.0.1',
         published_at => '2026-10-01T00:00:00Z', notes => 'n', prerelease => 0,
-        assets => [ { name => 'EeveeSpotifyv7.0.1.ipa', size => 161_611_776,
-                      url => 'https://github.com/codeboy2012/PwEevee/releases/download/v2.0.1/EeveeSpotifyv7.0.1.ipa' } ],
+        assets => [ { name => 'PwEevee-2.0.1.ipa', size => 161_611_776,
+                      url => 'https://github.com/codeboy2012/PwEevee/releases/download/v2.0.1/PwEevee-2.0.1.ipa' } ],
     } ]
 };
 
@@ -57,7 +57,7 @@ my $STABLE = {
     check($rc == 0, 'stable+IPA run exits 0');
     my $body = do { local $/; open my $f, '<', "$cfg/README.md" or die; <$f> };
     check(index($body, 'v2.0.1') >= 0, 'stable version appears in README');
-    check(index($body, 'EeveeSpotifyv7.0.1.ipa') >= 0, 'IPA asset link appears');
+    check(index($body, 'PwEevee-2.0.1.ipa') >= 0, 'canonical IPA asset link appears');
     check(index($body, '154 MB') >= 0 || index($body, '154') >= 0, 'size rendered in MB');
     check(index($body, 'intro paragraph we must never lose') == 0, 'manual README head preserved');
     check(index($body, 'footer maintained by hand') > index($body, '<!-- releases:end -->'), 'manual README tail preserved');
@@ -96,7 +96,8 @@ my $STABLE = {
     my $rc = system($^X, $UPD, '--readme', "$cfg/README.md", '--data', "$cfg/releases.json", '--offline');
     check($rc == 0, 'no-IPA stable release still updates the block');
     my $body = do { local $/; open my $f, '<', "$cfg/README.md" or die; <$f> };
-    check(index($body, 'no IPA asset was attached') >= 0, 'no-IPA message rendered');
+    check(index($body, 'missing its `PwEevee-2.0.1.ipa` asset') >= 0,
+          'no-IPA message names the expected canonical artifact');
     check(index($body, 'releases/tag/v2.0.1') >= 0, 'release URL still linked');
 }
 

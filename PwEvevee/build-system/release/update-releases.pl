@@ -45,6 +45,7 @@ use POSIX qw(strftime);
 use PwSite qw(repo_root read_json write_json date_epoch fmt_date fmt_bytes
               text_excerpt is_safe_url);
 use PwHttp qw(http_init http_get http_head http_cleanup);
+use PwArtifact qw(parse_artifact release_channel pick_artifact expected_name);
 
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
@@ -158,50 +159,65 @@ for my $p (@{ $model->{projects} }) {
             # v2.1.0-pre counts prerelease: false on the wire). Treat the
             # usual suffixes as prerelease so they never present as stable.
             my ($tagname) = ($_);   # keep map bodies below self-contained
+            # For PwEevee itself the stable channel is strict: a prerelease is
+            # never promoted to "latest" just because no stable release exists.
+            # Upstream projects keep their historical fallback.
+            my $strict = ($slug eq 'pweevee');
             my @stable = grep { !$_->{prerelease} && ($_->{tag_name} // '') !~ /-(pre|beta|alpha|rc)([.-]|$)/i } @published;
-            my @pool   = @stable ? @stable : @published;
+            my @pool   = $strict ? @stable : (@stable ? @stable : @published);
+            if ($strict && !@pool) {
+                $err = 'No stable release has been published yet.';
+            } else {
+                @pool      = sort { date_epoch($b->{published_at}) <=> date_epoch($a->{published_at}) } @pool;
+                @published = sort { date_epoch($b->{published_at}) <=> date_epoch($a->{published_at}) } @published;
 
-            @pool      = sort { date_epoch($b->{published_at}) <=> date_epoch($a->{published_at}) } @pool;
-            @published = sort { date_epoch($b->{published_at}) <=> date_epoch($a->{published_at}) } @published;
+                my $latest = normalise_release($pool[0], $nwo, $strict);
+                my $keep_n = @published < $opt{history} ? scalar(@published) : $opt{history};
+                my @history = map { normalise_release($_, $nwo, $strict) } @published[ 0 .. $keep_n - 1 ];
 
-            my $latest = normalise_release($pool[0], $nwo);
-            my $keep_n = @published < $opt{history} ? scalar(@published) : $opt{history};
-            my @history = map { normalise_release($_, $nwo) } @published[ 0 .. $keep_n - 1 ];
-
-            info(sprintf('  %s Latest release: %s%s',
-                "\x{2713}", $latest->{version},
-                ($latest->{prerelease} ? '  (prerelease — this repository has no stable release)' : '')));
-            info(sprintf('    published %s  ·  %d asset%s',
-                $latest->{published_label},
-                scalar @{ $latest->{assets} },
-                (@{ $latest->{assets} } == 1 ? '' : 's')));
-            info(sprintf('      - %s (%s)', $_->{name}, $_->{size_label})) for @{ $latest->{assets} };
-            info('      (this release carries no downloadable assets)') unless @{ $latest->{assets} };
-
-            if ($opt{verify}) {
-                for my $a (@{ $latest->{assets} }) {
-                    my $code = http_head($a->{download_url});
-                    my $good = ($code && $code =~ /^(?:200|302)$/) ? 1 : 0;
-                    $a->{verified} = $good ? $TRUE : $FALSE;
-                    warn "!! $name: asset '$a->{name}' HEAD returned " . ($code // 'no response') . "\n"
-                        unless $good;
+                if ($strict && !$latest->{download_asset}) {
+                    my $want = expected_name($latest->{version},
+                        release_channel($latest->{version}, $latest->{prerelease} ? 1 : 0));
+                    warn "!! $name: release $latest->{version} has no valid "
+                       . ($want // 'PwEevee-X.Y.Z.ipa')
+                       . " asset; the site will report the artifact as missing\n";
                 }
-                info('    asset URLs verified');
-            }
 
-            push @out, {
-                slug         => $slug,
-                name         => $name,
-                repo         => $nwo,
-                repo_url     => "https://github.com/$nwo",
-                issues_url   => "https://github.com/$nwo/issues",
-                releases_url => "https://github.com/$nwo/releases",
-                available    => $TRUE,
-                stale        => $FALSE,
-                latest       => $latest,
-                history      => \@history,
-            };
-            next;
+                info(sprintf('  %s Latest release: %s%s',
+                    "\x{2713}", $latest->{version},
+                    ($latest->{prerelease} ? '  (prerelease — this repository has no stable release)' : '')));
+                info(sprintf('    published %s  ·  %d asset%s',
+                    $latest->{published_label},
+                    scalar @{ $latest->{assets} },
+                    (@{ $latest->{assets} } == 1 ? '' : 's')));
+                info(sprintf('      - %s (%s)', $_->{name}, $_->{size_label})) for @{ $latest->{assets} };
+                info('      (this release carries no downloadable assets)') unless @{ $latest->{assets} };
+
+                if ($opt{verify}) {
+                    for my $a (@{ $latest->{assets} }) {
+                        my $code = http_head($a->{download_url});
+                        my $good = ($code && $code =~ /^(?:200|302)$/) ? 1 : 0;
+                        $a->{verified} = $good ? $TRUE : $FALSE;
+                        warn "!! $name: asset '$a->{name}' HEAD returned " . ($code // 'no response') . "\n"
+                            unless $good;
+                    }
+                    info('    asset URLs verified');
+                }
+
+                push @out, {
+                    slug         => $slug,
+                    name         => $name,
+                    repo         => $nwo,
+                    repo_url     => "https://github.com/$nwo",
+                    issues_url   => "https://github.com/$nwo/issues",
+                    releases_url => "https://github.com/$nwo/releases",
+                    available    => $TRUE,
+                    stale        => $FALSE,
+                    latest       => $latest,
+                    history      => \@history,
+                };
+                next;
+            }
         }
     }
 
@@ -286,7 +302,7 @@ USAGE
 
 # Reduce a GitHub release object to exactly the fields the site uses.
 sub normalise_release {
-    my ($r, $nwo) = @_;
+    my ($r, $nwo, $strict) = @_;
 
     my @assets;
     for my $a (@{ ref $r->{assets} eq 'ARRAY' ? $r->{assets} : [] }) {
@@ -298,6 +314,7 @@ sub normalise_release {
             next;
         }
         my ($sha256) = ($a->{digest} // '') =~ /^sha256:([0-9a-f]{64})$/i;
+        my $art = parse_artifact($a->{name});
         push @assets, {
             name           => $a->{name},
             size           => ($a->{size} // 0) + 0,
@@ -311,21 +328,38 @@ sub normalise_release {
             # source of truth rather than fetched a second time.
             download_count => ($a->{download_count} // 0) + 0,
             updated_at     => $a->{updated_at},
+            pweevee_artifact => $art->{ok} ? $TRUE : $FALSE,
+            ($art->{ok} ? (artifact_channel => $art->{channel}, artifact_version => $art->{version}) : ()),
         };
     }
 
-    # primary download first: installable packages before archives and extras
+    # Primary first: valid PwEevee artifacts, then other installable packages,
+    # then archives and extras. The 3.1.0 bug was exactly this sort: two IPAs,
+    # alphabetical order, and the Spotify base ("com.spotify...") won.
     my %rank = (ipa => 0, tipa => 1, deb => 2, archive => 3, other => 4);
     @assets = sort {
-        ($rank{ $a->{kind} } // 4) <=> ($rank{ $b->{kind} } // 4)
+        my $pa = parse_artifact($a->{name});
+        my $pb = parse_artifact($b->{name});
+        (($pa->{ok} ? 0 : 1) <=> ($pb->{ok} ? 0 : 1))
+            || ($rank{ $a->{kind} } // 4) <=> ($rank{ $b->{kind} } // 4)
             || lc($a->{name}) cmp lc($b->{name})
     } @assets;
 
     my $tag  = $r->{tag_name} // '';
     my $body = $r->{body};
+    my $channel = release_channel($tag, $r->{prerelease} ? 1 : 0);
+    # Strict PwEevee selection: the release channel decides which asset may be
+    # the download. No match means no download, never "the first .ipa".
+    my $download = $strict
+        ? pick_artifact(\@assets, $channel, ($tag =~ s/^v//r))
+        : undef;
+    my $missing  = $strict && $channel ne 'prerelease' && !$download;
 
     return {
         version         => $tag,
+        channel         => $channel,
+        download_asset  => $download,
+        artifact_missing => $missing ? $TRUE : $FALSE,
         # Only a bare semver-looking tag gets a "v" for display. Tags such as
         # "swift6.2.2" are shown exactly as the upstream project published them.
         version_label   => (length $tag ? ($tag =~ /^\d/ ? "v$tag" : $tag) : 'unknown'),

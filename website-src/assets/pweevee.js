@@ -1017,10 +1017,38 @@
     /* Deliberately a COMPACT card, not a copy of the renderer's markup: the
        full presentation lives in one place (render-site.pl). This is a safety
        net, so it stays small and obviously secondary. */
+
+    /* The PwEevee download is the canonical artifact for the release channel,
+       never "the first .ipa". Generated data already carries download_asset;
+       this fallback re-derives the name so a stale snapshot cannot resurrect
+       the Spotify base IPA either. */
+    function canonicalName(r) {
+      var version = String(r.version || '').replace(/^v/, '');
+      if (!/^\d+\.\d+\.\d+$/.test(version)) return '';
+      var tag = String(r.version || '').toLowerCase();
+      var channel = /-nightly(?:[.\-]|\d|$)/.test(tag) ? 'nightly'
+                  : /-alpha(?:[.\-]|\d|$)/.test(tag) ? 'alpha' : '';
+      if (!channel && r.prerelease) return '';
+      return 'PwEevee-' + version + (channel ? '-' + channel : '') + '.ipa';
+    }
+    function ownEntry(entry) {
+      return !!entry && (entry.slug === 'pweevee' || /\/PwEevee$/.test(String(entry.repo || '')));
+    }
+    function primaryAsset(entry, r, assets) {
+      if (!ownEntry(entry)) return assets[0];
+      if (r.download_asset && safeUrl(r.download_asset.download_url)) return r.download_asset;
+      var want = canonicalName(r).toLowerCase();
+      if (!want) return null;
+      for (var i = 0; i < assets.length; i++) {
+        if (String(assets[i].name || '').toLowerCase() === want) return assets[i];
+      }
+      return null;
+    }
+
     function cardFor(entry) {
       var r = entry.latest;
       var assets = (r.assets || []).filter(function (a) { return safeUrl(a.download_url); });
-      var primary = assets[0];
+      var primary = primaryAsset(entry, r, assets);
 
       var badges = '<span class="badge badge--latest"><span class="badge__dot"></span>Latest release</span>';
       if (r.prerelease) badges += '<span class="badge badge--prerelease">Prerelease</span>';
@@ -1033,7 +1061,9 @@
         : '<a class="btn btn--outline btn--lg" href="' + esc(r.url) + '" rel="noopener">View release on GitHub</a>';
 
       var note = primary ? '' :
-        '<p class="small muted">This release does not currently contain a downloadable package.</p>';
+        '<p class="small muted">' + (ownEntry(entry)
+          ? 'This release does not currently carry its PwEevee IPA; an unrelated file in the release is not offered as a download.'
+          : 'This release does not currently contain a downloadable package.') + '</p>';
 
       return '<div class="panel panel--raised panel--hover download">' +
         '<div class="download__head"><div class="download__ident">' +
@@ -1225,10 +1255,29 @@
       return (+m[3]) + ' ' + MONTHS[+m[2] - 1] + ' ' + (+m[1]);
     }
 
+    /* A newer tag with no canonical IPA is not a newer download. Rewriting the
+       card's version to it would show a version the download button does not
+       serve, so that release only stays a link target on GitHub. */
+    function hasArtifact(rel) {
+      var version = tagName(rel);
+      if (!/^\d+\.\d+\.\d+$/.test(version)) return false;
+      var tag = String(rel.tag_name || '').toLowerCase();
+      var channel = /-nightly(?:[.\-]|\d|$)/.test(tag) ? 'nightly'
+                  : /-alpha(?:[.\-]|\d|$)/.test(tag) ? 'alpha' : '';
+      if (!channel && rel.prerelease) return false;
+      var want = ('PwEevee-' + version + (channel ? '-' + channel : '') + '.ipa').toLowerCase();
+      var assets = rel.assets || [];
+      for (var i = 0; i < assets.length; i++) {
+        if (String(assets[i].name || '').toLowerCase() === want) return true;
+      }
+      return false;
+    }
+
     function apply(repo, rel) {
       var upstream = tagEpoch(rel);
       (hooks[repo] || []).forEach(function (h) {
         if (!h.node || !upstream || upstream <= h.epoch) return;
+        if (h.kind === 'panel' && !hasArtifact(rel)) return;
         if (h.kind === 'date') {
           h.node.textContent = 'Released ' + fmtDate(rel.published_at);
           return;

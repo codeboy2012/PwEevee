@@ -109,9 +109,14 @@ and regenerates `releases/index.json`.
 
 1. `release/update-releases.pl` — queries the GitHub API for the newest **published**
    release of every project declared in `website/data/projects.json` and writes
-   `website/data/releases.json`. Drafts are never used; a prerelease is only used when
-   a project has no stable release at all. If GitHub cannot be reached, the previous
-   known-good entry is kept and flagged `stale` rather than being replaced with nothing.
+   `website/data/releases.json`. Drafts are never used; PwEevee's stable channel is strict
+   (a prerelease never becomes "latest"), while an upstream project with no stable release
+   may still show its newest prerelease. A PwEevee download must be the release's own
+   canonical `PwEevee-X.Y.Z.ipa` (or `-nightly` / `-alpha`) asset — never the first `.ipa`
+   and never the clean Spotify base that ships beside it. A release without that asset is
+   recorded as `artifact_missing` and no download is offered. If GitHub cannot be reached,
+   the previous known-good entry is kept and flagged `stale` rather than being replaced
+   with nothing.
 2. `release/update-altsource.pl` — reads every AltStore-format source declared under a
    project's `altsource` key and writes `website/data/altsource.json`. Currently that is
    the SideloadLabs source, which publishes the installable EeveeSpotify IPA variants.

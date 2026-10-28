@@ -132,8 +132,11 @@ website-src/layout.html + pages/*.html ──► render-site.pl ──► websit
   `https://pweevee.skytweak.dpdns.org/`; the alternate path `skytweak.dpdns.org/pweevee`
   must 301 to it (single indexed site).
 - **Downloads** resolve to a published release asset and nothing else. The site hosts no
-  IPA of its own: PwEevee's download is its own GitHub release asset, and the EeveeSpotify
-  IPA variants come from the SideloadLabs AltSource, labelled as such. A button is only
+  IPA of its own: PwEevee's download is the release's canonical `PwEevee-X.Y.Z[-nightly|-alpha].ipa`
+  asset (validated by name and channel in one shared module, `PwArtifact.pm`), and the
+  EeveeSpotify IPA variants come from the SideloadLabs AltSource, labelled as such. A
+  release that ships only the clean Spotify base has no PwEevee download, and the page
+  says which artifact is missing instead of linking the wrong IPA. A button is only
   rendered when the asset exists in the generated data and its URL passes the safe-URL
   check; otherwise the page shows an explanatory state and a GitHub link, never a dead
   button.

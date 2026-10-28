@@ -50,6 +50,7 @@ use File::Path qw(make_path);
 use POSIX ();
 use PwSite qw(repo_root slurp spew read_json h attr fmt_bytes fmt_date fmt_date_iso
               date_epoch notes_to_html is_safe_url);
+use PwArtifact qw(primary_for_release expected_name release_channel parse_artifact);
 
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
@@ -913,7 +914,17 @@ sub release_panel {
     # Only offer what actually exists: an asset must be present and its URL must
     # survive the safe-URL check, or no download button is rendered at all.
     my @assets = grep { is_safe_url($_->{download_url} // '') } @{ $r->{assets} || [] };
-    my $primary = $assets[0];
+    # "The first .ipa" is not a PwEevee download. For our own project the
+    # download must be the canonical asset for the release channel; if it is
+    # absent the card says so instead of linking the Spotify base IPA.
+    my $own_project = ($p->{slug} // '') eq 'pweevee';
+    my $primary = $own_project
+        ? ($r->{download_asset} // primary_for_release($r))
+        : $assets[0];
+    my $want_name = $own_project
+        ? expected_name(($r->{version} // '') =~ s/^v//r,
+                        release_channel($r->{version}, $r->{prerelease} ? 1 : 0))
+        : undef;
 
     my @badges = ('<span class="badge badge--latest"><span class="badge__dot"></span>Latest release</span>');
     push @badges, '<span class="badge badge--prerelease">Prerelease</span>' if $r->{prerelease};
@@ -936,7 +947,11 @@ sub release_panel {
         '<div class="state state--warn">',
           '<div class="state__icon" aria-hidden="true">!</div>',
           '<h3>Download currently unavailable.</h3>',
-          '<p>', ($own
+          '<p>', (($own && $want_name)
+              ? 'This release does not carry its expected ' . h($want_name) . ' asset. '
+              . 'Another file in the release (such as the unmodified Spotify base) is not '
+              . 'offered as a PwEevee download; the GitHub release page lists exactly what exists.'
+              : $own
               ? 'The newest published release has no attached package right now. The release page on '
               . 'GitHub is the authoritative place to check, and a download appears here as soon as '
               . 'an asset is published.'
@@ -1416,7 +1431,9 @@ sub history_card {
     my ($p, $g, $r) = @_;
     my $accent = 'accent-' . ($p->{accent} // 'brand');
     my @assets = grep { is_safe_url($_->{download_url}) } @{ $r->{assets} || [] };
-    my $primary = $assets[0];
+    my $primary = ($p->{slug} // '') eq 'pweevee'
+        ? ($r->{download_asset} // primary_for_release($r))
+        : $assets[0];
     my $is_latest = ref $g->{latest} eq 'HASH'
                  && ($g->{latest}{version} // '') eq ($r->{version} // '');
 

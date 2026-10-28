@@ -308,16 +308,23 @@ section('A. release discovery (update-releases.pl, mocked GitHub API)');
        'A3b a -beta tag with prerelease:false is still not presented as stable',
        'got ' . ($l3b->{version} // 'none'));
 
-    # ---- A4: with no stable release at all, the newest prerelease is shown ----
+    # ---- A4: stable discovery is strict for PwEevee itself ----
+    # Upstream projects may still fall back to a prerelease when they have no
+    # stable release; PwEevee must not, because its stable channel is what the
+    # public download and the site's "latest" card promise.
     serve_releases(
         release(tag => 'v9.9.9-rc1', published => '2026-12-01T00:00:00Z', prerelease => 1),
         release(tag => 'v9.0.0-beta', published => '2026-11-20T00:00:00Z'),
     );
     (undef, undef, my $o4) = $run_updater->(out => "$FIX/A4.json");
-    my $l4 = $latest_of->($o4);
-    ok(($l4->{version} // '') eq 'v9.9.9-rc1' && $l4->{prerelease},
-       'A4 a repository with only prereleases presents the newest one, flagged',
+    my $p4 = $project_of->($o4, 'pweevee');
+    my $l4 = $p4->{latest} || {};
+    ok(($l4->{version} // '') eq 'v2.0.0' && $p4->{stale},
+       'A4 with only prereleases the last known stable release stays, marked stale',
        'got ' . ($l4->{version} // 'none'));
+    ok(($p4->{error} // '') =~ /No stable release/i,
+       'A4 the staleness explains that no stable release exists',
+       'got ' . ($p4->{error} // 'none'));
 
     # ---- A5: drafts are never considered ----
     serve_releases(
@@ -336,6 +343,55 @@ section('A. release discovery (update-releases.pl, mocked GitHub API)');
     ok($e6 == 0 && ($p6->{latest}{asset_count} // -1) == 0,
        'A6 a release carrying no assets is published as such, not as a failure',
        'exit ' . $e6 . ', asset_count ' . ($p6->{latest}{asset_count} // 'missing'));
+
+    # ---- A11: two IPAs in one release; the Spotify base must never win ----
+    my $spotify = {
+        name => 'com.spotify.client_9.1.90_und3fined.ipa', size => 153481523,
+        content_type => 'application/octet-stream',
+        browser_download_url => "https://github.com/$NWO/releases/download/3.1.5/com.spotify.client_9.1.90_und3fined.ipa",
+        download_count => 12, updated_at => '2026-10-01T00:00:00Z',
+    };
+    my $pweevee_ipa = {
+        name => 'PwEevee-3.1.5.ipa', size => 146953045,
+        content_type => 'application/x-itunes-ipa',
+        browser_download_url => "https://github.com/$NWO/releases/download/3.1.5/PwEevee-3.1.5.ipa",
+        download_count => 3, updated_at => '2026-10-02T00:00:00Z',
+        digest => 'sha256:' . ('cd' x 32),
+    };
+    serve_releases(release(tag => '3.1.5', published => '2026-10-28T10:00:00Z',
+                           assets => [ $spotify, $pweevee_ipa ]));
+    (my $e11, undef, my $o11) = $run_updater->(out => "$FIX/A11.json");
+    my $l11 = $latest_of->($o11);
+    ok(($l11->{download_asset}{name} // '') eq 'PwEevee-3.1.5.ipa',
+       'A11 the validated PwEevee IPA is the download, not the Spotify base',
+       'got ' . ($l11->{download_asset}{name} // 'none'));
+    ok(($l11->{assets}[0]{name} // '') eq 'PwEevee-3.1.5.ipa',
+       'A11 the canonical artifact sorts first in the asset list',
+       'got ' . ($l11->{assets}[0]{name} // 'none'));
+    ok(!$l11->{artifact_missing}, 'A11 a release with its canonical asset is not marked missing');
+    ok(grep({ ($_->{name} // '') eq 'com.spotify.client_9.1.90_und3fined.ipa' } @{ $l11->{assets} || [] }),
+       'A11 the Spotify base stays listed as a release file, just not as the download');
+
+    # ---- A12: canonical name for the WRONG version is still no download ----
+    my %wrong = %$pweevee_ipa;
+    $wrong{name} = 'PwEevee-3.2.0.ipa';
+    $wrong{browser_download_url} =~ s/PwEevee-3\.1\.5/PwEevee-3.2.0/;
+    serve_releases(release(tag => '3.1.5', published => '2026-10-28T10:00:00Z',
+                           assets => [ $spotify, \%wrong ]));
+    (undef, undef, my $o12) = $run_updater->(out => "$FIX/A12.json");
+    my $l12 = $latest_of->($o12);
+    ok(!defined $l12->{download_asset} && $l12->{artifact_missing},
+       'A12 an asset for another version is reported missing, never substituted');
+
+    # ---- A13: no canonical file at all: missing, not the Spotify base ----
+    serve_releases(release(tag => '3.1.6', published => '2026-10-29T10:00:00Z',
+                           assets => [ $spotify ]));
+    (undef, undef, my $o13) = $run_updater->(out => "$FIX/A13.json");
+    my $l13 = $latest_of->($o13);
+    ok(!defined $l13->{download_asset} && $l13->{artifact_missing},
+       'A13 a release with only the Spotify IPA has no PwEevee download');
+    ok(($l13->{assets}[0]{name} // '') eq 'com.spotify.client_9.1.90_und3fined.ipa',
+       'A13 the unrelated file is still visible in the honest asset list');
 }
 
 # ---- A7-A10: failures keep the previous known-good release ---------------
@@ -361,6 +417,8 @@ for my $case (
        'got ' . ($p->{error} // 'none'));
     ok(!defined $p->{latest}{assets}[0] || $p->{latest}{assets}[0]{name},
        "$id nothing is invented to replace the missing data");
+    ok(!defined $p->{latest}{download_asset},
+       "$id no download URL is fabricated from a failed API response");
 }
 
 {

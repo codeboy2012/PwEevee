@@ -3,73 +3,32 @@
       {
          "bundleIdentifier" : "com.spotify.client",
          "developerName" : "PwEevee",
-         "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
+         "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/PwEevee-3.1.5.ipa",
          "iconURL" : "https://pweevee.skytweak.dpdns.org/assets/brand/pweevee-app-icon.png",
          "localizedDescription" : "PwEevee packages modified Spotify iOS builds (the spoti.pw and EeveeSpotify components, by their own developers) into installable IPAs. Sign with your own certificate when installing: the builds are unsigned. PwEevee is an independent project and is not affiliated with or endorsed by Spotify or Apple.",
          "name" : "PwEevee",
-         "size" : 300634848,
+         "size" : 146953045,
          "subtitle" : "Spotify customizer for sideloading",
          "tintColor" : "#1DB954",
-         "version" : "v2.2.0-pre",
-         "versionDate" : "2026-10-23T19:28:17Z",
-         "versionDescription" : "PwEevee release v2.2.0-pre — asset PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa. Spotify base 9.1.90 (build 919002269). Release channel: Pre-release (device testing pending — please report issues, do not assume everything works) --- The first PwEevee build produced entirely by the unified, reproducible…",
+         "version" : "v3.1.5",
+         "versionDate" : "2026-10-28T01:37:48Z",
+         "versionDescription" : "PwEevee release v3.1.5 — asset PwEevee-3.1.5.ipa. Spotify base 9.1.90 (build 919002269). Downloads engine loading: Fixed a mismatch between the embedded SpotifyAudioProbe.dylib bridge symbol (SAPTaurusBridge) and the symbol expected by PwEevee (SAPPwEeveeBridge). Dynamic…",
          "versions" : [
             {
-               "date" : "2026-10-23T19:28:17Z",
-               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
-               "localizedDescription" : "PwEevee release v2.2.0-pre — asset PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa. Spotify base 9.1.90 (build 919002269). Release channel: Pre-release (device testing pending — please report issues, do not assume everything works) --- The first PwEevee build produced entirely by the unified, reproducible…",
+               "date" : "2026-10-28T01:37:48Z",
+               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/PwEevee-3.1.5.ipa",
+               "localizedDescription" : "PwEevee release v3.1.5 — asset PwEevee-3.1.5.ipa. Spotify base 9.1.90 (build 919002269). Downloads engine loading: Fixed a mismatch between the embedded SpotifyAudioProbe.dylib bridge symbol (SAPTaurusBridge) and the symbol expected by PwEevee (SAPPwEeveeBridge). Dynamic…",
                "minOSVersion" : "16.1",
-               "size" : 300634848,
-               "version" : "v2.2.0-pre"
+               "size" : 146953045,
+               "version" : "v3.1.5"
             },
             {
-               "date" : "2026-10-06T01:48:48Z",
-               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
-               "localizedDescription" : "PwEevee release v2.0.0 — asset EeveeSpotifyv7.0.0.ipa. Spotify base 9.1.88 (build 918802209). Major Release — EeveeSpotify 7.0.0 PwEevee v2.0.0 is a major update that brings the project to the new EeveeSpotify 7.0.0 generation, with a large number of new features, a redesigned…",
-               "minOSVersion" : "15.0",
-               "size" : 139507438,
-               "version" : "v2.0.0"
-            },
-            {
-               "date" : "2026-10-06T01:48:48Z",
-               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
-               "localizedDescription" : "PwEevee release v2.0.0-combined — asset SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa. Spotify base 9.1.78 (build 9.1.78). Major Release — EeveeSpotify 7.0.0 PwEevee v2.0.0 is a major update that brings the project to the new EeveeSpotify 7.0.0 generation, with a large number of new features, a redesigned…",
-               "minOSVersion" : "15.0",
-               "size" : 161793103,
-               "version" : "v2.0.0-combined"
-            },
-            {
-               "date" : "2026-09-27T02:40:40Z",
-               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/PwEeveeBeta2.ipa",
-               "localizedDescription" : "PwEevee release v0.22.0-alpha.2 — asset PwEeveeBeta2.ipa. Spotify base 9.1.76 (build 9.1.76). KNOWN ISSUES This release is working and has been tested, but there are still some bugs and rough edges we're working out. PwEevee v0.22.0-alpha.2 is the second alpha build of PwEevee,…",
-               "minOSVersion" : "7.0",
-               "size" : 139511638,
-               "version" : "v0.22.0-alpha.2"
-            }
-         ],
-         "websiteURL" : "https://pweevee.skytweak.dpdns.org/"
-      },
-      {
-         "bundleIdentifier" : "com.skywatch.spotify",
-         "developerName" : "PwEevee",
-         "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/skywatch-spotify-9.1.88-watchfix.ipa",
-         "iconURL" : "https://pweevee.skytweak.dpdns.org/assets/brand/pweevee-app-icon.png",
-         "localizedDescription" : "PwEevee packages modified Spotify iOS builds (the spoti.pw and EeveeSpotify components, by their own developers) into installable IPAs. Sign with your own certificate when installing: the builds are unsigned. PwEevee is an independent project and is not affiliated with or endorsed by Spotify or Apple.",
-         "name" : "PwEevee (watchfix experimental)",
-         "size" : 156262456,
-         "subtitle" : "Spotify customizer for sideloading",
-         "tintColor" : "#1DB954",
-         "version" : "v2.1.0-pre",
-         "versionDate" : "2026-10-10T20:11:58Z",
-         "versionDescription" : "PwEevee release v2.1.0-pre — asset skywatch-spotify-9.1.88-watchfix.ipa. Spotify base 9.1.88 (build 918802209). Release channel: Pre-release Project: PwEevee Version: v2.1.0-pre Integrated tweak: EeveeSpotify 7.0.0 Base Spotify version: 9.1.88 Build identifier: com.skywatch.spotify Status: Testing…",
-         "versions" : [
-            {
-               "date" : "2026-10-10T20:11:58Z",
-               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/skywatch-spotify-9.1.88-watchfix.ipa",
-               "localizedDescription" : "PwEevee release v2.1.0-pre — asset skywatch-spotify-9.1.88-watchfix.ipa. Spotify base 9.1.88 (build 918802209). Release channel: Pre-release Project: PwEevee Version: v2.1.0-pre Integrated tweak: EeveeSpotify 7.0.0 Base Spotify version: 9.1.88 Build identifier: com.skywatch.spotify Status: Testing…",
+               "date" : "2026-10-27T21:44:22Z",
+               "downloadURL" : "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/PwEevee-3.1.0.ipa",
+               "localizedDescription" : "PwEevee release 3.1.0 — asset PwEevee-3.1.0.ipa. Spotify base 9.1.90 (build 919002269). PwEevee 3.1.0 is a major feature release focused on performance, customization, lyrics, lock-screen improvements, audio features, and downloads. Built around Spotify 9.1.90, this release…",
                "minOSVersion" : "16.1",
-               "size" : 156262456,
-               "version" : "v2.1.0-pre"
+               "size" : 147039801,
+               "version" : "3.1.0"
             }
          ],
          "websiteURL" : "https://pweevee.skytweak.dpdns.org/"

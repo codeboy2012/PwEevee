@@ -46,6 +46,8 @@ use File::Basename qw(dirname);
 use File::Path qw(make_path);
 use File::Temp qw(tempfile);
 use JSON::PP;
+use lib dirname($0) . '/lib';
+use PwArtifact qw(parse_artifact release_channel);
 
 binmode STDOUT, ':utf8';
 my $OPT_CHECK = grep { $_ eq '--check' } @ARGV;
@@ -91,9 +93,15 @@ my ($pweevee) = grep { ($_->{slug} // '') eq 'pweevee' } @{ $RL->{projects} // [
 $pweevee or die "appsource: no pweevee project in releases.json\n";
 
 for my $rel (@{ $pweevee->{history} // [] }) {
+    my $rel_version = ($rel->{version} // '') =~ s/^v//r;
+    next unless release_channel($rel->{version}, $rel->{prerelease} ? 1 : 0) eq 'stable';
     for my $a (@{ $rel->{assets} // [] }) {
         next unless ($a->{kind} // '') eq 'ipa';
         next unless $a->{sha256} && $a->{size} && $a->{download_url};
+        # Only the canonical stable artifact belongs in the app source. The
+        # Spotify base IPA in the same release is not a PwEevee version.
+        my $art = parse_artifact($a->{name});
+        next unless $art->{ok} && $art->{channel} eq 'stable' && $art->{version} eq $rel_version;
         my $pl = $valid_plists->{ $a->{sha256} };
         # unverified -> skip, never guess
         push @candidates, { asset => $a, release => $rel, plist => $pl, sha => $a->{sha256} }
