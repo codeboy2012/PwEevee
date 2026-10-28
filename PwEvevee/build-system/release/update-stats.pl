@@ -176,8 +176,11 @@ for my $p (@{ $model->{projects} }) {
         if ($keep) {
             info("$name: 304 Not Modified — keeping stored stats");
             # GitHub just vouched the stored numbers are current: an earlier
-            # network-failure staleness is cleared on the spot.
-            delete $keep->{stale};
+            # network-failure staleness is cleared on the spot. `stale` stays
+            # present and false — it is part of the record shape, and deleting
+            # it here made an unchanged 304 run produce a different file (and a
+            # pointless publish) from the run that fetched last.
+            $keep->{stale} = JSON::PP::false;
             delete $keep->{stale_since};
             delete $keep->{error};
             if (defined(my $total = fetch_shields_total($nwo))) {

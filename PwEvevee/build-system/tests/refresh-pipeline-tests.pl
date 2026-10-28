@@ -47,6 +47,10 @@ use File::Path qw(make_path remove_tree);
 use File::Copy qw(copy);
 use JSON::PP ();
 use Digest::SHA qw(sha256_hex);
+use Cwd qw(abs_path);
+use Fcntl qw(:flock);
+use POSIX qw(strftime);
+use Time::Local qw(timegm);
 
 binmode STDOUT, ':encoding(UTF-8)';
 
@@ -620,6 +624,492 @@ section('D. the on-visit recheck cannot overwrite the rendered snapshot');
     ok($mod =~ /data-fresh-state['"],\s*failures\s*\?\s*'offline'/,
        'D6 a failed check is reported as offline and the rendered values stand, '
      . 'instead of presenting a false successful refresh');
+}
+
+# ==================================================== E. incident + notifications
+
+section('E. incident state, notification decisions and the merged status');
+
+my $iso = sub { strftime('%Y-%m-%dT%H:%M:%SZ', gmtime($_[0])) };
+
+{
+    my $EH = "$FIX/health";
+    remove_tree($EH) if -d $EH;
+    make_path($EH);
+
+    my $T0  = timegm(0, 0, 10, 27, 9, 2026);   # a fixed clock: cooldowns are exact
+    my $hs  = "$EH/status.json";
+    my $hh  = "$EH/health.json";
+
+    my $run_health = sub {
+        my (%a) = @_;
+        my @args = ('--status', qq{"$hs"}, '--state', qq{"$hh"}, '--now', $a{now});
+        push @args, ('--rc', $a{rc}) if exists $a{rc};
+        push @args, ('--stage', qq{"$a{stage}"}) if defined $a{stage} && length $a{stage};
+        push @args, ('--since', qq{"$a{since}"}) if defined $a{since};
+        push @args, ('--skipped', qq{"$a{skipped}"}) if defined $a{skipped};
+        push @args, ('--cooldown', $a{cooldown}) if defined $a{cooldown};
+        push @args, ('--record-notification', '--result', $a{result}) if defined $a{result};
+        push @args, ('--error', qq{"$a{error}"}) if defined $a{error};
+        my $out = qx{perl scripts/refresh-health.pl @args 2>&1};
+        return ($? >> 8, $out, read_json($hs) || {}, read_json($hh) || {});
+    };
+    my $ok_run = sub {
+        my ($t, %extra) = @_;
+        write_json($hs, {
+            started => $iso->($t), finished => $iso->($t), state => 'ok', stage => 'done',
+            release => '3.1.0', changed => JSON::PP::false, published => JSON::PP::false,
+            note => '', %extra,
+        });
+    };
+    my $bad_run = sub {
+        my ($t, $stage, $note) = @_;
+        write_json($hs, {
+            started => $iso->($t), finished => $iso->($t), state => 'failed', stage => $stage,
+            release => '3.1.0', changed => JSON::PP::false, published => JSON::PP::false,
+            note => $note // "$stage failed (exit 1)",
+        });
+    };
+
+    # ---- E1: a clean success -------------------------------------------------
+    $ok_run->($T0);
+    my ($e1rc, $e1out, $s, $h) = $run_health->(rc => 0, stage => 'done', since => $iso->($T0), now => $T0);
+    ok($e1rc == 0 && $e1out =~ /"notify":0/,
+       'E1 a clean success sends no notification', "exit $e1rc, $e1out");
+    ok(($s->{last_success_at} // '') eq $iso->($T0),
+       'E1 the status records the last successful refresh');
+    ok(($h->{last_published_release} // '') eq '3.1.0',
+       'E1 ... and the release it published, so a later failure can name it');
+    ok(($s->{incident} // '') eq 'none' && ($s->{consecutive_failures} // -1) == 0,
+       'E1 ... and reports no incident');
+    ok(!$h->{pending_notification}, 'E1 no alert is queued');
+
+    # ---- E2: first failure ---------------------------------------------------
+    my $T2 = $T0 + 900;
+    $bad_run->($T2, 'validate');
+    my ($e2rc, $e2out, $s2, $h2) = $run_health->(rc => 1, since => $iso->($T2), now => $T2);
+    ok($e2rc == 0 && $e2out =~ /"notify":1/ && $e2out =~ /"kind":"failure"/,
+       'E2 the first failure of an incident queues one alert', $e2out);
+    ok(($s2->{stage} // '') eq 'validate',
+       'E2 the stage comes from the pipeline record, not from the wrapper');
+    ok(($s2->{consecutive_failures} // 0) == 1 && ($s2->{incident} // '') eq 'open',
+       'E2 the incident is open and counted');
+    my $alert2 = ($h2->{pending_notification} || {})->{text} // '';
+    ok($alert2 =~ /validating the rendered site/,
+       'E2 the alert names the stage that failed', $alert2);
+    ok($alert2 =~ /release 3\.1\.0/,
+       'E2 ... and the release the live site still serves', $alert2);
+
+    # ---- E3: the cooldown ----------------------------------------------------
+    my $T3 = $T2 + 900;
+    $bad_run->($T3, 'validate');
+    my ($e3rc, $e3out, $s3) = $run_health->(rc => 1, since => $iso->($T3), now => $T3);
+    ok($e3out =~ /"notify":0/ && $e3out =~ /cooldown/,
+       'E3 a repeat failure inside the cooldown is not re-alerted', $e3out);
+    ok(($s3->{consecutive_failures} // 0) == 2,
+       'E3 ... but it is still counted');
+
+    # ---- E4: a delivery failure keeps the incident open ----------------------
+    my ($e4rc, $discard4, $s4, $h4) = $run_health->(
+        result => 'failed', error => 'the notification endpoint answered HTTP 500', now => $T3 + 1);
+    ok($e4rc == 0 && ($s4->{notification}{status} // '') eq 'failed',
+       'E4 a failed delivery is recorded as such');
+    ok(($s4->{incident} // '') eq 'open',
+       'E4 ... and does not close the incident');
+    ok(!$h4->{pending_notification},
+       'E4 ... and does not leave the same alert queued forever');
+
+    # ---- E5: once the cooldown elapses, a still-failing run alerts again ------
+    my $T5 = $T3 + 3700;
+    $bad_run->($T5, 'validate');
+    my ($erc5, $e5out, $s5) = $run_health->(rc => 1, since => $iso->($T5), now => $T5);
+    ok($erc5 == 0 && $e5out =~ /"notify":1/ && $e5out =~ /cooldown elapsed/,
+       'E5 after the cooldown the still-failing pipeline alerts again', $e5out);
+    ok(($s5->{consecutive_failures} // 0) == 3,
+       'E5 the failure counter keeps climbing');
+
+    # ---- E6: recovery --------------------------------------------------------
+    my $T6 = $T5 + 60;
+    $ok_run->($T6);
+    my ($e6rc, $e6out, $s6, $h6) = $run_health->(rc => 0, stage => 'done', since => $iso->($T6), now => $T6);
+    ok($e6rc == 0 && $e6out =~ /"kind":"recovery"/,
+       'E6 a success after a failure queues exactly one recovery alert', $e6out);
+    ok(($s6->{incident} // '') eq 'open',
+       'E6 the incident stays open until the recovery is actually delivered');
+    my ($e6brc, $discard6, $s6b, $h6b) = $run_health->(result => 'ok', now => $T6 + 1);
+    ok($e6brc == 0 && ($s6b->{incident} // '') eq 'none'
+       && !($h6b->{incident_open} // 0),
+       'E6 delivering the recovery closes the incident');
+    ok(($h6b->{last_notified_at} // '') eq $iso->($T6 + 1),
+       'E6 ... and records when the operator was told');
+
+    # ---- E7: a lock skip changes nothing and alerts nobody -------------------
+    my $T7 = $T6 + 300;
+    my ($e7rc, $e7out, $s7) = $run_health->(skipped => 'locked', now => $T7);
+    ok($e7rc == 0 && $e7out =~ /"notify":0/,
+       'E7 a run skipped for the lock never alerts');
+    ok(($s7->{state} // '') eq 'skipped' && ($s7->{stage} // '') eq 'lock',
+       'E7 ... and is distinguishable from a success and from a failure');
+    ok(($s7->{last_success_at} // '') eq $iso->($T6),
+       'E7 ... leaving the last successful refresh untouched');
+    ok(($s7->{consecutive_failures} // -1) == 0,
+       'E7 ... and the failure counter at zero');
+
+    # ---- E8: corrupt health file --------------------------------------------
+    spew($hh, "{ this is not json\n");
+    my $T8 = $T7 + 900;
+    $ok_run->($T8);
+    my ($e8rc, $discard8, $s8, $h8) = $run_health->(rc => 0, stage => 'done', since => $iso->($T8), now => $T8);
+    ok($e8rc == 0, 'E8 a corrupt health file does not wedge the schedule');
+    ok(($h8->{state_recovered} // 0) == 1,
+       'E8 ... and the fact that it had to be restarted is recorded');
+    ok(ref $s8 eq 'HASH' && ($s8->{state} // '') eq 'ok',
+       'E8 ... while the status file stays valid JSON');
+
+    # ---- E9: corrupt status file --------------------------------------------
+    spew($hs, '{"started": "2026-10-27T23:0');
+    my $T9 = $T8 + 900;
+    my ($e9rc, $discard9, $s9, $h9) = $run_health->(rc => 1, stage => 'fetch', since => $iso->($T9), now => $T9);
+    ok($e9rc == 0 && ref $s9 eq 'HASH' && ($s9->{state} // '') eq 'failed',
+       'E9 a corrupt status file is replaced by a valid failure record');
+    ok(($h9->{status_recovered} // 0) == 1,
+       'E9 ... and the corruption is visible in the health file');
+
+    # ---- E10: redaction ------------------------------------------------------
+    my $T10 = $T9 + 60;
+    $bad_run->($T10, 'fetch',
+        'fetch failed at https://hooks.example.test/T0/B0/sekrit?token=abc123');
+    my ($e10rc, $e10out, $s10) = $run_health->(rc => 1, since => $iso->($T10), now => $T10);
+    ok($e10rc == 0 && ($s10->{note} // '') =~ /<url>/ && ($s10->{note} // '') !~ /abc123|sekrit/,
+       'E10 an endpoint or token in an error is redacted before it is stored',
+       $s10->{note} // '');
+    ok($e10out !~ /abc123|sekrit/,
+       'E10 ... and never reaches the decision output');
+
+    # ---- E11: the status keeps its old keys and gains the new ones -----------
+    for my $k (qw(started finished state stage release changed published note)) {
+        ok(exists $s10->{$k}, "E11 the status keeps its existing key '$k'");
+    }
+    for my $k (qw(last_success_at last_published_release consecutive_failures incident notification checked_at)) {
+        ok(exists $s10->{$k}, "E11 ... and exposes '$k'");
+    }
+
+    # ---- E12: usage errors are loud -----------------------------------------
+    my $bad = qx{perl scripts/refresh-health.pl --status "$hs" 2>&1};
+    ok(($? >> 8) == 64, 'E12 a missing --state is a usage error, not a silent success');
+}
+
+# ==================================================== F. the cron wrapper
+
+section('F. the cron wrapper end to end, against a stub tree and a mock endpoint');
+
+{
+    my $G = "$FIX/wrap";
+    remove_tree($G) if -d $G;
+    make_path("$G/repo/scripts", "$G/site/logs", "$G/site/bin", "$G/hook", "$G/home");
+
+    # The tree the wrapper checks out: a stand-in pipeline whose only job is to
+    # write the status record the real refresh-site.sh writes and to exit the
+    # way the scenario needs it to.
+    my $STUB = <<'STUB';
+#!/usr/bin/env bash
+out=""
+while [ $# -gt 0 ]; do
+  case "$1" in --status-file) out="$2"; shift 2 ;; *) shift ;; esac
+done
+mode="${STUB_MODE:-ok}"
+now="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+case "$mode" in
+  ok)       state=ok;     stage=done;     release=3.1.0; rc=0; note="" ;;
+  validate) state=failed; stage=validate; release=3.1.0; rc=1; note="validating the rendered site failed (exit 1)" ;;
+  publish)  state=failed; stage=publish;  release=3.1.0; rc=1; note="backup failed" ;;
+  releases) state=failed; stage=releases; release=;      rc=2; note="fetching GitHub release metadata failed (exit 2)" ;;
+  *)        state=ok;     stage=done;     release=3.1.0; rc=0; note="" ;;
+esac
+printf '{"started":"%s","finished":"%s","state":"%s","stage":"%s","release":"%s","changed":false,"published":false,"note":"%s"}\n' \
+  "$now" "$now" "$state" "$stage" "$release" "$note" > "$out"
+echo "stub refresh ($mode)"
+exit "$rc"
+STUB
+    spew("$G/repo/scripts/refresh-site.sh", $STUB);
+
+    qx{git -C "$G/repo" init -q 2>&1};
+    qx{git -C "$G/repo" symbolic-ref HEAD refs/heads/main 2>&1};   # the wrapper fetches main
+    qx{git -C "$G/repo" add -A 2>&1};
+    qx{git -C "$G/repo" -c user.email=t\@example.test -c user.name=t commit -qm "stub tree" 2>&1};
+    my $ABS = abs_path("$G/repo");
+    qx{git clone -q "file://$ABS" "$G/site/src" 2>&1};
+
+    copy("scripts/refresh-cron.sh",   "$G/site/bin/refresh-cron.sh");
+    copy("scripts/refresh-health.pl", "$G/site/bin/refresh-health.pl");
+    copy("scripts/refresh-notify.sh", "$G/site/bin/refresh-notify.sh");
+    my $wrap_bin = "$G/site/bin/refresh-cron.sh";
+
+    # ---- the endpoint -------------------------------------------------------
+    my $HOOK = <<'HOOK';
+use strict; use warnings;
+use IO::Socket::INET;
+my $dir = $ARGV[0];
+my $srv = IO::Socket::INET->new(LocalAddr => '127.0.0.1', LocalPort => 0,
+                                Listen => 8, ReuseAddr => 1) or die "hook listen: $!";
+open(my $pf, '>', "$dir/port.txt") or die "port: $!"; print {$pf} $srv->sockport; close $pf;
+while (my $c = $srv->accept) {
+    my $req = '';
+    while (defined(my $line = <$c>)) { $req .= $line; last if $line =~ /^\r?$/ }
+    my ($len) = $req =~ /^Content-Length:\s*(\d+)/mi;
+    my $body = '';
+    if ($len) {
+        my $got = 0;
+        while ($got < $len) {
+            my $n = $c->read(my $chunk, $len - $got);
+            last unless $n;
+            substr($body, $got) = $chunk; $got += $n;
+        }
+    }
+    open(my $lf, '>>', "$dir/requests.jsonl") or die "log: $!";
+    my $b = $body; $b =~ s/\r?\n/ /g;
+    print {$lf} $b, "\n"; close $lf;
+    my $code = -e "$dir/fail" ? 500 : 200;
+    print {$c} "HTTP/1.0 $code Mock\r\nContent-Length: 0\r\n\r\n";
+    close $c;
+}
+HOOK
+    spew("$G/hook/server.pl", $HOOK);
+    my $hook_pid = fork();
+    defined $hook_pid or die "cannot fork the mock endpoint: $!\n";
+    if (!$hook_pid) {
+        # the endpoint outlives individual runs; it must not hold the caller's
+        # stdout open or every qx{} that started it would wait for its exit
+        open(STDOUT, '>', '/dev/null');
+        open(STDERR, '>', '/dev/null');
+        exec 'perl', "$G/hook/server.pl", "$G/hook" or die "exec hook: $!\n";
+    }
+    my $HPORT = '';
+    for (1 .. 200) {
+        if (open(my $pf, '<', "$G/hook/port.txt")) { $HPORT = <$pf> // ''; close $pf; chomp $HPORT; last if $HPORT =~ /^\d+$/ }
+        select undef, undef, undef, 0.05;
+    }
+    die "the mock notification endpoint did not come up\n" unless $HPORT =~ /^\d+$/;
+    my $HOOK_URL = "http://127.0.0.1:$HPORT/hook";
+
+    my $requests = sub {
+        my $d = slurp("$G/hook/requests.jsonl") // '';
+        return grep { /\S/ } split /\n/, $d;
+    };
+    my $reset = sub {
+        unlink "$G/site/logs/refresh-health.json", "$G/site/logs/refresh-status.json",
+               "$G/hook/requests.jsonl", "$G/hook/fail";
+    };
+    my $wrap = sub {
+        my (%a) = @_;
+        local $ENV{PWEEVEE_SITE_DIR}        = "$G/site";
+        local $ENV{STUB_MODE}               = $a{mode} // 'ok';
+        local $ENV{PWEEVEE_NOTIFY_CONF}     = "$G/no-such.conf";
+        local $ENV{PWEEVEE_NOTIFY_COOLDOWN} = $a{cooldown} // 3600;
+        local $ENV{PWEEVEE_NOTIFY_URL}      = defined $a{url} ? $a{url} : $HOOK_URL;
+        my $out = qx{bash "$wrap_bin" 2>&1};
+        return ($? >> 8, $out);
+    };
+    my $status = sub { read_json("$G/site/logs/refresh-status.json") || {} };
+
+    # ---- F1: a healthy run --------------------------------------------------
+    $reset->();
+    my ($f1rc, $f1out) = $wrap->(mode => 'ok');
+    ok($f1rc == 0, 'F1 the wrapper exits 0 on a clean run', "exit $f1rc, $f1out");
+    ok(($status->()->{state} // '') eq 'ok' && ($status->()->{incident} // '') eq 'none',
+       'F1 ... and records a healthy status');
+    ok(scalar($requests->()) == 0, 'F1 a healthy run sends no notification');
+
+    # ---- F2: the first failure ----------------------------------------------
+    my ($f2rc) = $wrap->(mode => 'validate');
+    my @r2 = $requests->();
+    ok($f2rc == 1, 'F2 the wrapper propagates the pipeline exit code', "exit $f2rc");
+    ok(scalar(@r2) == 1, 'F2 the first failure sends exactly one notification',
+       'sent ' . scalar(@r2));
+    ok(($r2[0] // '') =~ /validating the rendered site/,
+       'F2 the alert names the stage that failed', $r2[0] // '');
+    ok(($r2[0] // '') =~ /3\.1\.0/,
+       'F2 ... and the release still being served');
+    ok(($status->()->{stage} // '') eq 'validate' && ($status->()->{state} // '') eq 'failed',
+       'F2 the status records the failed stage');
+    ok(($status->()->{notification}{status} // '') eq 'ok',
+       'F2 ... and that the alert was delivered');
+    ok(($status->()->{consecutive_failures} // 0) == 1,
+       'F2 ... and the first consecutive failure');
+
+    # ---- F3: dedup ----------------------------------------------------------
+    my ($f3rc) = $wrap->(mode => 'validate');
+    ok($f3rc == 1 && scalar($requests->()) == 1,
+       'F3 a repeat failure inside the cooldown sends no second alert',
+       'sent ' . scalar($requests->()));
+
+    # ---- F4: the cooldown expires -------------------------------------------
+    my ($f4rc) = $wrap->(mode => 'validate', cooldown => 0);
+    ok($f4rc == 1 && scalar($requests->()) == 2,
+       'F4 once the cooldown elapses the still-failing pipeline alerts again',
+       'sent ' . scalar($requests->()));
+
+    # ---- F5: recovery -------------------------------------------------------
+    my ($f5rc) = $wrap->(mode => 'ok');
+    my @r5 = $requests->();
+    ok($f5rc == 0 && scalar(@r5) == 3, 'F5 a success after a failure sends one recovery alert',
+       'sent ' . scalar(@r5));
+    ok(($r5[2] // '') =~ /recovered/, 'F5 whose text says the pipeline recovered', $r5[2] // '');
+    ok(($status->()->{incident} // '') eq 'none',
+       'F5 the status now reports no open incident');
+    ok(($status->()->{notification}{status} // '') eq 'ok',
+       'F5 ... and that the recovery was delivered');
+
+    # ---- F6: no endpoint configured -----------------------------------------
+    $reset->();
+    $wrap->(mode => 'ok');
+    my ($f6rc) = $wrap->(mode => 'validate', url => '');
+    ok($f6rc == 1, 'F6 a failure still fails the run when nothing is configured', "exit $f6rc");
+    ok(scalar($requests->()) == 0, 'F6 nothing is sent when no endpoint is configured');
+    ok(($status->()->{notification}{status} // '') eq 'not-configured',
+       'F6 ... and the status says notifications are not configured',
+       $status->()->{notification}{status} // 'none');
+    ok(($status->()->{incident} // '') eq 'open',
+       'F6 ... while the incident stays open');
+
+    # ---- F7: delivery failure cannot mask the pipeline failure ---------------
+    $reset->();
+    $wrap->(mode => 'ok');
+    spew("$G/hook/fail", "1");
+    my ($f7rc) = $wrap->(mode => 'publish');
+    ok($f7rc == 1, 'F7 a failed delivery does not change the pipeline exit code', "exit $f7rc");
+    ok(($status->()->{state} // '') eq 'failed' && ($status->()->{stage} // '') eq 'publish',
+       'F7 ... nor the recorded stage or state');
+    ok(($status->()->{notification}{status} // '') eq 'failed',
+       'F7 ... and the delivery failure is recorded');
+    ok(($status->()->{note} // '') eq 'backup failed',
+       'F7 ... with the pipeline error intact, not replaced by the delivery error',
+       $status->()->{note} // '');
+    unlink "$G/hook/fail";
+
+    # ---- F8: lock contention ------------------------------------------------
+    my $have_flock = qx{command -v flock 2>/dev/null};
+    if ($have_flock =~ /\S/) {
+        $reset->();
+        $wrap->(mode => 'ok');
+        my $lock_path = "$G/site/refresh.lock";
+        my $held = 0;
+        if (open(my $lfh, '>', $lock_path)) {
+            $held = flock($lfh, LOCK_EX | LOCK_NB) ? 1 : 0;
+            my ($f8rc) = $wrap->(mode => 'validate');
+            ok($f8rc == 0, 'F8 a run that finds the lock held exits 0 instead of failing', "exit $f8rc");
+            ok(($status->()->{state} // '') eq 'skipped' && ($status->()->{stage} // '') eq 'lock',
+               'F8 ... and records a skipped attempt');
+            ok(($status->()->{last_success_at} // '') ne '',
+               'F8 ... preserving the last successful refresh');
+            ok(scalar($requests->()) == 0, 'F8 ... without alerting');
+            close $lfh;
+        }
+        ok($held, 'F8 (the lock was actually held for that check)');
+    } else {
+        note('flock is not installed on this host, so the wrapper lock check is skipped here '
+             . '(it is exercised on the server that runs the schedule)');
+    }
+
+    # ---- F9: a failure before the pipeline starts ---------------------------
+    $reset->();
+    $wrap->(mode => 'ok');
+    qx{mv "$G/site/src" "$G/site/src.hidden"};
+    my ($f9rc) = $wrap->(mode => 'ok');
+    ok($f9rc == 1, 'F9 a missing checkout fails the run', "exit $f9rc");
+    ok(($status->()->{stage} // '') eq 'fetch', 'F9 ... at the fetch stage');
+    ok(($status->()->{release} // '') eq '3.1.0',
+       'F9 ... while still reporting the release the live site serves',
+       $status->()->{release} // '');
+    ok(scalar($requests->()) == 1, 'F9 ... and the operator is told');
+    qx{mv "$G/site/src.hidden" "$G/site/src"};
+
+    # ---- F10: no secret in the log ------------------------------------------
+    my $log = slurp("$G/site/logs/refresh.log") // '';
+    ok($log !~ /127\.0\.0\.1:\Q$HPORT\E/,
+       'F10 the notification endpoint never appears in the refresh log');
+
+    # ---- F11: no interactive environment -----------------------------------
+    $reset->();
+    my $PATH = $ENV{PATH} // '/usr/bin:/bin';
+    my $bare = qx{env -i HOME="$G/home" PATH="$PATH" SHELL=/bin/sh PWEEVEE_SITE_DIR="$G/site" bash "$wrap_bin" 2>&1};
+    my $bare_rc = $? >> 8;
+    ok($bare_rc == 0, 'F11 the wrapper runs with only HOME/PATH (the cron environment)',
+       "exit $bare_rc, $bare");
+
+    # ---- F12: all three scripts parse ---------------------------------------
+    for my $s (qw(refresh-site.sh refresh-cron.sh refresh-notify.sh)) {
+        qx{bash -n "scripts/$s" 2>&1};
+        ok(($? >> 8) == 0, "F12 scripts/$s parses");
+    }
+
+    kill 'TERM', $hook_pid;
+    waitpid($hook_pid, 0);
+}
+
+# ==================================================== G. schedule contract
+
+section('G. the schedule the documentation claims is the schedule that exists');
+
+{
+    my $doc = slurp("$ROOT/docs/homelab-deployment.md") // '';
+    ok($doc =~ m{^\*/15 \* \* \* \* /home/sleepy/pweevee-site/bin/refresh-cron\.sh}m,
+       'G1 the operator doc states the real fifteen-minute entry');
+    ok($doc =~ /refresh-health\.pl/ && $doc =~ /notify\.conf/,
+       'G2 ... and how incident state and the notification endpoint are configured');
+    ok($doc =~ /\@reboot/,
+       'G3 ... and the boot-time entry that starts the server');
+    ok(-f "$ROOT/scripts/refresh-cron.sh" && -f "$ROOT/scripts/refresh-health.pl"
+       && -f "$ROOT/scripts/refresh-notify.sh",
+       'G4 the three deployed pieces have a tracked source in the repository');
+}
+
+# ==================================================== H. the notifier
+
+section('H. the notifier picks a payload shape and never leaks the endpoint');
+
+{
+    my $G = "$FIX/wrap";
+    my $dry = sub {
+        my ($url) = @_;
+        local $ENV{PWEEVEE_NOTIFY_URL}   = $url;
+        local $ENV{PWEEVEE_NOTIFY_CONF}  = "$G/no-such.conf";
+        local $ENV{PWEEVEE_NOTIFY_TITLE} = 'PwEevee website refresh failed';
+        local $ENV{PWEEVEE_NOTIFY_TEXT}  = 'see https://x.test/y?token=zzz';
+        my $out = qx{bash scripts/refresh-notify.sh --dry-run 2>&1};
+        return ($? >> 8, $out);
+    };
+
+    my ($h1rc, $h1) = $dry->('https://hooks.slack.com/services/T/B/x');
+    ok($h1rc == 0 && $h1 =~ /^format=slack\n/ && $h1 =~ /"text"/,
+       'H1 a Slack webhook gets a text payload', $h1);
+    my (undef, $h2) = $dry->('https://discord.com/api/webhooks/1/x');
+    ok($h2 =~ /^format=discord\n/ && $h2 =~ /"content"/,
+       'H2 a Discord webhook gets a content payload', $h2);
+    my (undef, $h3) = $dry->('https://ntfy.sh/pweevee');
+    ok($h3 =~ /^format=ntfy\n/, 'H3 an ntfy topic gets a plain body', $h3);
+    my (undef, $h4) = $dry->('https://example.test/hook');
+    ok($h4 =~ /^format=generic\n/ && $h4 =~ /"source":"pweevee-website"/,
+       'H4 anything else gets the documented generic JSON', $h4);
+    ok($h4 =~ /<url>/ && $h4 !~ /zzz/,
+       'H5 the message is redacted before it can leave the process');
+    ok($h4 !~ /example\.test/, 'H6 the endpoint itself is never printed');
+
+    {
+        local $ENV{PWEEVEE_NOTIFY_URL}  = '';
+        local $ENV{PWEEVEE_NOTIFY_CONF} = "$G/no-such.conf";
+        qx{bash scripts/refresh-notify.sh 2>&1};
+        ok(($? >> 8) == 2, 'H7 no endpoint is a distinct exit code, not a silent success');
+    }
+
+    spew("$G/notify.conf", "PWEEVEE_NOTIFY_URL=https://ntfy.sh/from-file\n");
+    {
+        delete local $ENV{PWEEVEE_NOTIFY_URL};
+        local $ENV{PWEEVEE_NOTIFY_CONF} = "$G/notify.conf";
+        my $out = qx{bash scripts/refresh-notify.sh --dry-run 2>&1};
+        ok($out =~ /^format=ntfy\n/, 'H8 the endpoint may come from the 0600 config file');
+    }
+
 }
 
 # ---------------------------------------------------------------- summary

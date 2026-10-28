@@ -98,6 +98,10 @@ done
 perl -MDigest::SHA -MJSON::PP -e 1 2>/dev/null || {
   echo "perl with Digest::SHA and JSON::PP (core modules) is required" >&2; exit 1; }
 
+# The stable name of the step currently running, recorded in the status file so
+# a failure says WHICH stage failed rather than only that something did.
+STAGE_SLUG=releases
+
 # ---------------------------------------------------------------- digest only
 
 if [ "$DIGEST_ONLY" = 1 ]; then
@@ -139,11 +143,11 @@ RELEASE=""
 # path, including failures, so "did the last refresh work?" is answerable
 # without reading logs (and the site's freshness band shows the same story).
 write_status() {
-  local state="$1" note="${2:-}"
+  local state="$1" note="${2:-}" stage="${3:-${STAGE_SLUG:-pipeline}}"
   [ -n "$STATUS" ] || return 0
   mkdir -p "$(dirname "$STATUS")"
-  printf '{"started":"%s","finished":"%s","state":"%s","release":"%s","digest_before":"%s","digest_after":"%s","changed":%s,"published":%s,"note":"%s"}\n' \
-    "$STARTED" "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$state" "$RELEASE" \
+  printf '{"started":"%s","finished":"%s","state":"%s","stage":"%s","release":"%s","digest_before":"%s","digest_after":"%s","changed":%s,"published":%s,"note":"%s"}\n' \
+    "$STARTED" "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$state" "$stage" "$RELEASE" \
     "$DIGEST_BEFORE" "$DIGEST_AFTER" \
     "$([ "$CHANGED" = 1 ] && echo true || echo false)" \
     "$([ "$PUBLISHED" = 1 ] && echo true || echo false)" \
@@ -159,6 +163,7 @@ UPDATER_ARGS=()
 
 run_step() {
   local label="$1"; shift
+  local stage="${STAGE_SLUG:-pipeline}"
   step "$label"
   set +e
   "$@"
@@ -167,7 +172,7 @@ run_step() {
   if [ "$rc" -ne 0 ]; then
     say ""
     say "!! $label failed (exit $rc) — nothing was published; the live site is unchanged."
-    write_status failed "$label failed (exit $rc)"
+    write_status failed "$label failed (exit $rc)" "$stage"
     exit "$rc"
   fi
 }
@@ -180,14 +185,18 @@ say "  lock            : $([ "$LOCKED" = 1 ] && echo "$LOCK (held)" || echo none
 
 run_step "fetching GitHub release metadata" \
   perl PwEvevee/build-system/release/update-releases.pl ${UPDATER_ARGS[@]+"${UPDATER_ARGS[@]}"}
+STAGE_SLUG=stats
 run_step "refreshing repository statistics" \
   perl PwEvevee/build-system/release/update-stats.pl ${UPDATER_ARGS[@]+"${UPDATER_ARGS[@]}"}
+STAGE_SLUG=altsource
 run_step "reading the SideloadLabs AltSource" \
   perl PwEvevee/build-system/release/update-altsource.pl ${UPDATER_ARGS[@]+"${UPDATER_ARGS[@]}"}
+STAGE_SLUG=render
 run_step "rendering the website" \
   perl PwEvevee/build-system/release/render-site.pl
 
 if [ "$TEST" = 1 ]; then
+  STAGE_SLUG=validate
   run_step "validating the rendered site" bash -c "$TESTS_CMD"
 else
   step "validation skipped (--no-test)"
@@ -210,12 +219,13 @@ if [ -z "$PUBLISH" ]; then
   [ "$DIGEST_BEFORE" = "$DIGEST_AFTER" ] || CHANGED=1
   say ""
   say "Refreshed. Latest PwEevee release in the rendered data: ${RELEASE:-unknown}"
-  write_status ok ""
+  write_status ok "" done
   exit 0
 fi
 
 # ---------------------------------------------------------------- publish
 
+STAGE_SLUG=publish
 step "publishing to $PUBLISH"
 
 if [ ! -d "$SITE/$OUT" ] || [ ! -f "$SITE/$OUT/index.html" ]; then
@@ -230,7 +240,7 @@ LIVE_DIGEST=""
 if [ -n "$LIVE_DIGEST" ] && [ "$LIVE_DIGEST" = "$DIGEST_AFTER" ]; then
   say "  the live site is already this exact site (digest $DIGEST_AFTER)"
   say "  nothing to publish — no swap, no backup, no churn"
-  write_status ok "live site already current"
+  write_status ok "live site already current" done
   exit 0
 fi
 
@@ -279,5 +289,5 @@ say ""
 say "Published. Latest PwEevee release now served: ${RELEASE:-unknown}"
 say "  digest before : $DIGEST_BEFORE"
 say "  digest after  : $DIGEST_AFTER"
-write_status ok ""
+write_status ok "" done
 exit 0
