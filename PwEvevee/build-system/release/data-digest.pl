@@ -63,7 +63,14 @@ defined $opt{tree} && length $opt{tree} or die "--tree needs a directory\n";
 # successful run.
 my %VOLATILE = map { $_ => 1 }
     qw(generated_at release_data_generated_at fetched_at stale_since
-       verified_at checked_at refreshed_at etag);
+       verified_at checked_at refreshed_at etag
+       pushed_at);
+
+# pushed_at is normalized for the same reason as the timestamps, but it has a
+# sharper edge: committing a refreshed snapshot IS a push, so a run that
+# compared it would see its own previous commit as new data — and a scheduler
+# that commits on change would commit again, forever. It is repository
+# bookkeeping, not something the site renders.
 
 my @files;
 File::Find::find({

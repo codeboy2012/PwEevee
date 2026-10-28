@@ -398,7 +398,8 @@ section('B. change detection (data-digest.pl)');
             generated_at => $extra->{at},
             repos => [ { slug => 'pweevee', stars => 41,
                          fetched_at => $extra->{at}, stale_since => $extra->{since},
-                         etag => $extra->{etag} } ],
+                         etag => $extra->{etag},
+                         pushed_at => $extra->{pushed} // '2026-10-27T20:00:00Z' } ],
         });
         my $at  = $extra->{at};
         my $day = $extra->{day};
@@ -443,6 +444,16 @@ section('B. change detection (data-digest.pl)');
         { at => '2026-10-28T09:00:00Z', since => '', etag => 'W/"bbb"', day => '28 October 2026' });
     (undef, my $f) = $digest->($next_day);
     ok($f ne $b, 'B5 the rendered date moving to the next day moves the digest');
+
+    # A snapshot commit is itself a push, so comparing pushed_at would make the
+    # next run see its own commit as new data and commit again, forever.
+    my $own_push = $mk->("$FIX/B/pushed", '3.1.0',
+        { at => '2026-10-27T22:16:00Z', since => '', etag => 'W/"bbb"',
+          day => '27 October 2026', pushed => '2026-10-27T23:59:00Z' });
+    (undef, my $g) = $digest->($own_push);
+    ok($g eq $b,
+       'B6 a push that only moves pushed_at does not move the digest '
+     . '(otherwise the snapshot commit would re-trigger itself)', "$g vs $b");
 }
 
 # ============================================================ C. the cycle

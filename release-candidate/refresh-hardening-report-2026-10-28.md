@@ -38,7 +38,13 @@ performed; wherever that matters it is stated.
    of setting it false, so the stored record differed from a fetched one and the
    digest moved. This had been masked by the numbers themselves moving; it showed
    up plainly here when two runs fetched the same data.
-4. **A relative site path broke every path after the first `cd`.** The wrapper
+4. **A snapshot commit could re-trigger itself.** `pushed_at` is part of the
+   repository statistics, and committing a refreshed snapshot *is* a push, so
+   the next scheduled run saw its own previous commit as new data. On a
+   scheduler that commits on change (the GitHub workflow) that is a
+   self-perpetuating commit loop; on the host it is a needless publish after
+   every push to the repository.
+5. **A relative site path broke every path after the first `cd`.** The wrapper
    `cd`s into the extracted tree before the pipeline runs; with
    `PWEEVEE_SITE_DIR` set to a relative path, the status and log writes landed in
    the throwaway run directory and vanished with it. The wrapper now resolves
@@ -53,7 +59,8 @@ performed; wherever that matters it is stated.
 | `scripts/refresh-cron.sh` (new, tracked) | The wrapper was previously only on the host. Now versioned: absolute paths, lock-skip recorded as `skipped`, stage recorded on every failure, health update and alert after each run, notification errors never change the run's exit status. `PWEEVEE_SITE_DIR` exists so the tests can drive the real wrapper. |
 | `scripts/refresh-site.sh` | Records the failing stage (`releases`, `stats`, `altsource`, `render`, `validate`, `publish`) in the status file; keeps every existing key. |
 | `PwEvevee/build-system/release/update-stats.pl` | The 304 path keeps `stale: false` so an unchanged record has one stable shape. |
-| `PwEvevee/build-system/tests/refresh-pipeline-tests.pl` | 172 checks (178 on Linux) with new sections E–H: incident decisions, the wrapper end to end against a stub tree and a mock endpoint, the schedule contract, and the notifier's payloads/redaction. |
+| `PwEvevee/build-system/release/data-digest.pl` | `pushed_at` is normalized for change detection: it is repository bookkeeping, never rendered, and it moves on the snapshot commit itself. |
+| `PwEvevee/build-system/tests/refresh-pipeline-tests.pl` | 173 checks (179 on Linux) with new sections E–H: incident decisions, the wrapper end to end against a stub tree and a mock endpoint, the schedule contract, and the notifier's payloads/redaction. |
 | `docs/homelab-deployment.md` | Scheduler, boot survival, deployment of the trio, notification configuration, dedup/recovery, diagnosis, and the verification table below. |
 
 ## 3. Scheduling
@@ -107,8 +114,8 @@ Commands, run from the repository root:
 |---|---|
 | `perl PwEvevee/build-system/tests/*.pl` (all 19, one by one) | all PASS |
 | `perl PwEvevee/build-system/tests/website-tests.pl` | `OK 4409 checks passed` |
-| `perl PwEvevee/build-system/tests/refresh-pipeline-tests.pl` (workstation) | `OK 172 checks passed` |
-| same suite, from a fresh `git archive` of `main` on the host | `OK 178 checks passed` (the `flock` lock checks run there) |
+| `perl PwEvevee/build-system/tests/refresh-pipeline-tests.pl` (workstation) | `OK 173 checks passed` |
+| same suite, from a fresh `git archive` of `main` on the host | `OK 179 checks passed` (the `flock` lock checks run there) |
 
 Negative controls (each mutation applied to a copy, suite rerun, file restored
 byte-identically):
@@ -118,6 +125,7 @@ byte-identically):
 | Cooldown condition replaced with `if (1)` | E3, F3, F4, F5 — 4 checks fail |
 | URL redaction line removed | E10 — the stored note keeps the endpoint |
 | Recovery branch disabled | E6 (incident never closes), F5 — 3 checks fail |
+| `pushed_at` removed from the volatile list | B6 — the digest moves on a push that changed nothing visible |
 
 Failure modes exercised by the suite (mocked GitHub and a mock endpoint, never
 the live site): updater failure, validator failure, publication failure, lock
