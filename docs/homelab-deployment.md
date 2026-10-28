@@ -262,7 +262,7 @@ Runner: the deployed trio (sha256 `71415424…` cron, `9160520e…` health,
 
 | Check | Result |
 |---|---|
-| Full repository suite | all 19 suites pass; `refresh-pipeline-tests.pl` 172 checks on the workstation, 177 on this host (the `flock` checks run here) |
+| Full repository suite | all 19 suites pass; `refresh-pipeline-tests.pl` 172 checks on the workstation, 178 on this host (the `flock` checks run here) |
 | First run after deployment | `state: ok`, `stage: done`, `incident: none`, `notification.status: none`; published and recorded `last_published_release: 3.1.0` |
 | Immediate second run, same data | `changed: false`, `published: false`, note `live site already current`; no swap, no backup |
 | Idle-run churn (independent check) | three consecutive renders in a scratch tree hash to the same digest `7942d23d…`; the files differ only in refresh timestamps, which the digest normalizes |
