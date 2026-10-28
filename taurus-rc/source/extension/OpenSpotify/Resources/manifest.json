@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Open in Spotify · PwEevee",
+  "description": "Open Spotify links in the installed Spotify app, with manual fallback and repeat-prompt protection.",
+  "version": "2.0.1",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://open.spotify.com/*",
+        "*://play.spotify.com/*",
+        "*://spotify.link/*",
+        "*://spotify.app.link/*",
+        "*://spoti.fi/*"
+      ],
+      "js": [
+        "router.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "Open in Spotify",
+    "default_popup": "popup.html"
+  }
+}

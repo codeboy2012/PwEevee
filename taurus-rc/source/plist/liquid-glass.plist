@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIDesignRequiresCompatibility</key>
+	<false/>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
+	<key>MusicHapticsSupported</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>NSMotionUsageDescription</key>
+	<string>Move your head with AirPods in to like a song or change track.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_spotify-ln-check._tcp</string>
+		<string>_spotify-connect._tcp</string>
+		<string>_googlecast._tcp</string>
+	</array>
+	<key>NSMotionUsageDescription</key>
+	<string>Head gestures and Spatial Audio use motion to respond to how you move.</string>
+</dict>
+</plist>

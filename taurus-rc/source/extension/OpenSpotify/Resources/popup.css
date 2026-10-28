@@ -1,0 +1,2 @@
+ :root{font:16px/1.5 system-ui,sans-serif;color-scheme:light dark}body{margin:0;padding:20px;min-width:250px;max-width:340px}h1{font-size:20px;margin:0 0 16px}label{display:flex;align-items:center;gap:10px;min-height:44px}input{width:22px;height:22px;flex-shrink:0}p{font-size:14px}a{display:block;padding:12px;background:#1ed760;color:#000;border-radius:10px;text-align:center;font-weight:650;text-decoration:none;min-height:24px}a[hidden]{display:none}:focus-visible{outline:3px solid #147d3a;outline-offset:3px}
+a:active{filter:brightness(.8)}

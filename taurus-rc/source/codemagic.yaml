@@ -1,0 +1,31 @@
+workflows:
+  build-theos-tweak:
+    name: Build Theos Tweak & IPA
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      vars:
+        THEOS: $CM_BUILD_DIR/theos
+        # Add SG_FLAG_LIST in Codemagic UI under Environment variables if needed
+    scripts:
+      - name: Clone Theos and Submodules
+        script: |
+          git clone --recursive https://github.com/theos/theos.git $THEOS
+      - name: Install Build Tools
+        script: |
+          brew install make dpkg ldid
+      - name: Download Decrypted IPA
+        script: |
+          curl -Lo decrypted.ipa https://files.catbox.moe/qa5eyg.ipa
+      - name: Generate Flag Table
+        script: |
+          set -euo pipefail
+          python3 scripts/extract-flags.py decrypted.ipa
+          grep -q '^const SGFlagDef SGFlagTable\[\] = {' tweak/Sources/Shared/Flags/SGFlagList.m
+          grep -q '^const NSUInteger SGFlagCount =' tweak/Sources/Shared/Flags/SGFlagList.m
+      - name: Build Tweak (.deb)
+        script: |
+          env -u MAKELEVEL gmake -C tweak clean package
+    artifacts:
+      - "tweak/packages/*.deb"
+      - "decrypted.ipa"
