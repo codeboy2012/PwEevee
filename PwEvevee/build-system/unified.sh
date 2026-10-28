@@ -4,6 +4,8 @@
 # ============================================================
 #
 #   decrypted Spotify IPA (input)
+#        ↓  downloads        patch the verified 9.1.90 executable and build the
+#        ↓                   SpotifyAudioProbe companion (skip with --no-downloads)
 #        ↓  prepare          unzip, drop stale output, read version
 #        ↓  merge            spoti.pw + EeveeSpotify payloads into Spotify.app
 #        ↓  resolve          dependency resolution (duplicates = hard failure)
@@ -12,7 +14,7 @@
 #        ↓  package          deterministic store-only IPA
 #        ↓  manifest         build-manifest.json next to the output IPA
 #
-#   PwEvevee/build-system/unified.sh <decrypted.ipa> [-o dist/out.ipa] [--watch]
+#   PwEvevee/build-system/unified.sh <decrypted.ipa> [-o dist/out.ipa] [--watch] [--no-downloads]
 #
 # No manual file editing between steps; rerunnable; stale-output safe.
 #
@@ -26,12 +28,14 @@ ORIG_PWD="$(pwd)"
 BS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$BS/../.." && pwd)"
 cd "$REPO"
 
-IN="" OUT="" OUT_GIVEN=0 WATCH=0
+IN="" OUT="" OUT_GIVEN=0 WATCH=0 NO_DOWNLOADS=0
+DOWNLOADS_TOOLS="${PWEEVEE_DOWNLOADS_TOOLS:-$REPO/taurus-rc/source/extension/Downloads/tools}"
 while [ $# -gt 0 ]; do
   case "$1" in
     -o) OUT="$2"; OUT_GIVEN=1; shift 2 ;;
     --watch) WATCH=1; shift ;;
-    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+    --no-downloads) NO_DOWNLOADS=1; shift ;;
+    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
     *) IN="$1"; shift ;;
   esac
 done
@@ -49,6 +53,7 @@ command -v perl >/dev/null || fail "perl is required"
 command -v xz    >/dev/null || fail "xz is required (apt/brew install xz)"
 command -v unzip >/dev/null || fail "unzip is required"
 command -v diff  >/dev/null || fail "diff is required"
+command -v python3 >/dev/null || fail "python3 is required (the Downloads engine is built by build_downloads.py)"
 
 # merge_dir: copy a component DIRECTORY over the staged app. The merge runs on any
 # input IPA, including decrypt-day bases that already carry these directories, so an
@@ -110,6 +115,42 @@ APP_REL="$(unzip -Z1 "$IN" | grep -oE '^Payload/[^/]+\.app/' | sort -u | head -1
 [ -n "$APP_REL" ] || fail "no Payload/*.app in $IN"
 APP_REL="${APP_REL%/}"
 echo "    app dir: $APP_REL"
+# ----------------------------------------------------------------------------
+# Downloads engine
+#
+# The Downloads page is driven by SpotifyAudioProbe.dylib, which is compiled
+# here and then loaded by the app. Two things made 3.1.0 ship a dead page, and
+# both are fixed at this step instead of in the page:
+#
+#   * the IPA inherited a Taurus-era companion that exported SAPTaurusBridge,
+#     while the tweak looks up SAPPwEeveeBridge (so the class was never there);
+#   * no LC_LOAD_DYLIB named the companion, so dyld never loaded it at all.
+#
+# build_downloads.py refuses anything but the UUID-verified 9.1.90 binary, so
+# this step cannot silently attach the engine to a different Spotify build.
+# --no-downloads is the only way to skip it, and the skip is printed.
+# ----------------------------------------------------------------------------
+DOWNLOADS_DYLIB=""
+if [ "$NO_DOWNLOADS" = 1 ]; then
+  echo "    --no-downloads given: the IPA will NOT contain the Downloads engine"
+else
+  [ -f "$DOWNLOADS_TOOLS/build_downloads.py" ] || fail "Downloads tooling missing: $DOWNLOADS_TOOLS/build_downloads.py (pass --no-downloads to opt out explicitly)"
+  echo "    patching the 9.1.90 executable and building SpotifyAudioProbe.dylib"
+  DL_RC=0
+  python3 "$DOWNLOADS_TOOLS/build_downloads.py" "$IN" \
+    --out-ipa "$WORK/downloads.ipa" \
+    --out-dylib "$WORK/SpotifyAudioProbe.dylib" > "$WORK/downloads.json" || DL_RC=$?
+  if [ "$DL_RC" = 3 ]; then
+    fail "Downloads supports only the verified Spotify 9.1.90 build. Use the decrypted 9.1.90 IPA, or pass --no-downloads."
+  fi
+  [ "$DL_RC" = 0 ] || fail "Downloads patch/build failed (exit $DL_RC); see the output above. Pass --no-downloads to build without the engine."
+  IN="$WORK/downloads.ipa"
+  DOWNLOADS_DYLIB="$WORK/SpotifyAudioProbe.dylib"
+  LC_ALL=C grep -aqF -- "SAPPwEeveeBridge" "$DOWNLOADS_DYLIB" \
+    || fail "the freshly built companion does not export SAPPwEeveeBridge (stale bridge source)"
+  echo "    engine built: $(wc -c < "$DOWNLOADS_DYLIB" | tr -d ' ') bytes, bridge SAPPwEeveeBridge"
+fi
+
 mkdir -p "$WORK/in"
 ( cd "$WORK/in" && unzip -q "$IN" ) || fail "unzip of $IN failed"
 STAGED="$WORK/in/$APP_REL"
@@ -119,6 +160,28 @@ SPOTIFY_VERSION="$(perl "$BS/lib/plist-value.pl" "$STAGED/Info.plist" CFBundleSh
 echo "    Spotify version: $SPOTIFY_VERSION"
 
 step "2. merge components"
+# Guard: the pinned spotifyglass.dylib must carry the migrated PwEevee implementation
+# (the update-channel storage, the migrated identifier namespace and the pinned legacy
+# migration alias), and must NOT carry the SpoTi.pw-lineage markers the migrated product
+# never shipped. The contract lives in components/spotipw/manifest.json
+# (implementation_guard.required / .forbidden); a stale or wrong-lineage artifact fails
+# the build here instead of silently becoming an IPA.
+DYLIB_IN="$BS/../components/spotipw/dylibs/spotifyglass.dylib"
+GUARD_SPEC="$BS/../components/spotipw/manifest.json"
+[ -f "$DYLIB_IN" ] || fail "pinned dylib missing: $DYLIB_IN"
+[ -f "$GUARD_SPEC" ] || fail "component manifest missing: $GUARD_SPEC"
+while IFS= read -r marker; do
+  [ -n "$marker" ] || continue
+  grep -aqF -- "$marker" "$DYLIB_IN" \
+    || fail "pinned spotifyglass.dylib does not carry the migrated implementation: marker '${marker}' absent (see components/spotipw/manifest.json implementation_guard.required)"
+done < <(perl -MJSON::PP -e 'local $/; my $d = decode_json(<>); print "$_\n" for @{$d->{implementation_guard}{required}}' < "$GUARD_SPEC")
+while IFS= read -r marker; do
+  [ -n "$marker" ] || continue
+  if grep -aqF -- "$marker" "$DYLIB_IN"; then
+    fail "pinned spotifyglass.dylib carries an old-lineage marker: '${marker}' (see components/spotipw/manifest.json implementation_guard.forbidden)"
+  fi
+done < <(perl -MJSON::PP -e 'local $/; my $d = decode_json(<>); print "$_\n" for @{$d->{implementation_guard}{forbidden}}' < "$GUARD_SPEC")
+echo "    guard: pinned dylib matches the migrated-implementation contract ($(perl -MJSON::PP -e 'local $/; my $d = decode_json(<>); print scalar @{$d->{implementation_guard}{required}} + scalar @{$d->{implementation_guard}{forbidden}}' < "$GUARD_SPEC") markers)"
 # spotipw: tweak dylib → Frameworks/ (a fresh replacement file simply overwrites)
 mkdir -p "$STAGED/Frameworks"
 cp -a "$BS/../components/spotipw/dylibs/spotifyglass.dylib" "$STAGED/Frameworks/"
@@ -140,9 +203,13 @@ find "Evevee Spotify/component/resources" -type f | while read -r r; do
   mkdir -p "$STAGED/$(dirname "$rel")"
   cp -a "$r" "$STAGED/$rel"
 done
+# downloads companion (built above; never copied from an older IPA)
+if [ -n "$DOWNLOADS_DYLIB" ]; then
+  cp -a "$DOWNLOADS_DYLIB" "$STAGED/Frameworks/SpotifyAudioProbe.dylib"
+fi
 # shared dependency
 merge_dir "$BS/../shared-dependencies/cydiasubstrate/CydiaSubstrate.framework" "$STAGED/Frameworks/CydiaSubstrate.framework"
-echo "    merged: spotifyglass.dylib, EeveeSpotify.dylib, karaoke shader, 3 frameworks, bundle + $(find "Evevee Spotify/component/resources" -type f | wc -l) resources"
+echo "    merged: spotifyglass.dylib, EeveeSpotify.dylib, karaoke shader, 3 frameworks$([ -n "$DOWNLOADS_DYLIB" ] && echo ', Downloads companion'), bundle + $(find "Evevee Spotify/component/resources" -type f | wc -l) resources"
 
 step "3. resolve dependencies"
 perl "$BS/package/resolve-deps.pl" "$STAGED" || fail "dependency resolution failed"
@@ -154,8 +221,16 @@ while IFS= read -r name; do
   [ -n "$name" ] || continue
   perl "$BS/inject/inject-dylib.pl" "$BIN" "$name"
 done < <(perl -MJSON::PP -e 'local $/; my $d=decode_json(<>); print "$_->{name}\n" for @{$d->{load_commands}}' < "$BS/../dependencies.json")
+# The companion is only loaded when it was built. It is declared separately
+# from load_commands because a --no-downloads build must not name a missing file.
+if [ -n "$DOWNLOADS_DYLIB" ]; then
+  DL_LOAD="$(perl -MJSON::PP -e 'local $/; my $d=decode_json(<>); print $d->{downloads_engine}{load_command}' < "$BS/../dependencies.json")"
+  [ -n "$DL_LOAD" ] || fail "dependencies.json has no downloads_engine.load_command"
+  perl "$BS/inject/inject-dylib.pl" "$BIN" "$DL_LOAD"
+fi
 
 step "5. validate Mach-O"
+perl "$BS/validate/validate-bundle-deps.pl" "$STAGED" || fail "bundle dependency validation failed"
 perl "$BS/validate/validate-macho.pl" "$BIN" "$STAGED" || fail "Mach-O validation failed"
 
 step "6. --watch: normalize embedded Watch companion (optional)"
@@ -198,6 +273,16 @@ mkdir -p "$(dirname "$OUT")"
 perl "$BS/package/make-ipa.pl" "$STAGED" "$OUT"
 echo "    $(du -h "$OUT" | cut -f1)  $OUT"
 
+step "8b. verify the Downloads engine inside the packaged IPA"
+if [ -n "$DOWNLOADS_DYLIB" ]; then
+  # Verifies the companion's SAPPwEeveeBridge class, its single load command,
+  # and every guarded executable patch against the expected bytes. A failure
+  # here is a broken build, not a warning: Downloads must never ship dead.
+  python3 "$DOWNLOADS_TOOLS/verify_downloads.py" "$OUT" || fail "Downloads verification failed for $OUT"
+else
+  echo "    skipped: --no-downloads build (the Downloads page reports it as unavailable)"
+fi
+
 step "9. build manifest"
 BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 IPA_SHA256="$(perl -MDigest::SHA -e 'print Digest::SHA::sha256_hex(scalar do { local $/; open(my $f,"<:raw",$ARGV[0]); <$f> })' "$OUT")"
@@ -225,7 +310,13 @@ cat > "$MANIFEST" <<EOF
   "ipa_path": "$OUT_REL",
   "ipa_sha256": "$IPA_SHA256",
   "ipa_size": $IPA_SIZE,
-  "dylibs": ["spotifyglass.dylib", "EeveeSpotify.dylib"],
+  "dylibs": ["spotifyglass.dylib", "EeveeSpotify.dylib"$([ -n "$DOWNLOADS_DYLIB" ] && echo ', "SpotifyAudioProbe.dylib"')],
+  "downloads_engine": {
+    "included": $([ -n "$DOWNLOADS_DYLIB" ] && echo true || echo false),
+    "companion": "SpotifyAudioProbe.dylib",
+    "bridge_class": "SAPPwEeveeBridge",
+    "spotify_uuid": "$(perl -MJSON::PP -e 'local $/; my $d=eval { decode_json(<> ) }; print $d->{spotify_uuid} // "" if $d' "$WORK/downloads.json" 2>/dev/null)"
+  },
   "frameworks": ["CydiaSubstrate.framework", "EeveeSwiftProtobuf.framework", "Orion.framework"],
   "bundles": ["EeveeSpotify.bundle"],
   "brand_icon": "pweevee-icon.png (CFBundleAlternateIcons; original PwEevee artwork, see PwEvevee/brand-icons/manifest.json)",

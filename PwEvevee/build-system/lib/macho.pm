@@ -34,12 +34,12 @@ sub parse_macho {
   my $m1 = unpack('V', substr($data, 0, 4));
   my @archs;
   if ($m0 == 0xCAFEBABE || $m1 == 0xCAFEBABE) {
-    my $swap = ($m1 == 0xCAFEBABE) ? 1 : 0;
+    my $swap = ($m0 == 0xCAFEBABE) ? 1 : 0;
     my $n = rd_u32($data, 4, $swap);
     for my $i (0 .. $n - 1) {
       my $o = 8 + $i * 20;
-      my $off  = rd_u32($data, $o,     $swap);
-      my $size = rd_u32($data, $o + 4, $swap);
+      my $off  = rd_u32($data, $o + 8,  $swap);
+      my $size = rd_u32($data, $o + 12, $swap);
       push @archs, parse_thin(substr($data, $off, $size));
     }
     return @archs;
@@ -70,8 +70,12 @@ sub parse_thin {
     last if $cmdsize < 8 || $off + $cmdsize > length($data);
     my $e = { cmd => $cmd, cmdsize => $cmdsize, off => $off };
     my $nameoff = $off + rd_u32($data, $off + 8, $swap);
-    if ($cmd == 0xC || $cmd == 0xD || $cmd == 0x80000022 || $cmd == 0x80000023 || $cmd == 0x8000001E) {
+    if ($cmd == 0xC || $cmd == 0xD || $cmd == 0x80000018 || $cmd == 0x8000001F || $cmd == 0x20 || $cmd == 0x80000023) {
       $e->{kind} = 'dylib';
+      $e->{weak} = 1 if $cmd == 0x80000018;
+      $e->{reexport} = 1 if $cmd == 0x8000001F;
+      $e->{lazy} = 1 if $cmd == 0x20;
+      $e->{upward} = 1 if $cmd == 0x80000023;
       $e->{name} = strz($data, $nameoff);
     } elsif ($cmd == 0x8000001C) {
       $e->{kind} = 'rpath'; $e->{name} = strz($data, $nameoff);

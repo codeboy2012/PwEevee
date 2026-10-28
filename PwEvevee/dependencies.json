@@ -38,6 +38,18 @@
     { "name": "@executable_path/Frameworks/CydiaSubstrate.framework/CydiaSubstrate" }
   ],
 
+  "downloads_engine": {
+    "$comment": "The Downloads page is driven by a separately compiled companion library. unified.sh builds it from this project's source with build_downloads.py and injects load_command only when the engine was actually built, so a --no-downloads build never names a missing file. bridge_class is the class the tweak looks up with NSClassFromString; forbidden_class is the Taurus-era name that made the 3.1.0 build report 'Downloads engine isn't loaded' even though a dylib was present.",
+    "companion": "SpotifyAudioProbe.dylib",
+    "install": "Frameworks/SpotifyAudioProbe.dylib",
+    "load_command": "@executable_path/Frameworks/SpotifyAudioProbe.dylib",
+    "bridge_class": "SAPPwEeveeBridge",
+    "forbidden_class": "SAPTaurusBridge",
+    "required_spotify": "9.1.90",
+    "provider": "taurus-rc/source/extension/Downloads/tools/build_downloads.py",
+    "verifier": "taurus-rc/source/extension/Downloads/tools/verify_downloads.py"
+  },
+
   "duplicate_policy": {
     "identical": "allowed - collapse to one copy, note it in the build manifest",
     "different": "build failure: DUPLICATE DEPENDENCY error naming both suppliers",

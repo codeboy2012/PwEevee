@@ -500,9 +500,9 @@ EOF
     [ -n "$ident" ] || ident="${3:-}"
     echo "    codesign: $(basename "$dir") as ${ident:-adhoc}"
     if [ "$ident" = "adhoc" ]; then
-      codesign --force --sign - "$dir" >/dev/null 2>&1
+      codesign --force --sign - "$dir" >/dev/null || { echo "!! codesign failed: $dir" >&2; exit 1; }
     else
-      codesign --force --sign "$ident" ${extraargs+"${extraargs[@]}"} "$dir" >/dev/null 2>&1
+      codesign --force --sign "$ident" ${extraargs+"${extraargs[@]}"} "$dir" >/dev/null || { echo "!! codesign failed: $dir" >&2; exit 1; }
     fi
   }
 
@@ -520,7 +520,7 @@ EOF
   done
   for dy in "$APP_DIR/Frameworks"/*.dylib; do
     [ -f "$dy" ] || continue
-    codesign --force --sign - "$dy" >/dev/null 2>&1
+    codesign --force --sign - "$dy" >/dev/null || { echo "!! codesign failed: $dy" >&2; exit 1; }
   done
   for appex in "$APP_DIR/PlugIns"/*.appex; do
     [ -d "$appex" ] || continue

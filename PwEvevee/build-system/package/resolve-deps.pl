@@ -93,7 +93,28 @@ find({ wanted => sub {
 $icons >= 140 or push @problems, "Eevee icon set looks wrong: $icons PNGs at app root (expected >= 140)";
 push @notes, "eevee resources: bundle OK, $icons icon PNGs at app root";
 
-# 4. duplicate framework names anywhere in the tree
+# 4. the Downloads companion, when this build includes it
+#    unified.sh only injects its load command when build_downloads.py produced
+#    the library, so its presence is the signal. Checking the class names here
+#    catches the exact 3.1.0 defect at dependency-resolution time: an inherited
+#    Taurus-era dylib that exports SAPTaurusBridge instead of SAPPwEeveeBridge.
+{
+  my $dl = $deps->{downloads_engine};
+  if (ref $dl eq 'HASH' && $dl->{companion}) {
+    my $p = "$app/" . ($dl->{install} // ("Frameworks/" . $dl->{companion}));
+    if (-f $p) {
+      push @problems, "DOWNLOADS COMPANION TOO SMALL: $p" if -s $p < 100000;
+      my $bytes = _slurp($p);
+      push @problems, "DOWNLOADS COMPANION lacks $dl->{bridge_class}: $p"
+        if index($bytes, $dl->{bridge_class}) < 0;
+      push @problems, "DOWNLOADS COMPANION carries retired $dl->{forbidden_class}: $p"
+        if $dl->{forbidden_class} && index($bytes, $dl->{forbidden_class}) >= 0;
+      push @notes, "downloads companion: $dl->{companion} (bridge $dl->{bridge_class})";
+    }
+  }
+}
+
+# 5. duplicate framework names anywhere in the tree
 my %fwnames;
 find({ wanted => sub {
   return unless -d $File::Find::name && $File::Find::name =~ /\.framework$/;

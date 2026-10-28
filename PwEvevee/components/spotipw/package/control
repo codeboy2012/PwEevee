@@ -1,9 +1,9 @@
 Package: com.spotipw
-Name: spoti.pw
+Name: PwEevee
 Description: Liquid Glass for the Spotify iOS app
-Maintainer: spoti.pw
-Author: spoti.pw
+Maintainer: PwEevee
+Author: PwEevee
 Section: Tweaks
 Architecture: iphoneos-arm
-Version: 0.22.0
-Installed-Size: 1712
+Version: 3.1.5
+Installed-Size: 3192
