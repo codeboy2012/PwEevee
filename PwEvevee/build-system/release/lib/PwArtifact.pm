@@ -94,7 +94,10 @@ sub pick_artifact {
         next unless $p->{ok} && $p->{channel} eq $channel;
         next if defined $version && $p->{version} ne $version;
         my $url = $a->{download_url} // $a->{browser_download_url} // $a->{url};
-        next unless defined $url && $url =~ m{\Ahttps://}i;
+        # Keep GitHub's ownership of the bytes: an asset URL must be GitHub's
+        # own release host, never a mirror somebody else controls.
+        next unless defined $url
+            && $url =~ m{\Ahttps://(?:github\.com|[a-z0-9.-]+\.githubusercontent\.com)/}i;
         push @hits, [ $p, $a ];
     }
     return undef unless @hits;

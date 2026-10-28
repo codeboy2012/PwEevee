@@ -170,6 +170,10 @@ my $insecure = { name => 'PwEevee-3.1.5.ipa', download_url => 'http://example.co
 ok(!defined pick_artifact([ $insecure ], 'stable', '3.1.5'),
    'a non-https asset URL is never offered');
 
+my $mirror = { name => 'PwEevee-3.1.5.ipa', download_url => 'https://example.com/PwEevee-3.1.5.ipa' };
+ok(!defined pick_artifact([ $mirror ], 'stable', '3.1.5'),
+   'an https asset hosted outside GitHub is never offered as the release download');
+
 my $browser_only = { name => 'PwEevee-3.1.5.ipa',
                      browser_download_url => 'https://github.com/x/y/releases/download/3.1.5/PwEevee-3.1.5.ipa' };
 $picked = pick_artifact([ $browser_only ], 'stable', '3.1.5');
