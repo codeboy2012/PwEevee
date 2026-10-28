@@ -255,12 +255,43 @@ committed tree at `b54d298`, on this host.
 | Unattended cron fire | the `22:30:02Z` run started itself, refreshed from GitHub, passed 4409 checks, and published (`state: ok`, `release: 3.1.0`, backup `site-20261027T223010Z.tar.gz`) — no hand-holding, no manual step |
 | Reboot survival of the refresh | not tested (the `@reboot` entry for the server is unchanged; the refresh cron needs no boot-time action) |
 
+## What the hardened refresh has been verified doing (2026-10-28)
+
+Runner: the deployed trio (sha256 `71415424…` cron, `9160520e…` health,
+`5301ff4c…` notify), driven by the real cron entry and by hand under `env -i`.
+
+| Check | Result |
+|---|---|
+| Full repository suite | all 19 suites pass; `refresh-pipeline-tests.pl` 172 checks on the workstation, 177 on this host (the `flock` checks run here) |
+| First run after deployment | `state: ok`, `stage: done`, `incident: none`, `notification.status: none`; published and recorded `last_published_release: 3.1.0` |
+| Immediate second run, same data | `changed: false`, `published: false`, note `live site already current`; no swap, no backup |
+| Idle-run churn (independent check) | three consecutive renders in a scratch tree hash to the same digest `7942d23d…`; the files differ only in refresh timestamps, which the digest normalizes |
+| First failure of an incident (isolated drill) | `notify:1 kind:failure`, one HTTP POST to a loopback endpoint, `notification.status: ok` in the status file |
+| Repeat failure inside the cooldown | `notify:0 reason:cooldown`; still exactly one POST |
+| Still failing after the cooldown | `notify:1 reason:cooldown elapsed`; second POST, `consecutive_failures: 3` |
+| Recovery | `notify:1 kind:recovery`, text `after 3 failed run(s)`, one POST; incident then `none` |
+| Lock held | `skipped`, `stage: lock`, `consecutive_failures` unchanged, no alert |
+| No endpoint configured | `notification.status: not-configured`; the failure itself is unchanged and nothing is sent |
+| Delivery returns 500 | `notification.status: failed`, incident stays open, the pipeline's own exit code and error note are untouched |
+| Secret hygiene | the endpoint URL never appears in `refresh.log` or in the status file; a URL/token in an error is stored as `<url>` / `<redacted>` |
+| Unattended cron | the scheduled run picks up `origin/main` and writes the same health fields; no interactive environment involved |
+| Reboot survival | **not tested** — `cron.service` is `enabled` and `WantedBy=multi-user.target`, and it started at the last boot, but no reboot was performed |
+
 ## Known limitations
 
 - The refresh runs as a crontab entry rather than a systemd timer: without root
   on this host that is the available scheduler. Its logs are files under
   `logs/`, not `journalctl`; a failed run is visible in
   `logs/refresh-status.json` and does not stop the next cycle.
+- No notification endpoint is configured on this host: there is no mail agent
+  and no authenticated webhook. Until `PWEEVEE_NOTIFY_URL` is set, a failure is
+  recorded as `notification.status: not-configured` and nothing is delivered.
+  The alert text and dedup logic are exercised by the suite and the isolated
+  drill (loopback endpoint), so configuring the value is all that remains.
+- `refresh-cron.sh`, `refresh-health.pl` and `refresh-notify.sh` are deployed
+  files, not read from the git tree at run time: a change to them needs the
+  copy step above. The wrapper and notifier are compared by sha256 after every
+  deployment.
 - No root on the host without interactive sign-in: a proper systemd unit
   (`/etc/systemd/system/pweevee-website.service`) would be the cleaner long-term
   arrangement; the `@reboot` crontab covers reboot survival meanwhile.

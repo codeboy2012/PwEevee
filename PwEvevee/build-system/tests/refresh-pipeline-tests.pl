@@ -734,6 +734,8 @@ my $iso = sub { strftime('%Y-%m-%dT%H:%M:%SZ', gmtime($_[0])) };
     my ($e6rc, $e6out, $s6, $h6) = $run_health->(rc => 0, stage => 'done', since => $iso->($T6), now => $T6);
     ok($e6rc == 0 && $e6out =~ /"kind":"recovery"/,
        'E6 a success after a failure queues exactly one recovery alert', $e6out);
+    ok($e6out =~ /after 3 failed run/,
+       'E6 the recovery alert states how many runs had failed', $e6out);
     ok(($s6->{incident} // '') eq 'open',
        'E6 the incident stays open until the recovery is actually delivered');
     my ($e6brc, $discard6, $s6b, $h6b) = $run_health->(result => 'ok', now => $T6 + 1);

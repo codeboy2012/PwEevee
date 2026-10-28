@@ -285,6 +285,10 @@ $stage = 'pipeline' unless length $stage;
 
 $STATE->{last_attempt_at} = $NOW_ISO;
 
+# how long the incident lasted, for the recovery message: the success branch
+# resets the counter, so it has to be read before that
+my $failures_at_success = $STATE->{consecutive_failures};
+
 if ($kind eq 'skipped') {
     $STATE->{last_state} = 'skipped';
     $STATE->{last_skip_at} = $NOW_ISO;
@@ -347,7 +351,7 @@ if ($kind eq 'failure') {
             text   => sprintf(
                 'Refresh succeeded at %s after %d failed run(s) since %s. '
               . 'The site now serves release %s.',
-                $NOW_ISO, $STATE->{consecutive_failures},
+                $NOW_ISO, $failures_at_success,
                 $STATE->{first_failure_at} // 'unknown',
                 length($rel) ? $rel : 'unknown'),
         };
