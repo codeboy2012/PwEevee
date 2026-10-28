@@ -22,7 +22,6 @@
 #   update-releases.pl  -> writes release.download_asset / artifact_channel
 #   update-readme.pl    -> README download line
 #   update-appsource.pl -> which verified assets may be published
-#   update-stats.pl     -> which downloads are PwEevee's
 #   render-site.pl      -> the rendered download button
 #   pweevee.js          -> the client-side safety-net card
 # ============================================================================
