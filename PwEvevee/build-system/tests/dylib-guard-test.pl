@@ -48,7 +48,7 @@ if (-f $DYLIB) {
   # The pinned dylib must also compile its own public version string in, and that
   # version must be the public PwEevee release version of the product source tree.
   my $public = '';
-  if (open(my $v, '<', "$ROOT/taurus-rc/source/public-version.txt")) {
+  if (open(my $v, '<', "$ROOT/source/public-version.txt")) {
     $public = do { local $/; <$v> };
     $public =~ s/\s+//g;
   }

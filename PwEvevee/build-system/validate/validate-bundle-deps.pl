@@ -8,7 +8,7 @@
 # the binaries PwEevee controls must resolve either to an Apple system library or
 # to a bundle-relative location (CydiaSubstrate is bundled under Frameworks/ and
 # resolves through the host binary's @executable_path/Frameworks rpath, i.e. an
-# @rpath install-name - see taurus-rc/source/tweak/Makefile).
+# @rpath install-name - see source/tweak/Makefile).
 #
 # Regression for the dyld crash: spotifyglass.dylib shipped with
 #   /Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate (absolute, missing

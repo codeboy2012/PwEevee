@@ -46,8 +46,8 @@
     "bridge_class": "SAPPwEeveeBridge",
     "forbidden_class": "SAPTaurusBridge",
     "required_spotify": "9.1.90",
-    "provider": "taurus-rc/source/extension/Downloads/tools/build_downloads.py",
-    "verifier": "taurus-rc/source/extension/Downloads/tools/verify_downloads.py"
+    "provider": "source/extension/Downloads/tools/build_downloads.py",
+    "verifier": "source/extension/Downloads/tools/verify_downloads.py"
   },
 
   "duplicate_policy": {

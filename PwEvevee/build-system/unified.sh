@@ -29,7 +29,7 @@ BS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$BS/../.." && pw
 cd "$REPO"
 
 IN="" OUT="" OUT_GIVEN=0 WATCH=0 NO_DOWNLOADS=0
-DOWNLOADS_TOOLS="${PWEEVEE_DOWNLOADS_TOOLS:-$REPO/taurus-rc/source/extension/Downloads/tools}"
+DOWNLOADS_TOOLS="${PWEEVEE_DOWNLOADS_TOOLS:-$REPO/source/extension/Downloads/tools}"
 while [ $# -gt 0 ]; do
   case "$1" in
     -o) OUT="$2"; OUT_GIVEN=1; shift 2 ;;

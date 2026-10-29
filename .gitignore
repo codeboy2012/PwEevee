@@ -18,3 +18,23 @@ Evevee Spotify/source-artifacts/*.ipa
 
 # General IPA outputs
 *.ipa
+
+# Private reference material and extracted app bundles — never publish
+private-reference/
+audit/ipas/
+audit/brand-sweep/work/
+audit/reposnap/
+audit/upstream/
+parallel-tmp/
+*.mobileprovision
+*.p12
+*.p8
+*.cer
+*.key
+.signing.env
+
+# Internal assistant notes and vendor binary packages
+source/.agents/
+source/.claude/
+source/vendor/*.deb
+release-candidate/*.deb

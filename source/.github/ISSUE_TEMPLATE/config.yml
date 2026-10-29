@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How to build and sign it
+    url: https://github.com/codeboy2012/PwEevee#build-it
+    about: Build, signing and bundle id questions are answered in the README.

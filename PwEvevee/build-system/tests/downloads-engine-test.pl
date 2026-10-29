@@ -31,8 +31,8 @@ my $ROOT = dirname($0) . '/../../..';
 my $DEPS = "$ROOT/PwEvevee/dependencies.json";
 my $UNIFIED = "$ROOT/PwEvevee/build-system/unified.sh";
 my $RESOLVE = "$ROOT/PwEvevee/build-system/package/resolve-deps.pl";
-my $MANIFEST = "$ROOT/taurus-rc/source/extension/OpenSpotify/Resources/manifest.json";
-my $PLIST_PY = "$ROOT/taurus-rc/source/scripts/safari-extension-plist.py";
+my $MANIFEST = "$ROOT/source/extension/OpenSpotify/Resources/manifest.json";
+my $PLIST_PY = "$ROOT/source/scripts/safari-extension-plist.py";
 
 my @failures;
 my $pass = 0;

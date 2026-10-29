@@ -1,0 +1,36 @@
+name: Feature request
+description: Something the mod could do or look like
+title: "[Feature Request] "
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched the [open and closed issues](https://github.com/codeboy2012/PwEevee/issues?q=is%3Aissue) and this isn't requested yet.
+          required: true
+  - type: dropdown
+    id: look
+    attributes:
+      label: Which look is this for?
+      options:
+        - Redesign
+        - Spotify's own look
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What you'd like, and why
+      description: What would you use it for? If it's from Apple Music or another app, say which screen.
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or mockups
+      description: Of Spotify today, and of the app you're comparing to.
+    validations:
+      required: false

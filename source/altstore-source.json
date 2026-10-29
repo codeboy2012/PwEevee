@@ -1,0 +1,29 @@
+{
+  "name": "PwEevee",
+  "identifier": "pw.pweevee.source",
+  "subtitle": "PwEevee releases for SideStore and Feather",
+  "iconURL": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Spotify_App_Logo.svg/960px-Spotify_App_Logo.svg.png",
+  "website": "https://github.com/codeboy2012/PwEevee",
+  "tintColor": "0A4B00",
+  "apps": [
+    {
+      "name": "PwEevee",
+      "bundleIdentifier": "com.spotify.client",
+      "developerName": "PwEevee",
+      "subtitle": "PwEevee: the free, open-source Spotify mod with Premium features",
+      "localizedDescription": "PwEevee is an open-source Spotify mod with Premium features. The Redesigned UI requires iOS 26; the legacy UI supports iOS 16.1 and later. Derived from the open-source chroma.pw/spoti.pw project by darkk (GPL-3.0 attribution).",
+      "iconURL": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Spotify_App_Logo.svg/960px-Spotify_App_Logo.svg.png",
+      "tintColor": "0A4B00",
+      "versions": [
+        {
+          "version": "0.60.1",
+          "date": "2026-10-08T22:17:09Z",
+          "downloadURL": "https://github.com/codeboy2012/PwEevee/releases/download/v0.60.1/PwEevee-0.60.1.ipa",
+          "size": 132877139,
+          "minOSVersion": "16.1"
+        }
+      ],
+      "appPermissions": {}
+    }
+  ]
+}

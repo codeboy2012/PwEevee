@@ -9,7 +9,7 @@ The artifact these rows describe: the PwEevee rebuild of Spotify 9.1.90
 (256 MB compressed, ~‑80 MB installed), main app + **5 app extensions**
 (IntentsExtension, NotificationContentExtension, NotificationServiceExtension,
 SpotifyGlassLiveActivity, WidgetExtension) + 3 embedded frameworks + 2 injected dylibs.
-Background facts with citations: [taurus-rc/reports/distribution-readiness.md](../../taurus-rc/reports/distribution-readiness.md).
+Background facts with citations: the private distribution-readiness report, retained outside this repository.
 
 ## A. Credential types
 

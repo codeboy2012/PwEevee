@@ -1,0 +1,94 @@
+name: Bug report
+description: Something broken, missing or misplaced
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Reports without the details below can't be reproduced and get closed.
+        Both versions are in Spotify → Settings → **Mod Settings → Mod**.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched the [open and closed issues](https://github.com/codeboy2012/PwEevee/issues?q=is%3Aissue) and this isn't reported yet.
+          required: true
+        - label: I'm on the newest release (Mod Settings → Mod → Updates).
+          required: true
+  - type: input
+    id: mod-version
+    attributes:
+      label: Mod version
+      description: Mod Settings → Mod → Version
+      placeholder: "0.18.0"
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: Mod Settings → Mod → Spotify. The mod is built for 9.1.78; other versions may break.
+      placeholder: "9.1.78"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and iOS version
+      placeholder: "iPhone 16 Pro, iOS 26.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: look
+    attributes:
+      label: Look
+      description: The switch at the top of Mod Settings.
+      options:
+        - Redesign
+        - Spotify's own look
+    validations:
+      required: true
+  - type: dropdown
+    id: signer
+    attributes:
+      label: Installed with
+      options:
+        - AltStore / SideStore
+        - Sideloadly
+        - Feather
+        - TrollStore
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Library
+        2. Tap a playlist
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or screen recording
+      description: Drag files in here. For a crash, a crash log helps most (Settings → Privacy & Security → Analytics & Improvements → Analytics Data → Spotify-…).
+    validations:
+      required: false
+  - type: textarea
+    id: settings
+    attributes:
+      label: Your settings (optional)
+      description: Mod Settings → Mod → Export settings, then attach the file. Makes switch-specific bugs much easier to find.
+    validations:
+      required: false

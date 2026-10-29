@@ -458,13 +458,13 @@ component guard before it writes anything.
 
 The `spotifyglass.dylib` that ships in 3.1.0 and 3.1.5 was built from the migrated product
 source tree with Theos (`THEOS_PACKAGE_SCHEME := rootless`), in a clean `rm -rf .theos && make`.
-That tree is now published at `taurus-rc/source/`, with its public version in
-`taurus-rc/source/public-version.txt` and the internal upstream line in
-`taurus-rc/source/version.txt`. It is **not** the `Spotipw/tweak/Sources` tree: that one is
+That tree is now published at `source/`, with its public version in
+`source/public-version.txt` and the internal upstream line in
+`source/version.txt`. It is **not** the `Spotipw/tweak/Sources` tree: that one is
 the pre-migration lineage, and `unified.sh` deliberately rejects a build from it (the
 component guard forbids the old site endpoint and the old `spotipw.usage` key).
 
-`taurus-rc/source/` carries the v3.1.5 Safari extension, Downloads engine and tweak
+`source/` carries the v3.1.5 Safari extension, Downloads engine and tweak
 source. The nested upstream `.git`, generated screenshots, AI-assistant notes and the
 third-party binary autoflex package are intentionally not committed; the unified IPA
 build does not need them (the legacy `scripts/pipeline.sh` path does need the vendor
@@ -510,7 +510,7 @@ PwEevee/
 ├── PwEvevee/shared-dependencies/  CydiaSubstrate, with per-file SHA-256 manifests
 ├── Evevee Spotify/            the upstream EeveeSpotify component, as received
 ├── Spotipw/                   the pre-migration spoti.pw lineage source tree
-├── taurus-rc/source/          migrated product source for the shipped tweak/extension
+├── source/          migrated product source for the shipped tweak/extension
 ├── docs/                      architecture, build, troubleshooting, development, audits
 ├── website-src/               website sources; website/ is generated from them
 ├── website/                   the rendered site + generated release/statistics data

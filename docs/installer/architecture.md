@@ -106,9 +106,8 @@ gate is met, the honest path is the tool-supported one.
 
 ## 6. Reused verified research
 
-The compatibility matrix builds on the distribution-readiness investigation
-([taurus-rc/reports/distribution-readiness.md](../../taurus-rc/reports/distribution-readiness.md)),
-which established — with cited Apple/AltStore/SideStore/fastlane sources — the free-team
+The compatibility matrix builds on a distribution-readiness investigation whose private build
+records are retained outside this repository; it established — with cited Apple/AltStore/SideStore/fastlane sources — the free-team
 App-ID budget (main app + 5 appexes → up to 6 App IDs, limit 10/week),
 SideStore ≥ 0.6.2 extension-profile reuse, the free-team App Groups limitation (widgets
 degrade, not crash), and the sign order (deepest code first).
