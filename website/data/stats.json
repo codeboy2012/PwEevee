@@ -6,29 +6,29 @@
             "latest": {
                "asset_downloads": [
                   {
-                     "download_count": 6803,
+                     "download_count": 6853,
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb"
                   },
                   {
-                     "download_count": 1506,
+                     "download_count": 1516,
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb"
                   },
                   {
-                     "download_count": 2768,
+                     "download_count": 2791,
                      "name": "txt.txt"
                   }
                ],
-               "downloads": 11077,
+               "downloads": 11160,
                "version": "v7.0.0"
             },
-            "release_downloads": 53992,
+            "release_downloads": 54080,
             "releases_summed": 8
          },
          "pweevee": {
             "latest": {
                "asset_downloads": [
                   {
-                     "download_count": 33,
+                     "download_count": 35,
                      "name": "PwEevee-3.1.5.ipa"
                   },
                   {
@@ -36,10 +36,10 @@
                      "name": "com.spotify.client_9.1.90_und3fined.ipa"
                   }
                ],
-               "downloads": 45,
+               "downloads": 47,
                "version": "v3.1.5"
             },
-            "release_downloads": 835,
+            "release_downloads": 837,
             "releases_summed": 10
          },
          "spotipw": {
@@ -62,10 +62,10 @@
          }
       },
       "release_data_found": 3,
-      "release_data_generated_at": "2026-10-29T16:19:31Z",
-      "total": 54827
+      "release_data_generated_at": "2026-10-29T21:17:42Z",
+      "total": 54917
    },
-   "generated_at": "2026-10-29T16:19:33Z",
+   "generated_at": "2026-10-29T21:17:44Z",
    "generator": "PwEevee/build-system/release/update-stats.pl",
    "metric_notes": {
       "downloads": "sum of per-asset download_count over the release history tracked in website/data/releases.json (across all projects)",
@@ -78,14 +78,14 @@
    "repos": [
       {
          "available": true,
-         "downloads_total": 835,
-         "etag": "\"9df5b3bfa88a47fa9c5fccf62cf44bb642bab52bce4bb6861fc63cd17670d4b7\"",
-         "fetched_at": "2026-10-29T16:19:32Z",
+         "downloads_total": 837,
+         "etag": "\"462839ffb12286efe3224dc013561addc26311594197567edf5584c69c9948aa\"",
+         "fetched_at": "2026-10-29T21:17:43Z",
          "forks": 2,
          "homepage": "https://pweevee.skytweak.dpdns.org/",
          "name": "PwEevee",
          "open_issues": 1,
-         "pushed_at": "2026-10-29T09:19:36Z",
+         "pushed_at": "2026-10-29T16:19:38Z",
          "repo": "codeboy2012/PwEevee",
          "repo_url": "https://github.com/codeboy2012/PwEevee",
          "slug": "pweevee",
@@ -120,16 +120,16 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-29T16:19:32Z",
+         "stale_since": "2026-10-29T21:17:43Z",
          "stars": 0,
          "subscribers": 0
       },
       {
          "available": true,
          "downloads_total": 54000,
-         "etag": "\"fb132e3b184f32779fa62c43e6487b7c10904a15de22fff80fd75cb3fe54981c\"",
-         "fetched_at": "2026-10-29T16:19:33Z",
-         "forks": 5027,
+         "etag": "\"c69ddd108ca4be69c8fa06342df989485b972c4b649c1d31978ba03742a1d105\"",
+         "fetched_at": "2026-10-29T21:17:44Z",
+         "forks": 5040,
          "homepage": "https://github.com/SideloadLabs/Eevee-Alt-Source/raw/refs/heads/main/apps.json",
          "name": "EeveeSpotify",
          "open_issues": 36,
@@ -138,7 +138,7 @@
          "repo_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated",
          "slug": "eeveespotify",
          "stale": false,
-         "stars": 1445,
+         "stars": 1448,
          "subscribers": 18,
          "topics": []
       }
