@@ -1,5 +1,5 @@
 {
-   "generated_at": "2026-10-28T23:34:09Z",
+   "generated_at": "2026-10-29T02:53:39Z",
    "generator": "PwEvevee/build-system/release/update-releases.pl",
    "projects": [
       {
@@ -13,7 +13,7 @@
                      "artifact_channel": "stable",
                      "artifact_version": "3.1.5",
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 23,
+                     "download_count": 31,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/PwEevee-3.1.5.ipa",
                      "kind": "ipa",
                      "name": "PwEevee-3.1.5.ipa",
@@ -25,7 +25,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 8,
+                     "download_count": 10,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/com.spotify.client_9.1.90_und3fined.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.90_und3fined.ipa",
@@ -42,7 +42,7 @@
                   "artifact_channel": "stable",
                   "artifact_version": "3.1.5",
                   "content_type": "application/x-itunes-ipa",
-                  "download_count": 23,
+                  "download_count": 31,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/PwEevee-3.1.5.ipa",
                   "kind": "ipa",
                   "name": "PwEevee-3.1.5.ipa",
@@ -71,7 +71,7 @@
                      "artifact_channel": "stable",
                      "artifact_version": "3.1.0",
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 11,
+                     "download_count": 14,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/PwEevee-3.1.0.ipa",
                      "kind": "ipa",
                      "name": "PwEevee-3.1.0.ipa",
@@ -83,7 +83,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 4,
+                     "download_count": 7,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/com.spotify.client_9.1.90_und3fined.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.90_und3fined.ipa",
@@ -100,7 +100,7 @@
                   "artifact_channel": "stable",
                   "artifact_version": "3.1.0",
                   "content_type": "application/x-itunes-ipa",
-                  "download_count": 11,
+                  "download_count": 14,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/3.1.0/PwEevee-3.1.0.ipa",
                   "kind": "ipa",
                   "name": "PwEevee-3.1.0.ipa",
@@ -127,7 +127,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 63,
+                     "download_count": 66,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.2.0-pre/PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
                      "kind": "ipa",
                      "name": "PwEevee-0.22.0-alpha.2-unified-Spotify-9.1.90.ipa",
@@ -194,7 +194,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 14,
+                     "download_count": 17,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/com.spotify.client_9.1.88_und3fined.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.88_und3fined.ipa",
@@ -206,7 +206,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 24,
+                     "download_count": 26,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.1.0-pre/skywatch-spotify-9.1.88-watchfix.ipa",
                      "kind": "ipa",
                      "name": "skywatch-spotify-9.1.88-watchfix.ipa",
@@ -249,7 +249,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 128,
+                     "download_count": 131,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/com.spotify.client_9.1.78_No_Watch.ipa",
                      "kind": "ipa",
                      "name": "com.spotify.client_9.1.78_No_Watch.ipa",
@@ -261,7 +261,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 125,
+                     "download_count": 128,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/EeveeSpotifyv7.0.0.ipa",
                      "kind": "ipa",
                      "name": "EeveeSpotifyv7.0.0.ipa",
@@ -273,7 +273,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 130,
+                     "download_count": 133,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v2.0.0/SpoTiv50.0.0%2BEeveeSpotifyv7.0.0.ipa",
                      "kind": "ipa",
                      "name": "SpoTiv50.0.0+EeveeSpotifyv7.0.0.ipa",
@@ -304,7 +304,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 55,
+                     "download_count": 59,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/PwEevee.v1.0.2.ipa",
                      "kind": "ipa",
                      "name": "PwEevee.v1.0.2.ipa",
@@ -316,7 +316,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 15,
+                     "download_count": 18,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v1.0.2/Spotpw.v0.23.0.PRE.ipa",
                      "kind": "ipa",
                      "name": "Spotpw.v0.23.0.PRE.ipa",
@@ -371,7 +371,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 31,
+                     "download_count": 34,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha.2/PwEeveeBeta2.ipa",
                      "kind": "ipa",
                      "name": "PwEeveeBeta2.ipa",
@@ -426,7 +426,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 69,
+                     "download_count": 72,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0-alpha/PwEvevee.ipa",
                      "kind": "ipa",
                      "name": "PwEvevee.ipa",
@@ -481,7 +481,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 13,
+                     "download_count": 16,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/com.spotipw_0.22.0-fixed-bundle-id.ipa",
                      "kind": "ipa",
                      "name": "com.spotipw_0.22.0-fixed-bundle-id.ipa",
@@ -493,7 +493,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 8,
+                     "download_count": 11,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.22.0/Spotify-Decrypted.ipa",
                      "kind": "ipa",
                      "name": "Spotify-Decrypted.ipa",
@@ -536,7 +536,7 @@
                "assets": [
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 13,
+                     "download_count": 16,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/com.spotipw_0.21.1.ipa",
                      "kind": "ipa",
                      "name": "com.spotipw_0.21.1.ipa",
@@ -548,7 +548,7 @@
                   },
                   {
                      "content_type": "application/x-itunes-ipa",
-                     "download_count": 3,
+                     "download_count": 6,
                      "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v0.21.1/Spotify-Decrypted.ipa",
                      "kind": "ipa",
                      "name": "Spotify-Decrypted.ipa",
@@ -595,7 +595,7 @@
                   "artifact_channel": "stable",
                   "artifact_version": "3.1.5",
                   "content_type": "application/x-itunes-ipa",
-                  "download_count": 23,
+                  "download_count": 31,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/PwEevee-3.1.5.ipa",
                   "kind": "ipa",
                   "name": "PwEevee-3.1.5.ipa",
@@ -607,7 +607,7 @@
                },
                {
                   "content_type": "application/x-itunes-ipa",
-                  "download_count": 8,
+                  "download_count": 10,
                   "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/com.spotify.client_9.1.90_und3fined.ipa",
                   "kind": "ipa",
                   "name": "com.spotify.client_9.1.90_und3fined.ipa",
@@ -624,7 +624,7 @@
                "artifact_channel": "stable",
                "artifact_version": "3.1.5",
                "content_type": "application/x-itunes-ipa",
-               "download_count": 23,
+               "download_count": 31,
                "download_url": "https://github.com/codeboy2012/PwEevee/releases/download/v3.1.5/PwEevee-3.1.5.ipa",
                "kind": "ipa",
                "name": "PwEevee-3.1.5.ipa",
@@ -984,7 +984,7 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-28T23:34:08Z"
+         "stale_since": "2026-10-29T02:53:38Z"
       },
       {
          "available": true,
@@ -995,7 +995,7 @@
                "assets": [
                   {
                      "content_type": "application/octet-stream",
-                     "download_count": 6697,
+                     "download_count": 6724,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -1007,7 +1007,7 @@
                   },
                   {
                      "content_type": "application/octet-stream",
-                     "download_count": 1468,
+                     "download_count": 1474,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                      "kind": "deb",
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
@@ -1019,7 +1019,7 @@
                   },
                   {
                      "content_type": "text/plain",
-                     "download_count": 2718,
+                     "download_count": 2729,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                      "kind": "other",
                      "name": "txt.txt",
@@ -1215,7 +1215,7 @@
                   },
                   {
                      "content_type": "application/zip",
-                     "download_count": 1367,
+                     "download_count": 1368,
                      "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v6.6.5/EeveeSpotify_6.6.5_TrollFools.zip",
                      "kind": "archive",
                      "name": "EeveeSpotify_6.6.5_TrollFools.zip",
@@ -1413,7 +1413,7 @@
             "assets": [
                {
                   "content_type": "application/octet-stream",
-                  "download_count": 6697,
+                  "download_count": 6724,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb",
@@ -1425,7 +1425,7 @@
                },
                {
                   "content_type": "application/octet-stream",
-                  "download_count": 1468,
+                  "download_count": 1474,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
                   "kind": "deb",
                   "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb",
@@ -1437,7 +1437,7 @@
                },
                {
                   "content_type": "text/plain",
-                  "download_count": 2718,
+                  "download_count": 2729,
                   "download_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated/releases/download/v7.0.0/txt.txt",
                   "kind": "other",
                   "name": "txt.txt",
