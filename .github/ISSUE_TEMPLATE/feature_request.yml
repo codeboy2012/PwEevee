@@ -1,0 +1,88 @@
+name: Feature request
+description: Suggest a new capability or improvement for PwEevee.
+title: "[Feature]: "
+labels:
+  - feature request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        PwEevee v4 and later will introduce additional features and original enhancements beyond the existing integrations. Use this form to describe what you would like to see.
+
+        Search existing feature requests before submitting, and keep the proposal focused on one capability.
+
+  - type: input
+    id: feature-name
+    attributes:
+      label: Feature name
+      description: Give the proposal a short, descriptive name.
+      placeholder: "e.g. Custom playback controls"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature category
+      description: Which area does this proposal belong to?
+      options:
+        - UI / Design
+        - Spotify customization
+        - Chroma integration
+        - EeveeSpotify integration
+        - SpoTi.pw integration
+        - New PwEevee features
+        - Compatibility
+        - Other
+      multiple: false
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the proposed feature
+      description: Explain the feature and how it would work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem it solves
+      description: What limitation or friction would this feature address?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Describe what the user should experience when this is implemented.
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Suggested implementation
+      description: Optional. Share any technical approach, APIs, or references that may help.
+    validations:
+      required: false
+
+  - type: upload
+    id: references
+    attributes:
+      label: Additional screenshots or references
+      description: Optional. Drag and drop mockups or screenshots that help explain the proposal.
+    validations:
+      required: false
+      accept: ".png,.jpg,.jpeg,.gif,.webp,.pdf"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing feature requests and did not find a duplicate.
+          required: true

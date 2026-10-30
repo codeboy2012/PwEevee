@@ -1,0 +1,104 @@
+name: Compatibility report
+description: Report which PwEevee features work on a specific device and iOS version.
+title: "[Compatibility]: "
+labels:
+  - compatibility
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to track how PwEevee behaves across devices, iOS versions, and Spotify versions.
+
+        Search existing compatibility reports first. Do not include passwords, API keys, signing certificates, provisioning profiles, private files, or other personal information.
+
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: The device model or identifier.
+      placeholder: "e.g. iPhone SE (iPhone12,8)"
+    validations:
+      required: true
+
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: The iOS version installed on the device.
+      placeholder: "e.g. 17.6.1"
+    validations:
+      required: true
+
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: The Spotify app version used with PwEevee.
+      placeholder: "e.g. 9.1.90"
+    validations:
+      required: true
+
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: The PwEevee release used for this report.
+      placeholder: "e.g. 3.1.6.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      description: How was PwEevee installed?
+      options:
+        - Sideloading
+        - Jailbreak
+        - Other
+      multiple: false
+    validations:
+      required: true
+
+  - type: textarea
+    id: working-features
+    attributes:
+      label: Working features
+      description: List the features that work correctly on this configuration.
+    validations:
+      required: true
+
+  - type: textarea
+    id: broken-features
+    attributes:
+      label: Features that are not working
+      description: List the features that fail, including any error messages you see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional. Add anything else that may affect compatibility, such as tweaks or configuration changes.
+    validations:
+      required: false
+
+  - type: upload
+    id: evidence
+    attributes:
+      label: Screenshots or logs
+      description: Optional. Drag and drop images or attach a zipped log bundle after removing sensitive data.
+    validations:
+      required: false
+      accept: ".png,.jpg,.jpeg,.gif,.webp,.log,.txt,.zip"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing compatibility reports and did not find this configuration.
+          required: true
+        - label: I removed personal information, credentials, and private files from this report.
+          required: true

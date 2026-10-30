@@ -1,0 +1,153 @@
+name: Bug report
+description: Report a reproducible problem with PwEevee so it can be investigated.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem.
+
+        Search the existing issues first. Do not include passwords, API keys, signing certificates, provisioning profiles, private files, or other personal information. Redact anything sensitive from logs and screenshots.
+
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: The Spotify app version where the problem occurs.
+      placeholder: "e.g. 9.1.90"
+    validations:
+      required: true
+
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: The PwEevee release you are using.
+      placeholder: "e.g. 3.1.6.1"
+    validations:
+      required: true
+
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: The iOS version installed on the affected device.
+      placeholder: "e.g. 17.6.1"
+    validations:
+      required: true
+
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: The device model or identifier.
+      placeholder: "e.g. iPhone SE (iPhone12,8)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      description: How was PwEevee installed?
+      options:
+        - Sideloading
+        - Jailbreak
+        - Other
+      multiple: false
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Relevant component
+      description: Which part of PwEevee is affected?
+      options:
+        - SpoTi.pw
+        - Chroma
+        - EeveeSpotify
+        - PwEevee
+        - Other
+      multiple: false
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: Clearly describe what went wrong.
+      placeholder: A concise summary of the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: List the exact steps that trigger the problem.
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Screenshots or screen recordings
+      description: Optional. Drag and drop images or recordings. Redact personal information first.
+    validations:
+      required: false
+      accept: ".png,.jpg,.jpeg,.gif,.webp,.mp4,.mov"
+
+  - type: upload
+    id: logs
+    attributes:
+      label: Relevant logs or crash reports
+      description: Optional. Attach logs or a zipped crash report after removing sensitive data.
+    validations:
+      required: false
+      accept: ".log,.txt,.json,.zip"
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Is the issue reproducible consistently?
+      options:
+        - Yes, every time
+        - No, intermittent
+        - Not sure
+      multiple: false
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, and private files from this report.
+          required: true

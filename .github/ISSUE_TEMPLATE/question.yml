@@ -1,0 +1,84 @@
+name: Question / support
+description: Ask a question about installing, configuring, or using PwEevee.
+title: "[Question]: "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the README, the latest release notes, and existing issues before opening a question.
+
+        Do not post passwords, API keys, signing certificates, provisioning profiles, private files, or other personal information.
+
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: The PwEevee release you are using.
+      placeholder: "e.g. 3.1.6.1"
+    validations:
+      required: true
+
+  - type: input
+    id: device-ios
+    attributes:
+      label: Device and iOS version
+      description: Optional. Include the device model and iOS version when relevant.
+      placeholder: "e.g. iPhone SE (iPhone12,8), iOS 17.6.1"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      description: How was PwEevee installed?
+      options:
+        - Sideloading
+        - Jailbreak
+        - Other
+      multiple: false
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Relevant component
+      description: Which part of PwEevee is your question about?
+      options:
+        - SpoTi.pw
+        - Chroma
+        - EeveeSpotify
+        - PwEevee
+        - Other
+      multiple: false
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or problem
+      description: Describe what you need help with and include the relevant context.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you already tried?
+      description: Optional. List troubleshooting steps, settings, or searches you have already completed.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked the README, latest release notes, and existing issues.
+          required: true
+        - label: I removed personal information, credentials, and private files from this question.
+          required: true

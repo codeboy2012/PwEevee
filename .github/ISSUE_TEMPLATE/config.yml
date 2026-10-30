@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Search existing issues
+    url: https://github.com/codeboy2012/PwEevee/issues?q=is%3Aissue
+    about: Check whether the issue, question, or compatibility report already exists before opening a new one.
+  - name: Latest PwEevee release
+    url: https://github.com/codeboy2012/PwEevee/releases/latest
+    about: Download the current release and read its release notes.
