@@ -18,6 +18,7 @@ injection, IPA/DEB packaging, validation, tests and release orchestration.
 | `build-system/_work/` | build scratch space (gitignored) |
 | `components/spotipw/` | the spoti.pw payload: `dylibs/spotifyglass.dylib`, MobileSubstrate filter, `manifest.json` with per-file SHA-256 |
 | `shared-dependencies/cydiasubstrate/` | CydiaSubstrate.framework + provenance |
+| `upstream/chroma.json` | Chroma public-version metadata from the official chroma.pw patcher; not bundled and no `.deb` |
 | `dependencies.json` | **single source of truth**: shared dependencies, the five load commands, duplicate policy |
 
 ## Why the spotipw payload lives here

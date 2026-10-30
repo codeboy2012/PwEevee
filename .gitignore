@@ -39,9 +39,11 @@ source/.claude/
 source/vendor/*.deb
 release-candidate/*.deb
 
-# Local logs, environment files and OS metadata
+# Local logs, environment files, Python caches and OS metadata
 *.log
 .env
 .env.local
+__pycache__/
+*.pyc
 .DS_Store
 Thumbs.db

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "Chroma",
+  "kind": "upstream-patcher",
+  "homepage": "https://chroma.pw/",
+  "source_url": "https://chroma.pw/patch",
+  "distribution": "official-browser-patcher",
+  "bundled": false,
+  "deb": null,
+  "status": "current",
+  "version": "0.51.0",
+  "spotify_version": "9.1.90",
+  "checked_at": "2026-10-30T03:18:59Z",
+  "last_success": {
+    "version": "0.51.0",
+    "spotify_version": "9.1.90",
+    "checked_at": "2026-10-30T03:18:59Z",
+    "source_url": "https://chroma.pw/patch"
+  },
+  "error": null
+}
