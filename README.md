@@ -15,6 +15,17 @@ IPA, then adds PwEevee's own icon picker, settings, diagnostics and packaging wo
 
 **v3.1.6.1 is the current legacy release.** v4 is being rebuilt from the ground up.
 
+## Project Statistics
+
+<div align="center">
+
+<a href="https://github.com/codeboy2012/PwEevee/releases"><img src="https://img.shields.io/github/downloads/codeboy2012/PwEevee/total?style=for-the-badge&amp;label=Downloads" alt="Total GitHub release downloads for PwEevee"></a>
+<a href="https://github.com/codeboy2012/PwEevee/forks"><img src="https://img.shields.io/github/forks/codeboy2012/PwEevee?style=for-the-badge&amp;label=Forks" alt="GitHub forks of PwEevee"></a>
+<a href="https://github.com/codeboy2012/PwEevee/watchers"><img src="https://img.shields.io/github/watchers/codeboy2012/PwEevee?style=for-the-badge&amp;label=Watchers" alt="GitHub watchers of PwEevee"></a>
+<a href="https://github.com/codeboy2012/PwEevee/stargazers"><img src="https://img.shields.io/github/stars/codeboy2012/PwEevee?style=for-the-badge&amp;label=Stars" alt="GitHub stars for PwEevee"></a>
+
+</div>
+
 ## Current release — v3.1.6.1
 
 v3.1.6.1 is built on Spotify **9.1.90** and is available now from GitHub Releases.
@@ -99,6 +110,18 @@ from the v4 website, which has not been built yet.
 v4 is in early development. There is no release date, no public beta and no
 feature-complete build. The roadmap describes phases, not a schedule. When there is
 something to test, it will be announced on GitHub Releases.
+
+## Star History
+
+<div align="center">
+  <a href="https://star-history.com/#codeboy2012/PwEevee&amp;Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=codeboy2012/PwEevee&amp;type=Date&amp;theme=dark">
+      <img src="https://api.star-history.com/svg?repos=codeboy2012/PwEevee&amp;type=Date" alt="PwEevee star history chart showing GitHub stars over time" width="100%">
+    </picture>
+  </a>
+  <sub>Star growth over time, powered by Star History.</sub>
+</div>
 
 ## Reporting and requests
 
