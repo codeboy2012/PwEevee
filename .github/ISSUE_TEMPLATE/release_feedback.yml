@@ -1,0 +1,99 @@
+name: Release testing feedback
+description: Share installation, launch, and feature results from testing a PwEevee release.
+title: '[Release feedback]: '
+labels:
+  - release-feedback
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for overall feedback after testing a release. Positive and negative results are both useful. Search existing feedback before submitting.
+  - type: input
+    id: release-version
+    attributes:
+      label: Release version
+      description: The PwEevee release you tested.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: e.g. 17.6.1
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: e.g. 9.1.90
+    validations:
+      required: true
+  - type: dropdown
+    id: installation-result
+    attributes:
+      label: Installation result
+      options:
+        - Installed and launched
+        - Installed but did not launch
+        - Installation failed
+        - Not attempted
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: launch-result
+    attributes:
+      label: Launch result
+      options:
+        - Works
+        - Crashes
+        - Freezes
+        - Infinite loading
+        - Not tested
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: feature-results
+    attributes:
+      label: Feature test results
+      description: Describe what worked, what did not, and what you tested.
+    validations:
+      required: true
+  - type: textarea
+    id: known-issues
+    attributes:
+      label: Known issues encountered
+      description: Optional. List bugs or limitations you found.
+  - type: textarea
+    id: comments
+    attributes:
+      label: Additional comments
+      description: Optional. Include anything else maintainers should know.
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: upload
+    id: evidence
+    attributes:
+      label: Screenshots or logs
+      description: Optional. Attach images or logs after removing personal information.
+    validations:
+      accept: .png,.jpg,.jpeg,.gif,.webp,.txt,.log,.json,.zip
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing release feedback before submitting.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

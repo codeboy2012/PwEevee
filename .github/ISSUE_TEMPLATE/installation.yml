@@ -1,0 +1,127 @@
+name: Installation / sideloading
+description: Report installation, signing, IPA import, or first-launch problems.
+title: '[Install]: '
+labels:
+  - installation
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form for installation and first-launch problems. Search existing issues before submitting.\n\nNever share certificates, account credentials, provisioning profiles, private keys, or other signing material."
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      options:
+        - Sideloadly
+        - SideStore
+        - AltStore
+        - LiveContainer
+        - TrollStore
+        - Jailbreak package manager
+        - Xcode
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: sideloading-app
+    attributes:
+      label: Sideloading application and version
+      description: Optional. Include the tool version if known.
+      placeholder: e.g. Sideloadly 0.55
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: The PwEevee release you are using.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: The Spotify app version involved.
+      placeholder: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: The iOS version on the affected device.
+      placeholder: e.g. 17.6.1
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: The device model or identifier.
+      placeholder: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: input
+    id: ipa-filename
+    attributes:
+      label: IPA filename
+      description: Optional. Use the exact filename you installed.
+      placeholder: e.g. PwEevee-3.1.6.1.ipa
+  - type: dropdown
+    id: installation-completes
+    attributes:
+      label: Does installation complete?
+      options:
+        - Yes
+        - No
+        - Partially
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Exact error message
+      description: Optional. Paste the message exactly as shown.
+      render: text
+  - type: dropdown
+    id: app-on-home-screen
+    attributes:
+      label: Does the app appear on the home screen?
+      options:
+        - Yes
+        - No
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: launches
+    attributes:
+      label: Does the app launch?
+      options:
+        - Yes
+        - No
+        - Crashes
+        - Not sure
+    validations:
+      required: true
+  - type: upload
+    id: installation-logs
+    attributes:
+      label: Installation logs
+      description: Optional. Attach logs after removing account, certificate, and device identifiers.
+    validations:
+      accept: .txt,.log,.json,.zip
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

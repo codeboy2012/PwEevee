@@ -1,0 +1,103 @@
+name: EeveeSpotify integration
+description: Report problems involving EeveeSpotify behavior or integration.
+title: '[EeveeSpotify]: '
+labels:
+  - eeveespotify
+  - integration
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for EeveeSpotify-specific behavior. Search existing issues before submitting.
+  - type: input
+    id: eevee-version
+    attributes:
+      label: EeveeSpotify version
+      description: The EeveeSpotify version shown in settings or metadata.
+      placeholder: e.g. 7.0.0
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      options:
+        - Premium spoofing
+        - Lyrics
+        - Downloads
+        - UI customization
+        - Settings
+        - Session
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: feature
+    attributes:
+      label: Feature involved
+      description: Name the feature or screen.
+      placeholder: e.g. Lyrics translation
+    validations:
+      required: true
+  - type: dropdown
+    id: previously-worked
+    attributes:
+      label: Did this feature previously work?
+      options:
+        - Yes
+        - No
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happens instead?
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Optional. Paste logs after removing account and device identifiers.
+      render: text
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic details
+      description: Optional. Include relevant settings, source metadata, or reproduction context.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

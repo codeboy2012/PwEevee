@@ -1,0 +1,120 @@
+name: Chroma integration
+description: Report problems involving the Chroma integration. Chroma was previously known as Spoti.pw (legacy).
+title: '[Chroma]: '
+labels:
+  - chroma
+  - integration
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: "Chroma is the current name for the upstream project previously known as Spoti.pw (legacy). It is one project, not two, and it is installed through its official browser-based patcher.\n\nPwEevee does not distribute a Chroma `.deb`; do not attach one or ask for one. Search existing issues before submitting."
+  - type: input
+    id: chroma-version
+    attributes:
+      label: Chroma version, if known
+      description: Use the version shown by the official Chroma page or patcher.
+      placeholder: e.g. 0.51.0
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: e.g. 17.6.1
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: dropdown
+    id: chroma-feature
+    attributes:
+      label: Affected Chroma feature
+      options:
+        - Patcher / installation
+        - UI
+        - Playback
+        - Lyrics
+        - Downloads
+        - Settings
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: official-workflow
+    attributes:
+      label: Does the issue also occur in the official Chroma workflow?
+      description: The official Chroma workflow uses Chroma's own patcher and installation path.
+      options:
+        - Yes
+        - No
+        - Not tested
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: pweevee-specific
+    attributes:
+      label: Is the issue specific to PwEevee integration?
+      options:
+        - Yes
+        - No
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happens instead?
+    validations:
+      required: true
+  - type: input
+    id: version-source
+    attributes:
+      label: Official Chroma version source
+      description: Optional. Paste the source URL and check time if you verified the version.
+      placeholder: e.g. https://chroma.pw/patch checked 2026-10-30 03:18 UTC
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Optional. Paste logs after removing account and device identifiers.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

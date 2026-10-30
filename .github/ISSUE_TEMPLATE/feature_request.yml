@@ -1,84 +1,100 @@
 name: Feature request
 description: Suggest a new capability or improvement for PwEevee.
-title: "[Feature]: "
+title: '[Feature]: '
 labels:
   - feature request
+  - enhancement
 body:
   - type: markdown
     attributes:
-      value: |
-        PwEevee v4 and later will introduce additional features and original enhancements beyond the existing integrations. Use this form to describe what you would like to see.
-
-        Search existing feature requests before submitting, and keep the proposal focused on one capability.
-
+      value: "PwEevee v4 and later will introduce significantly more features and original enhancements beyond the existing upstream integrations. Use this form to describe one focused proposal.\n\nSearch existing feature requests before submitting."
   - type: input
-    id: feature-name
+    id: feature-title
     attributes:
-      label: Feature name
-      description: Give the proposal a short, descriptive name.
-      placeholder: "e.g. Custom playback controls"
+      label: Feature title
+      description: A short, descriptive name for the proposal.
+      placeholder: e.g. Custom playback controls
     validations:
       required: true
-
   - type: dropdown
     id: category
     attributes:
       label: Feature category
-      description: Which area does this proposal belong to?
       options:
-        - UI / Design
+        - New PwEevee functionality
         - Spotify customization
+        - UI and design
         - Chroma integration
         - EeveeSpotify integration
-        - SpoTi.pw integration
-        - New PwEevee features
+        - App icon customization
+        - Lyrics
+        - Playback
+        - Downloads
+        - Performance
         - Compatibility
+        - Developer tools
         - Other
-      multiple: false
     validations:
       required: true
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Description of the proposed feature
-      description: Explain the feature and how it would work.
-    validations:
-      required: true
-
   - type: textarea
     id: problem
     attributes:
-      label: Problem it solves
-      description: What limitation or friction would this feature address?
+      label: Problem being addressed
+      description: What limitation or friction should this solve?
     validations:
       required: true
-
   - type: textarea
-    id: expected-behavior
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the feature and how it could work.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
     attributes:
       label: Expected behavior
-      description: Describe what the user should experience when this is implemented.
+      description: What should the user experience after it is implemented?
     validations:
       required: true
-
   - type: textarea
-    id: implementation
+    id: use-case
     attributes:
-      label: Suggested implementation
-      description: Optional. Share any technical approach, APIs, or references that may help.
+      label: Example use case
+      description: Walk through a concrete example.
     validations:
-      required: false
-
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
   - type: upload
-    id: references
+    id: visual-references
     attributes:
-      label: Additional screenshots or references
-      description: Optional. Drag and drop mockups or screenshots that help explain the proposal.
+      label: Visual references
+      description: Optional. Add mockups, screenshots, or a PDF that helps explain the proposal.
     validations:
-      required: false
-      accept: ".png,.jpg,.jpeg,.gif,.webp,.pdf"
-
+      accept: .png,.jpg,.jpeg,.gif,.webp,.pdf
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority or importance
+      options:
+        - Nice to have
+        - Important
+        - Critical for my workflow
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: target-release
+    attributes:
+      label: Is this intended for v4 or later?
+      options:
+        - v4
+        - Later than v4
+        - Not sure
+    validations:
+      required: true
   - type: checkboxes
     id: checklist
     attributes:

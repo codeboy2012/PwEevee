@@ -1,78 +1,68 @@
 name: Question / support
 description: Ask a question about installing, configuring, or using PwEevee.
-title: "[Question]: "
+title: '[Question]: '
 labels:
   - question
 body:
   - type: markdown
     attributes:
-      value: |
-        Check the README, the latest release notes, and existing issues before opening a question.
-
-        Do not post passwords, API keys, signing certificates, provisioning profiles, private files, or other personal information.
-
-  - type: input
-    id: pweevee-version
-    attributes:
-      label: PwEevee version
-      description: The PwEevee release you are using.
-      placeholder: "e.g. 3.1.6.1"
-    validations:
-      required: true
-
-  - type: input
-    id: device-ios
-    attributes:
-      label: Device and iOS version
-      description: Optional. Include the device model and iOS version when relevant.
-      placeholder: "e.g. iPhone SE (iPhone12,8), iOS 17.6.1"
-    validations:
-      required: false
-
+      value: Search existing issues and check the README and latest release notes before opening a question. Do not post credentials or private signing material.
   - type: dropdown
-    id: installation-method
+    id: category
     attributes:
-      label: Installation method
-      description: How was PwEevee installed?
+      label: Question category
       options:
-        - Sideloading
-        - Jailbreak
+        - Installation
+        - Configuration
+        - Compatibility
+        - Chroma
+        - EeveeSpotify
+        - Updates
+        - Distribution
+        - Development
         - Other
-      multiple: false
     validations:
       required: true
-
   - type: dropdown
     id: component
     attributes:
       label: Relevant component
-      description: Which part of PwEevee is your question about?
       options:
-        - SpoTi.pw
+        - PwEevee
         - Chroma
         - EeveeSpotify
-        - PwEevee
+        - App icons
         - Other
-      multiple: false
+        - Not sure
     validations:
       required: true
-
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: Optional. The release you are using.
+      placeholder: e.g. 3.1.6.1
+  - type: input
+    id: device-ios
+    attributes:
+      label: Device and iOS version
+      description: Optional. Include when relevant.
+      placeholder: e.g. iPhone SE (iPhone12,8), iOS 17.6.1
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
   - type: textarea
     id: question
     attributes:
-      label: Question or problem
-      description: Describe what you need help with and include the relevant context.
+      label: Question
+      description: Describe what you need help with and include relevant context.
     validations:
       required: true
-
   - type: textarea
     id: tried
     attributes:
       label: What have you already tried?
-      description: Optional. List troubleshooting steps, settings, or searches you have already completed.
-    validations:
-      required: false
-
+      description: Optional. List troubleshooting steps or searches.
   - type: checkboxes
     id: checklist
     attributes:
@@ -80,5 +70,5 @@ body:
       options:
         - label: I checked the README, latest release notes, and existing issues.
           required: true
-        - label: I removed personal information, credentials, and private files from this question.
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
           required: true

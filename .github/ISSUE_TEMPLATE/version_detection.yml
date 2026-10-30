@@ -1,0 +1,101 @@
+name: Updates / version detection
+description: Report incorrect release information, stale versions, or update-checking errors.
+title: '[Versions]: '
+labels:
+  - versioning
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form when a version number, release link, or update check is wrong. Chroma is the current name for the project previously known as Spoti.pw (legacy); do not report Spoti.pw as a separate upstream source. Search existing issues before submitting.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component being checked
+      options:
+        - PwEevee GitHub Releases
+        - Official Chroma website
+        - EeveeSpotify upstream releases
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: reported-version
+    attributes:
+      label: Reported version
+      description: The version currently shown.
+      placeholder: e.g. 3.1.5
+    validations:
+      required: true
+  - type: input
+    id: expected-version
+    attributes:
+      label: Expected version
+      description: The version you expected to see.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: source-url
+    attributes:
+      label: Source URL
+      description: The page or API the value came from.
+      placeholder: e.g. https://chroma.pw/patch
+    validations:
+      required: true
+  - type: input
+    id: last-check
+    attributes:
+      label: Time of last check
+      description: Optional. Include the timezone.
+      placeholder: e.g. 2026-10-30 03:18 UTC
+  - type: dropdown
+    id: stale
+    attributes:
+      label: Is the version information stale?
+      options:
+        - Yes
+        - No
+        - Not sure
+        - Not checked
+    validations:
+      required: true
+  - type: dropdown
+    id: update-error
+    attributes:
+      label: Does the update checker report an error?
+      options:
+        - Yes
+        - No
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: response
+    attributes:
+      label: Optional response output
+      description: Paste the relevant response after removing tokens or account data.
+      render: json
+  - type: textarea
+    id: metadata
+    attributes:
+      label: Optional metadata output
+      description: Paste the relevant metadata or version record.
+      render: json
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional. Explain how you verified the expected version.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

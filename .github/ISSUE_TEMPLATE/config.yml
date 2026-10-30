@@ -6,3 +6,9 @@ contact_links:
   - name: Latest PwEevee release
     url: https://github.com/codeboy2012/PwEevee/releases/latest
     about: Download the current release and read its release notes.
+  - name: Chroma official website
+    url: https://chroma.pw/
+    about: Official Chroma project and current public version information.
+  - name: Chroma installation page
+    url: https://chroma.pw/patch
+    about: Patch a decrypted IPA with Chroma using its official browser-based patcher.

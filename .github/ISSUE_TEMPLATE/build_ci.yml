@@ -1,0 +1,124 @@
+name: Build / CI failure
+description: Report reproducible build, packaging, or GitHub Actions failures.
+title: '[Build/CI]: '
+labels:
+  - build
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for developer-facing build and CI failures. Search existing issues before submitting. Never include CI secrets, authentication tokens, signing certificates, or private keys.
+  - type: input
+    id: workflow-name
+    attributes:
+      label: Workflow name
+      description: The exact workflow or build command.
+      placeholder: e.g. PwEevee deb
+    validations:
+      required: true
+  - type: input
+    id: job-name
+    attributes:
+      label: Job name
+      description: The failing job or step group.
+      placeholder: e.g. deb
+    validations:
+      required: true
+  - type: input
+    id: commit-sha
+    attributes:
+      label: Commit SHA
+      description: The commit being built.
+      placeholder: e.g. d8a4d08
+    validations:
+      required: true
+  - type: input
+    id: branch
+    attributes:
+      label: Branch
+      description: The branch or ref.
+      placeholder: e.g. main
+    validations:
+      required: true
+  - type: dropdown
+    id: build-target
+    attributes:
+      label: Build target
+      options:
+        - PwEevee IPA
+        - PwEevee deb
+        - Chroma metadata check
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: runner-os
+    attributes:
+      label: Runner operating system
+      options:
+        - macOS
+        - Ubuntu
+        - Windows
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: tool-versions
+    attributes:
+      label: Relevant tool versions
+      description: Optional. Include Xcode, Theos, Python, Perl, or package-manager versions.
+      render: text
+  - type: input
+    id: failed-step
+    attributes:
+      label: Failed step
+      description: The step or command that failed.
+      placeholder: e.g. Build the deb
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should the build have done?
+    validations:
+      required: true
+  - type: textarea
+    id: actual-error
+    attributes:
+      label: Actual error
+      description: Paste the short error message.
+    validations:
+      required: true
+  - type: textarea
+    id: full-output
+    attributes:
+      label: Full error output
+      description: Optional. Paste the relevant tail of the log after removing secrets.
+      render: shell
+  - type: textarea
+    id: yaml
+    attributes:
+      label: Optional YAML snippet
+      description: Paste only the failing workflow or configuration section.
+      render: yaml
+  - type: textarea
+    id: metadata
+    attributes:
+      label: Optional JSON metadata
+      description: Paste relevant build metadata after removing secrets.
+      render: json
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing build and CI issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

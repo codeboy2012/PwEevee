@@ -1,98 +1,118 @@
 name: Compatibility report
-description: Report which PwEevee features work on a specific device and iOS version.
-title: "[Compatibility]: "
+description: Report what works or does not work on a specific device, iOS version, and Spotify version.
+title: '[Compatibility]: '
 labels:
   - compatibility
 body:
   - type: markdown
     attributes:
-      value: |
-        Use this form to track how PwEevee behaves across devices, iOS versions, and Spotify versions.
-
-        Search existing compatibility reports first. Do not include passwords, API keys, signing certificates, provisioning profiles, private files, or other personal information.
-
+      value: Use this form for both successful and unsuccessful compatibility results. Search existing compatibility reports before submitting.
   - type: input
     id: device-model
     attributes:
       label: Device model
       description: The device model or identifier.
-      placeholder: "e.g. iPhone SE (iPhone12,8)"
+      placeholder: e.g. iPhone SE (iPhone12,8)
     validations:
       required: true
-
   - type: input
     id: ios-version
     attributes:
-      label: iOS version
-      description: The iOS version installed on the device.
-      placeholder: "e.g. 17.6.1"
+      label: Exact iOS version
+      description: Include the full version number.
+      placeholder: e.g. 17.6.1
     validations:
       required: true
-
   - type: input
     id: spotify-version
     attributes:
       label: Spotify version
-      description: The Spotify app version used with PwEevee.
-      placeholder: "e.g. 9.1.90"
+      description: e.g. 9.1.90
     validations:
       required: true
-
   - type: input
     id: pweevee-version
     attributes:
       label: PwEevee version
-      description: The PwEevee release used for this report.
-      placeholder: "e.g. 3.1.6.1"
+      description: e.g. 3.1.6.1
     validations:
       required: true
-
   - type: dropdown
     id: installation-method
     attributes:
       label: Installation method
-      description: How was PwEevee installed?
       options:
         - Sideloading
         - Jailbreak
         - Other
-      multiple: false
+        - Not sure
     validations:
       required: true
-
-  - type: textarea
-    id: working-features
+  - type: dropdown
+    id: working-components
     attributes:
-      label: Working features
-      description: List the features that work correctly on this configuration.
+      label: Working components
+      description: Select every component that works.
+      options:
+        - All tested components work
+        - PwEevee core
+        - Chroma
+        - EeveeSpotify
+        - App icons
+        - Downloads
+        - Playback
+        - Lyrics
+        - UI customization
+        - Other
+        - Not sure
+      multiple: true
     validations:
       required: true
-
-  - type: textarea
-    id: broken-features
+  - type: dropdown
+    id: broken-components
     attributes:
-      label: Features that are not working
-      description: List the features that fail, including any error messages you see.
+      label: Broken components
+      description: Select every component that does not work.
+      options:
+        - No broken components
+        - PwEevee core
+        - Chroma
+        - EeveeSpotify
+        - App icons
+        - Downloads
+        - Playback
+        - Lyrics
+        - UI customization
+        - Other
+        - Not sure
+      multiple: true
     validations:
       required: true
-
   - type: textarea
-    id: notes
+    id: feature-availability
     attributes:
-      label: Additional notes
-      description: Optional. Add anything else that may affect compatibility, such as tweaks or configuration changes.
-    validations:
-      required: false
-
+      label: Feature availability
+      description: Optional. Note which features are present or missing.
+  - type: textarea
+    id: known-limitations
+    attributes:
+      label: Known limitations
+      description: Optional. Describe limits that other users should expect.
+  - type: textarea
+    id: observations
+    attributes:
+      label: Additional observations
+      description: Optional. Include anything else that affects compatibility.
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
   - type: upload
     id: evidence
     attributes:
       label: Screenshots or logs
-      description: Optional. Drag and drop images or attach a zipped log bundle after removing sensitive data.
+      description: Optional. Drag and drop images or attach a text/log/JSON file after redacting personal data.
     validations:
-      required: false
-      accept: ".png,.jpg,.jpeg,.gif,.webp,.log,.txt,.zip"
-
+      accept: .png,.jpg,.jpeg,.gif,.webp,.log,.txt,.json,.zip
   - type: checkboxes
     id: checklist
     attributes:
@@ -100,5 +120,5 @@ body:
       options:
         - label: I searched existing compatibility reports and did not find this configuration.
           required: true
-        - label: I removed personal information, credentials, and private files from this report.
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
           required: true

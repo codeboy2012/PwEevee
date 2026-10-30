@@ -1,0 +1,107 @@
+name: UI / appearance
+description: Report visual, theme, layout, or interface problems.
+title: '[Appearance]: '
+labels:
+  - ui/ux
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for visual or layout problems. For app icon issues, use the dedicated app icons form. Search existing issues before submitting.
+  - type: dropdown
+    id: interface
+    attributes:
+      label: Affected interface
+      options:
+        - Now Playing
+        - Home
+        - Library
+        - Search
+        - Settings
+        - Lock screen
+        - Lyrics
+        - Navigation / tab bar
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme or appearance setting
+      options:
+        - Light
+        - Dark
+        - System
+        - Custom
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: e.g. 17.6.1
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected appearance
+      description: Describe how it should look or behave.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual appearance
+      description: Describe what is wrong instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: device-specific
+    attributes:
+      label: Is the issue device-specific?
+      options:
+        - Only this device
+        - Multiple devices
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional but strongly recommended. Redact personal information first.
+    validations:
+      accept: .png,.jpg,.jpeg,.gif,.webp
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Relevant configuration
+      description: Optional. Paste only the relevant settings; remove personal values.
+      render: yaml
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Optional. Paste logs after redacting personal data.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

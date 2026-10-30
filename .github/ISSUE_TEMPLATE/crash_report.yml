@@ -1,0 +1,158 @@
+name: Crash / launch failure
+description: Report crashes, freezes, infinite loading, or Spotify failing to launch.
+title: '[Crash]: '
+labels:
+  - crash
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form when Spotify crashes, freezes, hangs, loads forever, or closes unexpectedly. Search existing issues before submitting.
+  - type: dropdown
+    id: crash-type
+    attributes:
+      label: Type of crash
+      description: What best describes the failure?
+      options:
+        - App crashes on launch
+        - Crashes after launch
+        - Freeze or hang
+        - Infinite loading
+        - Unexpected termination
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: launches
+    attributes:
+      label: Does Spotify launch at all?
+      options:
+        - No
+        - Yes, but it is unusable
+        - Yes, then it crashes
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: timing
+    attributes:
+      label: When does it fail?
+      options:
+        - Immediately
+        - After a specific action
+        - Randomly
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: last-working-version
+    attributes:
+      label: Last known working version
+      description: Optional. Which PwEevee version last worked?
+      placeholder: e.g. 3.1.5
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: The PwEevee release you are using.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: The Spotify app version involved.
+      placeholder: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: The iOS version on the affected device.
+      placeholder: e.g. 17.6.1
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: The device model or identifier.
+      placeholder: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      description: How was PwEevee installed?
+      options:
+        - Sideloading
+        - Jailbreak
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: occurred-at
+    attributes:
+      label: Approximate time of occurrence
+      description: Optional. Include the timezone if possible.
+      placeholder: e.g. 2026-10-30 03:00 UTC
+  - type: textarea
+    id: action-before
+    attributes:
+      label: What were you doing before it failed?
+      description: Optional. Describe the last action or screen.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the shortest reliable reproduction.
+    validations:
+      required: true
+  - type: dropdown
+    id: restart-changes
+    attributes:
+      label: Does restarting Spotify or the device change anything?
+      options:
+        - Yes, it temporarily fixes it
+        - No
+        - Not tried
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: upload
+    id: crash-files
+    attributes:
+      label: Crash reports or logs
+      description: Optional. Attach a text/log/JSON file or a zip. Do not upload private signing data.
+    validations:
+      accept: .txt,.log,.json,.zip
+  - type: textarea
+    id: stack-trace
+    attributes:
+      label: Stack trace
+      description: Optional. Paste the relevant stack trace after redacting personal data.
+      render: text
+  - type: textarea
+    id: console-output
+    attributes:
+      label: Console output
+      description: Optional. Paste relevant console or shell output.
+      render: shell
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

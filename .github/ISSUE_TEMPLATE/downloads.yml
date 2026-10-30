@@ -1,0 +1,95 @@
+name: Downloads / offline
+description: Report download failures, offline storage, or offline playback problems.
+title: '[Downloads]: '
+labels:
+  - downloads
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for downloading and offline functionality. Search existing issues before submitting.
+  - type: dropdown
+    id: download-feature
+    attributes:
+      label: Affected feature
+      options:
+        - Download track
+        - Download album
+        - Download playlist
+        - Offline playback
+        - Download storage
+        - Download settings
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: What content is affected?
+      options:
+        - All content
+        - Some tracks or albums
+        - One playlist
+        - Only offline playback
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Error messages
+      description: Optional. Paste the exact message shown.
+      render: text
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happens instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the shortest reliable reproduction.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic output
+      description: Optional. Paste exported diagnostics or logs after removing personal data.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

@@ -1,0 +1,116 @@
+name: Playback / streaming
+description: Report playback, streaming, audio-output, or control problems.
+title: '[Playback]: '
+labels:
+  - playback
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for playback or streaming behavior. For downloads and offline storage, use the downloads form. Search existing issues before submitting.
+  - type: dropdown
+    id: playback-feature
+    attributes:
+      label: Affected playback feature
+      options:
+        - Play / pause
+        - Skip / previous
+        - Seek
+        - Queue
+        - Volume
+        - Audio effects
+        - Speed / pitch
+        - Lyrics sync
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: connectivity
+    attributes:
+      label: Online or offline status
+      options:
+        - Online
+        - Offline
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: dropdown
+    id: audio-output
+    attributes:
+      label: Audio output
+      options:
+        - Speaker
+        - Wired headphones
+        - Bluetooth
+        - AirPlay
+        - CarPlay
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: starts
+    attributes:
+      label: What happens when playback starts?
+      description: Describe the first visible or audible failure.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happens instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Reproduction frequency
+      options:
+        - Every time
+        - Often
+        - Sometimes
+        - Once
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Optional. Paste logs after removing account and device identifiers.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

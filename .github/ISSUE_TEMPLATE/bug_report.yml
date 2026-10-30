@@ -1,52 +1,53 @@
 name: Bug report
-description: Report a reproducible problem with PwEevee so it can be investigated.
-title: "[Bug]: "
+description: Report a general PwEevee problem that does not fit a more specific issue form.
+title: '[Bug]: '
 labels:
   - bug
+  - needs-triage
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking the time to report a problem.
-
-        Search the existing issues first. Do not include passwords, API keys, signing certificates, provisioning profiles, private files, or other personal information. Redact anything sensitive from logs and screenshots.
-
+      value: "Use this form for a general bug. For crashes, installation, compatibility, regressions, playback, downloads, appearance, app icons, performance, or upstream integrations, choose the dedicated form.\n\nChroma was previously known as Spoti.pw (legacy). It is one upstream project, not two.\n\nSearch existing issues before submitting."
   - type: input
-    id: spotify-version
+    id: summary
     attributes:
-      label: Spotify version
-      description: The Spotify app version where the problem occurs.
-      placeholder: "e.g. 9.1.90"
+      label: Issue summary
+      description: A short, specific title for the problem.
+      placeholder: e.g. Settings opens to a blank page
     validations:
       required: true
-
   - type: input
     id: pweevee-version
     attributes:
       label: PwEevee version
       description: The PwEevee release you are using.
-      placeholder: "e.g. 3.1.6.1"
+      placeholder: e.g. 3.1.6.1
     validations:
       required: true
-
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: The Spotify app version involved.
+      placeholder: e.g. 9.1.90
+    validations:
+      required: true
   - type: input
     id: ios-version
     attributes:
       label: iOS version
-      description: The iOS version installed on the affected device.
-      placeholder: "e.g. 17.6.1"
+      description: The iOS version on the affected device.
+      placeholder: e.g. 17.6.1
     validations:
       required: true
-
   - type: input
     id: device-model
     attributes:
       label: Device model
       description: The device model or identifier.
-      placeholder: "e.g. iPhone SE (iPhone12,8)"
+      placeholder: e.g. iPhone SE (iPhone12,8)
     validations:
       required: true
-
   - type: dropdown
     id: installation-method
     attributes:
@@ -56,25 +57,32 @@ body:
         - Sideloading
         - Jailbreak
         - Other
-      multiple: false
-    validations:
-      required: true
-
+        - Not sure
   - type: dropdown
     id: component
     attributes:
-      label: Relevant component
+      label: Affected component
       description: Which part of PwEevee is affected?
       options:
-        - SpoTi.pw
+        - PwEevee
         - Chroma
         - EeveeSpotify
-        - PwEevee
+        - App icons
         - Other
-      multiple: false
+        - Not sure
     validations:
       required: true
-
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity / impact
+      description: How much does this affect normal use?
+      options:
+        - Critical — app unusable
+        - High — major feature broken
+        - Medium — workaround exists
+        - Low — cosmetic or minor
+        - Not sure
   - type: textarea
     id: description
     attributes:
@@ -83,65 +91,61 @@ body:
       placeholder: A concise summary of the problem.
     validations:
       required: true
-
   - type: textarea
-    id: steps-to-reproduce
+    id: steps
     attributes:
       label: Steps to reproduce
       description: List the exact steps that trigger the problem.
-      placeholder: |
-        1. Open ...
-        2. Tap ...
-        3. Observe ...
+      placeholder: "1. Open ...\n2. Tap ...\n3. Observe ..."
     validations:
       required: true
-
   - type: textarea
-    id: expected-behavior
+    id: expected
     attributes:
       label: Expected behavior
       description: What did you expect to happen?
     validations:
       required: true
-
   - type: textarea
-    id: actual-behavior
+    id: actual
     attributes:
       label: Actual behavior
       description: What happened instead?
     validations:
       required: true
-
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequency
+      description: How often does the problem occur?
+      options:
+        - Every time
+        - Often
+        - Sometimes
+        - Once
+        - Not sure
+  - type: input
+    id: first-appeared
+    attributes:
+      label: When did it first appear?
+      description: Optional. A date, release, or action that preceded it.
+      placeholder: e.g. after updating to 3.1.6.1
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
   - type: upload
     id: screenshots
     attributes:
       label: Screenshots or screen recordings
       description: Optional. Drag and drop images or recordings. Redact personal information first.
     validations:
-      required: false
-      accept: ".png,.jpg,.jpeg,.gif,.webp,.mp4,.mov"
-
-  - type: upload
+      accept: .png,.jpg,.jpeg,.gif,.webp,.mp4,.mov
+  - type: textarea
     id: logs
     attributes:
-      label: Relevant logs or crash reports
-      description: Optional. Attach logs or a zipped crash report after removing sensitive data.
-    validations:
-      required: false
-      accept: ".log,.txt,.json,.zip"
-
-  - type: dropdown
-    id: reproducibility
-    attributes:
-      label: Is the issue reproducible consistently?
-      options:
-        - Yes, every time
-        - No, intermittent
-        - Not sure
-      multiple: false
-    validations:
-      required: true
-
+      label: Diagnostic logs
+      description: Optional. Paste relevant logs or attach a text file after removing sensitive data.
+      render: text
   - type: checkboxes
     id: checklist
     attributes:
@@ -149,5 +153,5 @@ body:
       options:
         - label: I searched existing issues and did not find a duplicate.
           required: true
-        - label: I removed personal information, credentials, and private files from this report.
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
           required: true

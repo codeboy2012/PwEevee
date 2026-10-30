@@ -1,0 +1,106 @@
+name: Performance / stability
+description: Report slowdowns, lag, excessive resource use, or stability problems.
+title: '[Performance]: '
+labels:
+  - performance
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for performance or stability problems. You do not need to measure technical metrics; describe what you experience. Search existing issues before submitting.
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: e.g. 17.6.1
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: PwEevee version
+      description: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: dropdown
+    id: operation
+    attributes:
+      label: Affected operation
+      options:
+        - App launch
+        - Scrolling / navigation
+        - Playback
+        - Lyrics
+        - Downloads
+        - Settings
+        - Background use
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: when
+    attributes:
+      label: When does the slowdown occur?
+      description: Describe the screen, action, or time window.
+    validations:
+      required: true
+  - type: dropdown
+    id: pattern
+    attributes:
+      label: Is it constant or intermittent?
+      options:
+        - Constant
+        - Intermittent
+        - Only after long use
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: restart-changes
+    attributes:
+      label: Does restarting Spotify or the device change it?
+      options:
+        - Yes, it improves
+        - No
+        - Not tried
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: observations
+    attributes:
+      label: Optional observations
+      description: Optional. Describe battery, heat, memory pressure, or other symptoms.
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: upload
+    id: evidence
+    attributes:
+      label: Screenshots or logs
+      description: Optional. Attach screenshots, logs, or exported diagnostics after removing personal data.
+    validations:
+      accept: .png,.jpg,.jpeg,.gif,.webp,.txt,.log,.json,.zip
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

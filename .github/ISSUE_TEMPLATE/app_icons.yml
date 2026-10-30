@@ -1,0 +1,104 @@
+name: App icons
+description: Report alternate-icon selection, rendering, or reversion problems.
+title: '[Icons]: '
+labels:
+  - icons
+  - ui/ux
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for alternate app icons and icon customization. Search existing issues before submitting.
+  - type: input
+    id: selected-icon
+    attributes:
+      label: Selected icon
+      description: The icon you chose.
+      placeholder: e.g. Blue, Glass, or a custom name
+    validations:
+      required: true
+  - type: input
+    id: expected-icon
+    attributes:
+      label: Expected icon
+      description: What should have appeared?
+    validations:
+      required: true
+  - type: input
+    id: actual-icon
+    attributes:
+      label: Actual icon
+      description: What appeared instead?
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: e.g. 17.6.1
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: e.g. iPhone SE (iPhone12,8)
+    validations:
+      required: true
+  - type: dropdown
+    id: picker-works
+    attributes:
+      label: Does the icon picker work?
+      options:
+        - Yes
+        - No
+        - Partially
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: icon-changes
+    attributes:
+      label: Does the icon change successfully?
+      options:
+        - Yes
+        - No
+        - Sometimes
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: revert-works
+    attributes:
+      label: Does reverting to the default icon work?
+      options:
+        - Yes
+        - No
+        - Not tried
+        - Not sure
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. Show the picker and the resulting home-screen icon. Redact personal information.
+    validations:
+      accept: .png,.jpg,.jpeg,.gif,.webp
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional. Include steps, device state, or relevant settings.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

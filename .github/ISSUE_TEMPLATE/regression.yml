@@ -1,0 +1,123 @@
+name: Regression report
+description: Report behavior that worked in an older release and stopped working.
+title: '[Regression]: '
+labels:
+  - regression
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form when a feature worked before and stopped working after an update. Search existing issues before submitting.
+  - type: input
+    id: last-working-version
+    attributes:
+      label: Last version where it worked
+      description: The last PwEevee version that behaved correctly.
+      placeholder: e.g. 3.1.5
+    validations:
+      required: true
+  - type: input
+    id: first-broken-version
+    attributes:
+      label: First version where it stopped working
+      description: The first PwEevee version that shows the problem.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: affected-feature
+    attributes:
+      label: Affected feature
+      description: Name the feature or screen.
+      placeholder: e.g. Lock-screen lyrics
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: What happens now?
+    validations:
+      required: true
+  - type: textarea
+    id: previous-behavior
+    attributes:
+      label: Previous behavior
+      description: What happened in the older version?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the shortest reliable reproduction.
+    validations:
+      required: true
+  - type: dropdown
+    id: consistency
+    attributes:
+      label: Is the regression consistent?
+      options:
+        - Yes, every time
+        - Intermittent
+        - Once
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: pweevee-version
+    attributes:
+      label: Current PwEevee version
+      description: The version you are running now.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version
+      description: The Spotify version used with both builds.
+      placeholder: e.g. 9.1.90
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version
+      description: Optional. Include if the environment changed.
+      placeholder: e.g. 17.6.1
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model
+      description: Optional. Include if the device changed.
+      placeholder: e.g. iPhone SE (iPhone12,8)
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      description: Optional. Include if the installation route changed.
+      options:
+        - Sideloading
+        - Jailbreak
+        - Other
+        - Not sure
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: comparison-logs
+    attributes:
+      label: Comparison logs
+      description: Optional. Paste logs from the working and broken versions side by side.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

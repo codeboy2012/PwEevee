@@ -1,0 +1,84 @@
+name: Localization / accessibility
+description: Report translation, wording, readability, or accessibility problems.
+title: '[Localization]: '
+labels:
+  - localization
+  - accessibility
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for wording, translation, readability, or accessibility improvements. Search existing issues before submitting.
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue type
+      options:
+        - Translation
+        - Wording / readability
+        - Accessibility
+        - Text layout
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: Affected screen
+      description: Where does the text or behavior appear?
+      placeholder: e.g. Settings > About
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: The language or locale involved.
+      placeholder: e.g. English (US), German
+    validations:
+      required: true
+  - type: textarea
+    id: current-text
+    attributes:
+      label: Current text or behavior
+      description: Quote the current text or describe the barrier.
+    validations:
+      required: true
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested correction
+      description: Provide the replacement text or behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: What should the user experience?
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. Show the relevant screen. Redact personal information.
+    validations:
+      accept: .png,.jpg,.jpeg,.gif,.webp
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional. Include screen-reader, contrast, or layout context.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

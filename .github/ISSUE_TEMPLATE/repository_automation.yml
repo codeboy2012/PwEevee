@@ -1,0 +1,87 @@
+name: Repository automation
+description: Report broken workflows, metadata automation, or repository tooling problems.
+title: '[Automation]: '
+labels:
+  - automation
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form for repository automation, workflow, or metadata problems. Website v4 work is tracked separately from retired v3 automation.\n\nSearch existing issues before submitting."
+  - type: input
+    id: workflow
+    attributes:
+      label: Affected workflow or feature
+      description: Name the automation involved.
+      placeholder: e.g. issue labels or release metadata
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Relevant commit
+      description: Optional. The commit or ref where the problem occurs.
+      placeholder: e.g. d8a4d08
+  - type: dropdown
+    id: trigger
+    attributes:
+      label: Trigger event
+      options:
+        - push
+        - pull_request
+        - schedule
+        - workflow_dispatch
+        - release
+        - issue event
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should the automation do?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Optional. Paste logs after removing secrets and personal data.
+      render: text
+  - type: dropdown
+    id: repeatable
+    attributes:
+      label: Is the issue repeatable?
+      options:
+        - Yes, every time
+        - Intermittent
+        - Once
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional. Include links to the affected run or metadata.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing automation issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true

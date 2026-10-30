@@ -1,0 +1,99 @@
+name: AltSource / distribution
+description: Report package listings, distribution metadata, or installation-source problems.
+title: '[Distribution]: '
+labels:
+  - distribution
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: "Use this form for AltSource, repository, or package-listing problems. Chroma has no PwEevee-distributed `.deb`; do not attach one.\n\nSearch existing issues before submitting."
+  - type: dropdown
+    id: distribution-source
+    attributes:
+      label: Distribution source
+      options:
+        - PwEevee GitHub Releases
+        - AltStore
+        - SideStore
+        - Sileo
+        - Zebra
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - PwEevee
+        - Chroma
+        - EeveeSpotify
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: Package / version shown
+      description: The version currently listed.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: expected-version
+    attributes:
+      label: Expected package / version
+      description: The version that should be listed.
+      placeholder: e.g. 3.1.6.1
+    validations:
+      required: true
+  - type: input
+    id: spotify-compatibility
+    attributes:
+      label: Spotify compatibility version
+      description: The Spotify version the listing should support.
+      placeholder: e.g. 9.1.90
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: download-error
+    attributes:
+      label: Reported download error
+      description: Optional. Paste the exact error message.
+      render: text
+  - type: dropdown
+    id: url-works
+    attributes:
+      label: Does the download URL work?
+      options:
+        - Yes
+        - No
+        - Not tried
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: metadata
+    attributes:
+      label: Optional metadata or JSON output
+      description: Paste only the relevant listing fields.
+      render: json
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional. Include the source URL and steps you used.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I removed personal information, credentials, private keys, certificates, and signing files from this report.
+          required: true
