@@ -6,8 +6,7 @@
 #
 # Inputs
 #   website/data/appsource-plists.json  Info.plist facts read out of each release
-#                                       IPA, keyed by asset SHA-256 (the
-#                                       appsource-update.yml workflow appends)
+#                                       IPA, keyed by asset SHA-256
 #   website/data/releases.json          GitHub release data (update-releases.pl)
 #
 # Output

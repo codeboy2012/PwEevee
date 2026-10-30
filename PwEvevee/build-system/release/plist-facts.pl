@@ -4,8 +4,7 @@
 #   (no Key args = print every top-level string key as JSON)
 ##   XML and binary plist inputs are both handled; output is a flat JSON object
 # mapping key → scalar string, ready to feed into update-appsource.pl's
-# registry through appsource-update.yml. Reuses the same binary-plist reader
-# as the audit tooling (audit/ipas/tools/bpkeys.pl) but emits JSON.
+# registry. Emits the values as JSON.
 use strict;
 use warnings;
 use JSON::PP;

@@ -4,7 +4,6 @@
 # ============================================================================
 #
 #   perl PwEvevee/build-system/release/update-altsource.pl [options]
-#   scripts/update-releases.sh                 (runs this as part of the refresh)
 #
 # An AltSource is the JSON manifest format AltStore / SideStore consume. It is a
 # DIFFERENT kind of thing from a GitHub release, and this script keeps it that

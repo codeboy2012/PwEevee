@@ -4,7 +4,6 @@
 # ============================================================================
 #
 #   perl PwEvevee/build-system/release/update-releases.pl [options]
-#   scripts/update-releases.sh                 (same thing, one command)
 #
 # Repository coordinates are read from website/data/projects.json — every repo is
 # declared exactly once, there. For each project this script:

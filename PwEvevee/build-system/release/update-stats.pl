@@ -4,7 +4,6 @@
 # ============================================================================
 #
 #   perl PwEevee/build-system/release/update-stats.pl [options]
-#   scripts/update-stats.sh                   (same thing, one command)
 #
 # Like update-releases.pl this script trusts website/data/projects.json as the
 # single declaration of every repository, talks to the network only through
