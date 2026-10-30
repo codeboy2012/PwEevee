@@ -6,41 +6,41 @@
             "latest": {
                "asset_downloads": [
                   {
-                     "download_count": 6853,
+                     "download_count": 6899,
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64.deb"
                   },
                   {
-                     "download_count": 1516,
+                     "download_count": 1527,
                      "name": "com.eevee.spotify_7.0.0_iphoneos-arm64e-roothide.deb"
                   },
                   {
-                     "download_count": 2791,
+                     "download_count": 2802,
                      "name": "txt.txt"
                   }
                ],
-               "downloads": 11160,
+               "downloads": 11228,
                "version": "v7.0.0"
             },
-            "release_downloads": 54080,
+            "release_downloads": 54150,
             "releases_summed": 8
          },
          "pweevee": {
             "latest": {
                "asset_downloads": [
                   {
-                     "download_count": 35,
-                     "name": "PwEevee-3.1.5.ipa"
+                     "download_count": 0,
+                     "name": "com.spotify.client_9.1.90_und3fined.ipa"
                   },
                   {
-                     "download_count": 12,
-                     "name": "com.spotify.client_9.1.90_und3fined.ipa"
+                     "download_count": 0,
+                     "name": "PwEevee-3.1.6.1.ipa"
                   }
                ],
-               "downloads": 47,
-               "version": "v3.1.5"
+               "downloads": 0,
+               "version": "v3.1.6.1"
             },
-            "release_downloads": 837,
-            "releases_summed": 10
+            "release_downloads": 840,
+            "releases_summed": 11
          },
          "spotipw": {
             "latest": {
@@ -62,10 +62,10 @@
          }
       },
       "release_data_found": 3,
-      "release_data_generated_at": "2026-10-29T21:17:42Z",
-      "total": 54917
+      "release_data_generated_at": "2026-10-30T01:13:50Z",
+      "total": 54990
    },
-   "generated_at": "2026-10-29T21:17:44Z",
+   "generated_at": "2026-10-30T01:15:22Z",
    "generator": "PwEevee/build-system/release/update-stats.pl",
    "metric_notes": {
       "downloads": "sum of per-asset download_count over the release history tracked in website/data/releases.json (across all projects)",
@@ -78,14 +78,14 @@
    "repos": [
       {
          "available": true,
-         "downloads_total": 837,
-         "etag": "\"462839ffb12286efe3224dc013561addc26311594197567edf5584c69c9948aa\"",
-         "fetched_at": "2026-10-29T21:17:43Z",
+         "downloads_total": 840,
+         "etag": "\"7a6c553580532df5d77674bd2aba5b8263b2ae04c50bae38f6c95659b9ba15e3\"",
+         "fetched_at": "2026-10-30T01:15:20Z",
          "forks": 2,
          "homepage": "https://pweevee.skytweak.dpdns.org/",
          "name": "PwEevee",
          "open_issues": 1,
-         "pushed_at": "2026-10-29T16:19:38Z",
+         "pushed_at": "2026-10-30T00:59:20Z",
          "repo": "codeboy2012/PwEevee",
          "repo_url": "https://github.com/codeboy2012/PwEevee",
          "slug": "pweevee",
@@ -120,16 +120,16 @@
          "repo_url": "https://github.com/skopevoj/spoti.pw",
          "slug": "spotipw",
          "stale": true,
-         "stale_since": "2026-10-29T21:17:43Z",
+         "stale_since": "2026-10-30T01:15:20Z",
          "stars": 0,
          "subscribers": 0
       },
       {
          "available": true,
          "downloads_total": 54000,
-         "etag": "\"c69ddd108ca4be69c8fa06342df989485b972c4b649c1d31978ba03742a1d105\"",
-         "fetched_at": "2026-10-29T21:17:44Z",
-         "forks": 5040,
+         "etag": "\"cacd8c6ef9134e1f9c91dd8a4c4dc02a045ce93ad65a87c3d2cd67e0358d05c6\"",
+         "fetched_at": "2026-10-30T01:15:22Z",
+         "forks": 5045,
          "homepage": "https://github.com/SideloadLabs/Eevee-Alt-Source/raw/refs/heads/main/apps.json",
          "name": "EeveeSpotify",
          "open_issues": 36,
@@ -138,7 +138,7 @@
          "repo_url": "https://github.com/SideloadLabs/EeveeSpotifyReincarnated",
          "slug": "eeveespotify",
          "stale": false,
-         "stars": 1448,
+         "stars": 1451,
          "subscribers": 18,
          "topics": []
       }
