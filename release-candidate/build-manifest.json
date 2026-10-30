@@ -1,63 +1,390 @@
 {
-  "project": "pweevee-unified (spoti.pw + EeveeSpotify integration build)",
+  "project": "PwEevee",
+  "release": "3.1.6.1",
+  "public_version": "3.1.6.1",
+  "release_candidate": true,
+  "publication": "published",
+  "release_tag": "v3.1.6.1",
+  "release_url": "https://github.com/codeboy2012/PwEevee/releases/tag/v3.1.6.1",
   "spotify_version": "9.1.90",
   "spotify_build": "919002269",
-  "spotipw_version": "3.1.0",
-  "spotipw_commit": "unknown (migrated source tree, no git metadata; source manifest sha256 2ffe977aa3437709a5e86b051bfe7ce10accc6412d5f9d68059315628c102155)",
-  "eevee_version": "7.0.0",
-  "eevee_commit": "unknown (binary release 6.6.8-selfcontained.1)",
-  "build_date": "2026-10-27T16:02:00Z",
-  "public_version": "3.1.0",
-  "ipa_path": "dist/PwEevee-3.1.0.ipa (delivered copy: C:\\Users\\sleepy\\Downloads\\PwEevee-3.1.0.ipa)",
-  "ipa_sha256": "fd3f41e21b93a1585492c2a45112715dd9183c1f7b7370074e91866210f87dc2",
-  "ipa_size": 147039801,
-  "ipa_members": 1193,
+  "build_date": "2026-10-29T18:22:00Z",
+  "source": {
+    "tree": "source/",
+    "branch": "cleanup/v3.1.6.1-remote",
+    "commit": "2b4c6ee",
+    "base_remote_commit": "95886c2",
+    "source_tree_hash": "7698137bf7cde14190fbc687ef57f7fe2e0008d7",
+    "internal_version": "0.60.5"
+  },
+  "ipa_path": "dist/rebuild-3.1.6.1/PwEevee-3.1.6.1-rebuild.ipa",
+  "ipa_sha256": "05717c518848bde9b9a2be9a9a85722d3c8d4b6fc9ce010c4e68294728861c56",
+  "ipa_size": 144105749,
+  "ipa_members": 1098,
+  "deb_path": "dist/rebuild-3.1.6.1/com.pweevee_3.1.6.1_iphoneos-arm64.deb",
+  "deb_sha256": "d4d93dfa94256111be5ed825fe278da0e0481c70119f9824d8b9efc8c4c3a1f8",
+  "deb_size": 924544,
   "packaging": {
-    "method": "single-member swap into the validated migrated 3.1.0 app IPA, then deflate repack (zip -r -X)",
-    "baseline_ipa": "dist/pweevee-3.1.0-unified-Spotify-9.1.90-migrated.ipa",
-    "baseline_sha256": "aa31425dbbc92d8a3b05e85a46cad2e29447411c6c25fd1fc7e9bb2cea8039e6",
-    "member_delta": "1 changed (Payload/Spotify.app/Frameworks/spotifyglass.dylib); 0 removed; 1 cosmetic directory entry added",
-    "host_binary_sha256_prefix": "7e63fa23be1d8541",
-    "host_binary_ncmds": 154,
-    "host_platform": "iOS (LC_BUILD_VERSION platform 2)"
+    "method": "source/scripts/pipeline.sh on the pristine Spotify 9.1.90 base (--no-flex), then scripts/brand-icons.py",
+    "base_ipa": "com.spotify.client_9.1.90_und3fined.ipa (local reference; not distributed)",
+    "base_sha256": "409601a58953818eea17edb92963d10256ae6fcf00c69954105e5becc08ec296",
+    "zip_integrity": "no errors detected",
+    "display_name": "Spotify",
+    "bundle_id": "com.spotify.client",
+    "app_extensions": 6,
+    "flex_included": false,
+    "sideload_spoofer_included": false,
+    "main_icon": "PwEvevee/brand-icons/5e87bef6-68c5-42f2-a457-cadc429e747a.png",
+    "alternate_icons": 30,
+    "registered_alternate_icons": 38
   },
-  "dylibs": ["spotifyglass.dylib", "EeveeSpotify.dylib"],
-  "frameworks": ["CydiaSubstrate.framework", "EeveeSwiftProtobuf.framework", "Orion.framework"],
-  "bundles": ["EeveeSpotify.bundle"],
-  "brand_icon": "pweevee-icon.png (CFBundleAlternateIcons; 143 app-root PNGs, original PwEevee artwork, see PwEvevee/brand-icons/manifest.json)",
-  "resources": {
-    "eevee_icons": 143,
-    "load_commands": 5
-  },
-  "embedded_dylib": {
-    "sha256": "45242a9fffaf81f0da5b11883fd029a713ab1d980ac89c7ba8267ce5b54ceb24",
-    "size": 3245280,
-    "implementation_guard": "9 required markers present, 2 forbidden markers absent (PwEvevee/components/spotipw/manifest.json)",
-    "substrate_edge": "@rpath/CydiaSubstrate.framework/CydiaSubstrate (rootless; no absolute /Library dependency)",
-    "signature": "ad-hoc codesign, CodeDirectory v0x20400 flags=0x2, identifier spotifyglass.dylib.47ba6b93; codesign --verify: valid on disk, satisfies its Designated Requirement",
-    "why_this_object": "clean Theos rebuild of the confirmed migrated source tree (rm -rf .theos && make); byte-identical __TEXT/__DATA sections to the crash-fix (5efc..., unsigned) and deb (9475..., invalid '.unsigned' CodeDirectory) objects, but the only one carrying a codesign-valid signature; the earlier crash-fix IPA embedded an unsigned build and the migrated baseline embedded a build with the absolute Substrate path",
-    "superseded_objects": {
-      "5efc001e3b693b8d96d6f278c18cf6dce329df8cead367f854a0baf74a94f0e8": "crash-fix IPA embedded; no LC_CODE_SIGNATURE at all",
-      "60efaf4201a20bece8f465eeaa216d975279f59fca4b9594535a397cdafbabca": "earlier -src build; differs from the pin only by LC_UUID + signature",
-      "9475c1ef6e10049fd1299bd7c67a43ebb21f37e974648ad26d6acd0709777813": "dylib packaged in com.spotipw_3.1.0_iphoneos-arm64.deb; CodeDirectory flags=0 and '.unsigned' identifier, codesign reports no signature",
-      "e74b6876068be19e54b246fb75ebb6013279ade88d2dc67a9e3918526d9ded97": "migrated baseline IPA embedded; absolute /Library Substrate path (the launch-crash root cause)"
+  "components": {
+    "spotifyglass": {
+      "sha256": "ecffb2ab9cdf04e9d2ddd3c1daf403b02844bc7dcdbb41a207d1519cf30bab11",
+      "size": 3245264,
+      "signature": "ad-hoc codesign, flags=0x2 (adhoc), identifier spotifyglass.dylib",
+      "version": "3.1.6.1",
+      "install_name": "@rpath/spotifyglass.dylib"
+    },
+    "SpotifyAudioProbe": {
+      "sha256": "979dc6a3f5cecfe77c2be8dc1657d59ffabe86a71f73a775002705a08e0b60d8"
+    },
+    "SpotifyGlassAppGroups": {
+      "sha256": "978387a937f2c7e2ad9a6c5166612cee3c6d5fc77f5e6d7404a0e36e6f8dc551"
+    },
+    "eevee_version": "7.0.0",
+    "frameworks": [
+      "CydiaSubstrate.framework",
+      "EeveeSwiftProtobuf.framework",
+      "Orion.framework"
+    ],
+    "bundles": [
+      "EeveeSpotify.bundle"
+    ],
+    "icons": {
+      "main": {
+        "key": "AppIcon60x60",
+        "title": "PwEevee",
+        "source": "PwEvevee/brand-icons/5e87bef6-68c5-42f2-a457-cadc429e747a.png",
+        "sha256": "d8356b472f925b8c090c4a4e3065f0c83e43ee1a778063e70f06a70f87a0afbe",
+        "compiled_as": [
+          "AppIcon60x60@2x.png (120x120)",
+          "AppIcon60x60@3x.png (180x180)",
+          "AppIcon76x76@2x~ipad.png (152x152)",
+          "AppIcon83.5x83.5@2x~ipad.png (167x167)"
+        ]
+      },
+      "alternates": [
+        {
+          "key": "PwIcon01",
+          "title": "Neon Green",
+          "files": [
+            "PwIcon01.png",
+            "PwIcon01@2x.png",
+            "PwIcon01@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon02",
+          "title": "Lilac",
+          "files": [
+            "PwIcon02.png",
+            "PwIcon02@2x.png",
+            "PwIcon02@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon03",
+          "title": "Sunset",
+          "files": [
+            "PwIcon03.png",
+            "PwIcon03@2x.png",
+            "PwIcon03@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon04",
+          "title": "Silver Bloom",
+          "files": [
+            "PwIcon04.png",
+            "PwIcon04@2x.png",
+            "PwIcon04@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon05",
+          "title": "Cream",
+          "files": [
+            "PwIcon05.png",
+            "PwIcon05@2x.png",
+            "PwIcon05@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon06",
+          "title": "Acid Green",
+          "files": [
+            "PwIcon06.png",
+            "PwIcon06@2x.png",
+            "PwIcon06@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon07",
+          "title": "Coral",
+          "files": [
+            "PwIcon07.png",
+            "PwIcon07@2x.png",
+            "PwIcon07@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon08",
+          "title": "Blue Halo",
+          "files": [
+            "PwIcon08.png",
+            "PwIcon08@2x.png",
+            "PwIcon08@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon09",
+          "title": "Emerald",
+          "files": [
+            "PwIcon09.png",
+            "PwIcon09@2x.png",
+            "PwIcon09@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon10",
+          "title": "Glass Bloom",
+          "files": [
+            "PwIcon10.png",
+            "PwIcon10@2x.png",
+            "PwIcon10@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon11",
+          "title": "Glass Petals",
+          "files": [
+            "PwIcon11.png",
+            "PwIcon11@2x.png",
+            "PwIcon11@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon12",
+          "title": "Mono",
+          "files": [
+            "PwIcon12.png",
+            "PwIcon12@2x.png",
+            "PwIcon12@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon13",
+          "title": "Platinum",
+          "files": [
+            "PwIcon13.png",
+            "PwIcon13@2x.png",
+            "PwIcon13@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon14",
+          "title": "Vinyl",
+          "files": [
+            "PwIcon14.png",
+            "PwIcon14@2x.png",
+            "PwIcon14@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon15",
+          "title": "Midnight Blue",
+          "files": [
+            "PwIcon15.png",
+            "PwIcon15@2x.png",
+            "PwIcon15@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon16",
+          "title": "Azure",
+          "files": [
+            "PwIcon16.png",
+            "PwIcon16@2x.png",
+            "PwIcon16@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon17",
+          "title": "Green Glow",
+          "files": [
+            "PwIcon17.png",
+            "PwIcon17@2x.png",
+            "PwIcon17@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon18",
+          "title": "Crimson White",
+          "files": [
+            "PwIcon18.png",
+            "PwIcon18@2x.png",
+            "PwIcon18@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon19",
+          "title": "Sky",
+          "files": [
+            "PwIcon19.png",
+            "PwIcon19@2x.png",
+            "PwIcon19@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon20",
+          "title": "Violet",
+          "files": [
+            "PwIcon20.png",
+            "PwIcon20@2x.png",
+            "PwIcon20@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon21",
+          "title": "Rose",
+          "files": [
+            "PwIcon21.png",
+            "PwIcon21@2x.png",
+            "PwIcon21@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon22",
+          "title": "Tangerine",
+          "files": [
+            "PwIcon22.png",
+            "PwIcon22@2x.png",
+            "PwIcon22@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon23",
+          "title": "Ink White",
+          "files": [
+            "PwIcon23.png",
+            "PwIcon23@2x.png",
+            "PwIcon23@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon24",
+          "title": "Silver",
+          "files": [
+            "PwIcon24.png",
+            "PwIcon24@2x.png",
+            "PwIcon24@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon25",
+          "title": "Blush",
+          "files": [
+            "PwIcon25.png",
+            "PwIcon25@2x.png",
+            "PwIcon25@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon26",
+          "title": "Aurora",
+          "files": [
+            "PwIcon26.png",
+            "PwIcon26@2x.png",
+            "PwIcon26@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon27",
+          "title": "Mint White",
+          "files": [
+            "PwIcon27.png",
+            "PwIcon27@2x.png",
+            "PwIcon27@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon28",
+          "title": "Emerald Glow",
+          "files": [
+            "PwIcon28.png",
+            "PwIcon28@2x.png",
+            "PwIcon28@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon29",
+          "title": "Cobalt",
+          "files": [
+            "PwIcon29.png",
+            "PwIcon29@2x.png",
+            "PwIcon29@3x.png"
+          ]
+        },
+        {
+          "key": "PwIcon30",
+          "title": "Orbit",
+          "files": [
+            "PwIcon30.png",
+            "PwIcon30@2x.png",
+            "PwIcon30@3x.png"
+          ]
+        }
+      ],
+      "liquid_glass_alternates": [
+        "SGAppIconGlass",
+        "SGAppIconGreen",
+        "SGAppIconWhite",
+        "SGAppIconPink",
+        "SGAppIconBlue",
+        "SGAppIconPurple",
+        "SGAppIconOrange",
+        "SGAppIconLime"
+      ],
+      "registered_total": 38,
+      "display_name": "Spotify"
     }
   },
-  "signing": {
-    "nested_dylib": "ad-hoc signed by the Theos 'Signing spotifyglass' step (via the builder's ldid shim mapping to codesign -f -s -)",
-    "app_bundle": "not re-signed end to end; the sideloader re-signs the whole payload at install",
-    "installability": "not claimed: an ad-hoc signature does not by itself make the IPA installable on a device"
-  },
   "validation": {
-    "archive": true,
-    "mach_o": true,
-    "dependencies": true,
-    "dependencies_strict_all": true,
-    "resources": true,
-    "ipa": true,
-    "embedded_artifact": true,
-    "embedded_artifact_test": "PwEvevee/build-system/tests/embedded-artifact-test.pl (26 checks with PWEEVEE_IPA_HOST=1)"
+    "tweak_and_package": "passed",
+    "ipa_pipeline": "passed",
+    "downloads_verification": "passed",
+    "zip_integrity": "passed",
+    "node_safari": "19 passed, 0 failed",
+    "python_packaging": "4 passed, 0 failed",
+    "build_tests": "8 checks passed",
+    "prepublication_tests": "27 checks passed",
+    "embedded_artifact_tests": "26 passed, 0 failed",
+    "component_manifest_tests": "389 checks passed",
+    "dylib_guard_tests": "17 checks passed",
+    "brand_audit_source": "230 hits, 0 unclassified legacy",
+    "brand_audit_ipa": "PASS, 0 unclassified legacy"
+  },
+  "signing": {
+    "app_bundle": "no valid development signature; no embedded provisioning profile",
+    "nested_dylib": "spotifyglass.dylib is ad-hoc signed (flags=0x2, identifier spotifyglass.dylib)",
+    "installability": "not claimed; re-sign with a development profile or sideload signer"
   },
   "device_verified": false,
-  "device_blocker": "no physical iPhone/iPad attached to the build host; only simulators are present, and the artifact is a device-slice iOS build (LC_BUILD_VERSION platform 2) with a jailbreak-injected tweak"
+  "device_blocker": "this unsigned candidate has not been signed or installed; runtime verification is not claimed",
+  "artifacts_preserved": [
+    "dist/rebuild-3.1.6.1/PwEevee-3.1.6.1-rebuild.ipa",
+    "dist/rebuild-3.1.6.1/com.pweevee_3.1.6.1_iphoneos-arm64.deb",
+    "dist/history-backup/PwEevee-all-2026-10-29-final.bundle"
+  ]
 }

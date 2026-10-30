@@ -13,7 +13,7 @@ injection, IPA/DEB packaging, validation, tests and release orchestration.
 | `build-system/lib/` | Mach-O parser, deterministic ZIP writer, plist reader |
 | `build-system/package/` | `make-ipa.pl`, byte-exact `make-deb.pl`, `resolve-deps.pl` |
 | `build-system/validate/` | Mach-O + filesystem validation |
-| `build-system/tests/` | `deb-format-test.pl` (30 checks), `build-tests.pl` (14 checks), `website-tests.pl` (1090 checks) |
+| `build-system/tests/` | `deb-format-test.pl`, `build-tests.pl`, `component-manifest-test.pl`, `alternate-icon-tests.pl` and the remaining build/package suites |
 | `build-system/release/` | `make-release.pl` + local-archive retention, `update-releases.pl` (GitHub release data), `update-altsource.pl` (AltSource variant data), `render-site.pl` (static site generator), `make-social-card.pl`, `lib/PwSite.pm`, `lib/PwHttp.pm` |
 | `build-system/_work/` | build scratch space (gitignored) |
 | `components/spotipw/` | the spoti.pw payload: `dylibs/spotifyglass.dylib`, MobileSubstrate filter, `manifest.json` with per-file SHA-256 |
@@ -35,4 +35,4 @@ perl PwEvevee/build-system/tests/deb-format-test.pl
 perl PwEvevee/build-system/tests/build-tests.pl
 ```
 
-Docs: `../docs/ARCHITECTURE.md`, `../docs/BUILD.md`.
+Documentation and the public website are being rebuilt for v4; the root README carries the current release and download links.

@@ -82,12 +82,22 @@ sub parse_thin {
     } elsif ($cmd == 0x19 || $cmd == 0x1) {
       $e->{kind} = 'segment';
       $e->{segname} = strz($data, $off + 8, 16);
-      my $nsects = rd_u32($data, $off + ($cmd == 0x19 ? 64 : 56), $swap);
-      my $sbase  = $off + ($cmd == 0x19 ? 72 : 68);
+      # segment_command (0x1) vs segment_command_64 (0x19): nsects sits at 48 vs 64,
+      # the section table starts at 56 vs 72, and each section is 68 vs 80 bytes with
+      # its file offset at 40 vs 48. Reading the 32-bit layout with the 64-bit offsets
+      # used to yield a huge nsects for armv7 binaries (CydiaSubstrate) and emit one
+      # warning per phantom section - gigabytes of them on a real build.
+      my $is64seg = ($cmd == 0x19);
+      my $nsects = rd_u32($data, $off + ($is64seg ? 64 : 48), $swap);
+      my $sbase  = $off + ($is64seg ? 72 : 56);
+      my $sectsz = $is64seg ? 80 : 68;
+      my $room = int(($cmdsize - ($sbase - $off)) / $sectsz);
+      $nsects = $room if $nsects > $room;   # sections cannot exceed their own command
+      $nsects = 0 if $nsects < 0;
       my @sects;
       for my $s (0 .. $nsects - 1) {
-        my $so = $sbase + $s * ($cmd == 0x19 ? 80 : 68);
-        push @sects, { name => strz($data, $so, 16), offset => rd_u32($data, $so + 48, $swap) };
+        my $so = $sbase + $s * $sectsz;
+        push @sects, { name => strz($data, $so, 16), offset => rd_u32($data, $so + ($is64seg ? 48 : 40), $swap) };
       }
       $e->{sections} = \@sects;
     }

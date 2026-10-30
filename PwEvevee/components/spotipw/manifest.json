@@ -4,13 +4,13 @@
    "files": [
       {
          "path": "dylibs/spotifyglass.dylib",
-         "sha256": "f9bbff19f02187ec5d676cde0941ddc4bf108d22f7583a1e2e1a5a65229e0868",
-         "size": 3245280
+         "sha256": "ecffb2ab9cdf04e9d2ddd3c1daf403b02844bc7dcdbb41a207d1519cf30bab11",
+         "size": 3245264
       },
       {
          "path": "package/control",
-         "sha256": "e0d4d3b76bf1eeaa27cec106addc0fd1ce0f40680b80ccd15f98965d906d40a7",
-         "size": 209
+         "sha256": "4a93770e954e9d03aa0fb9c183efb7de8b563c5f4a7032188c9610a817694ca1",
+         "size": 202
       },
       {
          "path": "package/dynamic-libraries/spotifyglass.plist",
@@ -22,7 +22,7 @@
    "origin": "Evevee Spotify/source-artifacts/com.spotipw_0.22.0_iphoneos-arm.deb",
    "origin_sha256": "b45c34760aa082d504b8706a5a766613ed837b5ecdb00329ac6efce910403547",
    "package": "com.spotipw",
-   "spotifyglass_refresh": "dylibs/spotifyglass.dylib is the clean Theos build of the migrated PwEevee product source tree at public version 3.1.5 (builder tree /Users/xcode/pweevee-3.1.5-src, `rm -rf .theos && make TARGET_CODESIGN=codesign TARGET_CODESIGN_FLAGS='--force --sign -'` because that builder has no ldid). Theos ad-hoc codesigns it (codesign --verify: valid on disk, flags=0x2), and it links @rpath/CydiaSubstrate.framework/CydiaSubstrate (rootless, required for sideloaded installs). This build only bumps the version string and replaces the packaged source; 3.1.0's pin was 45242a9f. origin/origin_sha256 still describe the deb this component was first extracted from",
+   "spotifyglass_refresh": "dylibs/spotifyglass.dylib is the clean Theos build of the migrated PwEevee product source tree at public version 3.1.6.1 (macOS builder, Xcode 27.1 / Theos 6e7b8c4, `make FINALPACKAGE=1 TARGET_CODESIGN=codesign TARGET_CODESIGN_FLAGS='--force --sign -'`). It carries the cold-cache customize gate: customize is answered from cache only when a non-empty rewritten body exists, so a cold cache lets the real fetch out to be patched on arrival. Source: source/tweak/Sources/Shared/AdBlock/AdNetwork.x (canReplayCustomize). This build also carries the AppIcon alternate-icon registry change (iOS 17-capable picker for the 30 brand icons); it recompiled the dylib, so the pinned size and hash were refreshed. It is ad-hoc signed with `codesign -f -s - -i spotifyglass.dylib` (flags=0x0) and links @rpath/CydiaSubstrate.framework/CydiaSubstrate (rootless). origin/origin_sha256 still describe the deb this component was first extracted from. The 304 replay path uses the same gate: replayFor only synthesises a 200 around a non-empty cached body and hands that validated body to the delegate, so an empty cache can no longer be replayed as a fabricated 200. Third pass: a customize 304 with nothing to replay is marked on the task and completed as Spotify sent it, so the completion path cannot turn it into a zero-byte 200 either; both replay paths (304 and cached block) log the byte count they actually delivered, which is what the on-device live test reads.",
    "source_tree": "source (migrated PwEevee product source; public version in source/public-version.txt, internal upstream line in source/version.txt)",
    "implementation_guard": {
       "$comment": "Strings that must (required) / must not (forbidden) appear in the pinned spotifyglass.dylib, so an old-lineage or stale artifact can never be packaged silently. unified.sh hard-fails on a mismatch before merging; dylib-guard-test.pl verifies the same spec. The legacy update key spotifyglass.update.taurus.latest is REQUIRED: it is the pinned migration alias that lets pre-rename installs move their cached release across.",
@@ -42,5 +42,5 @@
          "spotipw.usage"
       ]
    },
-   "version": "3.1.5"
+   "version": "3.1.6.1"
 }

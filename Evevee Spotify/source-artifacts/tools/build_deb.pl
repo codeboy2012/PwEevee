@@ -9,7 +9,7 @@
 # control.tar.gz is reused verbatim from the existing deb (no dep/orion changes needed).
 use strict; use warnings;
 
-my $OUT      = "/c/Users/sleepy/Downloads/EeveeSpotify-6.6.8-SelfContained-v2.deb";
+my $OUT      = $ENV{OUT} || "EeveeSpotify-6.6.8-SelfContained-v2.deb";
 my $BUILDDIR = "/tmp/eevee_build";
 my $PAYLOAD  = "$BUILDDIR/payload";
 
@@ -18,7 +18,7 @@ my $PAYLOAD  = "$BUILDDIR/payload";
 my $SRC_DYLIB  = "/tmp/self_ext/Spotify.app/Frameworks/EeveeSpotify.dylib";
 my $SRC_PLIST  = "/tmp/eevee_filter.plist";
 my $SRC_APPDIR = "/tmp/self_ext/Spotify.app";
-my $OLD_DEB    = "/c/Users/sleepy/Downloads/EeveeSpotify-6.6.8-SelfContained.deb";
+my $OLD_DEB    = $ENV{OLD_DEB} || die "set OLD_DEB to the existing EeveeSpotify-6.6.8-SelfContained.deb\n";
 my $MTIME      = 1750000000;
 
 # ---------- 1. stage payload ----------

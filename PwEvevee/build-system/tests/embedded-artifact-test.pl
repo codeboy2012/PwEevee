@@ -60,7 +60,10 @@ sub slurp_raw { local $/; open my $fh, '<:raw', $_[0] or die "open $_[0]: $!"; r
 
 # ---- candidate IPA selection -------------------------------------------------
 sub pick_ipa {
-  my @explicit = ("$ROOT/dist/PwEevee-3.1.0.ipa", "$ROOT/release-candidate/PwEevee-3.1.0.ipa");
+  my @explicit = (
+    "$ROOT/dist/rebuild-3.1.6.1/PwEevee-3.1.6.1-rebuild.ipa",
+    "$ROOT/dist/PwEevee-3.1.6.1.ipa",
+  );
   if (defined $ENV{PWEEVEE_IPA}) {
     return ("$ENV{PWEEVEE_IPA}", 1);   # explicit: absence is a failure, not a skip
   }
@@ -146,7 +149,7 @@ my $guard = $spec->{implementation_guard} // {};
 
 my ($ipa, $required) = pick_ipa();
 if (!defined $ipa || (!-f $ipa && !$required)) {
-  print "EMBEDDED ARTIFACT TESTS SKIPPED (no candidate IPA at dist/PwEevee-3.1.0.ipa or release-candidate/PwEevee-3.1.0.ipa; set PWEEVEE_IPA=<path> to check a specific build)\n";
+  print "EMBEDDED ARTIFACT TESTS SKIPPED (no candidate IPA at dist/rebuild-3.1.6.1/PwEevee-3.1.6.1-rebuild.ipa or dist/PwEevee-3.1.6.1.ipa; set PWEEVEE_IPA=<path> to check a specific build)\n";
   exit 0;
 }
 unless (-f $ipa) {

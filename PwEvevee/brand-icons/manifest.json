@@ -1,14 +1,387 @@
 {
-   "files" : [
+   "name": "pweevee-brand-icons",
+   "license": "PwEevee project artwork; not derived from Spotify or any upstream project",
+   "origin": "supplied PwEevee icon set; main icon designated by the project owner",
+   "staged_as": "main icon staged as AppIcon60x60*.png and made primary; each alternate staged as PwIconNN*.png and registered under CFBundleIcons.CFBundleAlternateIcons by scripts/brand-icons.py",
+   "main": {
+      "key": "AppIcon60x60",
+      "title": "PwEevee",
+      "path": "5e87bef6-68c5-42f2-a457-cadc429e747a.png",
+      "sha256": "d8356b472f925b8c090c4a4e3065f0c83e43ee1a778063e70f06a70f87a0afbe",
+      "size": 110038
+   },
+   "alternates": [
       {
-         "path" : "pweevee-icon.png",
-         "sha256" : "2fb04e22502c4c81ab1f2518e6695f907663819593f22b848749a4d9688a0ca3",
-         "size" : 24978
+         "key": "PwIcon01",
+         "title": "Neon Green",
+         "path": "0bebdb40-7184-4ac1-8412-2e316d6b87ee.png",
+         "sha256": "ef598433db4ca814543f6a05f075534f866d7d19c2da9a2948c6f1575bbbcfba",
+         "size": 81195
+      },
+      {
+         "key": "PwIcon02",
+         "title": "Lilac",
+         "path": "155f8ae5-505d-42d1-b255-4bf94aba7d9a.png",
+         "sha256": "3392805ef2fbdecfaa0d8d089f42b3b793af9d51ff899cfa6303c2c16b2dc647",
+         "size": 76690
+      },
+      {
+         "key": "PwIcon03",
+         "title": "Sunset",
+         "path": "16892c3d-a50a-411b-a8a8-d5ebd69a70b5.png",
+         "sha256": "5d0f640b6e568ac3c39bb446357f96f0791cfbba43dbbbb636cee6a96039f6fb",
+         "size": 89495
+      },
+      {
+         "key": "PwIcon04",
+         "title": "Silver Bloom",
+         "path": "26678f9e-5039-4d03-928a-80a55954861c.png",
+         "sha256": "61e543155b5251375af0171e47dca2c25e8fa5208028465b8e7f3ba75d78e1a2",
+         "size": 48668
+      },
+      {
+         "key": "PwIcon05",
+         "title": "Cream",
+         "path": "281764fe-9037-4b53-a809-38bf0f685920.png",
+         "sha256": "8bd4f26df489e79e6631605702b84a2c621c9a5fbadddf819a6c6f890cabb7b5",
+         "size": 94440
+      },
+      {
+         "key": "PwIcon06",
+         "title": "Acid Green",
+         "path": "32566cf2-1b17-4ccd-8b32-82ec6ce67936.png",
+         "sha256": "b8a3365af6d2965714bff1f28a43fcb3115edef120a93e2b22d08b42d048fcab",
+         "size": 87415
+      },
+      {
+         "key": "PwIcon07",
+         "title": "Coral",
+         "path": "32fa09d2-7292-4aea-aa6b-c3ffdbd61f39.png",
+         "sha256": "f28f61e921cc90434d26d15caef53f74b12fec928f6c688d7a5b1e0bf2ebd439",
+         "size": 75124
+      },
+      {
+         "key": "PwIcon08",
+         "title": "Blue Halo",
+         "path": "334b53aa-e369-41fa-a7e5-68cee92f8bc7.png",
+         "sha256": "e24ae5e3733827aa3eb01d66bfba3045bdcf7bbd5c723129570e254c284703b2",
+         "size": 85608
+      },
+      {
+         "key": "PwIcon09",
+         "title": "Emerald",
+         "path": "3caab7ac-2d04-4fb0-970b-8a845878aae0.png",
+         "sha256": "baed8f5f9857cdfba268a13faa20502e8bc28447b0de5037c27cee09bdb1fcb7",
+         "size": 88075
+      },
+      {
+         "key": "PwIcon10",
+         "title": "Glass Bloom",
+         "path": "4a08f624-368f-4df2-972e-fe0ee7d6e823.png",
+         "sha256": "b32852eaefb3430806f00108a9b9ace1482501f1218670abe2985580ba4fe5ae",
+         "size": 95768
+      },
+      {
+         "key": "PwIcon11",
+         "title": "Glass Petals",
+         "path": "4fdaf98f-38aa-48d4-86a9-38e9cc1f0fae.png",
+         "sha256": "a27de9d80891d80bc48f73c32e19abce774b0106f94aa2723ed690a888368d2c",
+         "size": 117754
+      },
+      {
+         "key": "PwIcon12",
+         "title": "Mono",
+         "path": "58c0253b-95ca-433c-bc12-954c3aba7bd1.png",
+         "sha256": "67e9ff79ab0c3dbb51d99540ad3c83287cc01f6c3217c6de157dc18e388e74b4",
+         "size": 36901
+      },
+      {
+         "key": "PwIcon13",
+         "title": "Platinum",
+         "path": "5e30d6fe-adda-4427-a67b-4f2667c4abfa.png",
+         "sha256": "50b747875fc712b0d9824715ec07ea01b886300c83f6f58828847ca5483860b8",
+         "size": 109862
+      },
+      {
+         "key": "PwIcon14",
+         "title": "Vinyl",
+         "path": "6843ad8f-afbd-4e92-b10b-f78f3a2a5dba.png",
+         "sha256": "67b88c753e730a406921809cde63573b78c7d279ef20a17a8dc1f76510844e8b",
+         "size": 140919
+      },
+      {
+         "key": "PwIcon15",
+         "title": "Midnight Blue",
+         "path": "79ba8aab-7ea0-427e-9c33-a624d88d3037.png",
+         "sha256": "1d8fe5b84c66e22a0a8f4ae43c23f56adc3f474a49aac2a4203b8f27a2dcb6bc",
+         "size": 127008
+      },
+      {
+         "key": "PwIcon16",
+         "title": "Azure",
+         "path": "81871d35-0853-49e7-aa45-be020fc2d6b1.png",
+         "sha256": "e64f664eeeb72726247591e84d0e5c9ed2dc42374067acbc139c7b0a42c79739",
+         "size": 79215
+      },
+      {
+         "key": "PwIcon17",
+         "title": "Green Glow",
+         "path": "917f8315-8c66-41da-98ca-68bdbfbafa18.png",
+         "sha256": "74f8cff4e9168344d8099d74307b43cec0c041fd769c25bb7762579cbf473e8f",
+         "size": 80158
+      },
+      {
+         "key": "PwIcon18",
+         "title": "Crimson White",
+         "path": "9422114c-5e1a-496f-b1ed-fe7fb05abc3c.png",
+         "sha256": "0247601bf17faa4ef958c4f64adf9154c08a83f850fe704d836fc56d34e71ba1",
+         "size": 77477
+      },
+      {
+         "key": "PwIcon19",
+         "title": "Sky",
+         "path": "98ca94a4-1420-4bca-95d3-82d3f9e5d97a.png",
+         "sha256": "e18170b4fa72b755e6b5a5468a8d9ad16e1afbc3d01e456b7fc12d04e0022df9",
+         "size": 88044
+      },
+      {
+         "key": "PwIcon20",
+         "title": "Violet",
+         "path": "9a14c0fb-6697-4486-b3d3-29d4a7986556.png",
+         "sha256": "9d3afe307d71eb85bc6110242b21facd94b5431c8e783afaf769301d528ea11c",
+         "size": 87647
+      },
+      {
+         "key": "PwIcon21",
+         "title": "Rose",
+         "path": "9b8741d9-46f0-4589-b938-2e7367393441.png",
+         "sha256": "8fe003f040065a7293f2e63d383a75b72ced3bb1d187117bed6fc1ae18453324",
+         "size": 87979
+      },
+      {
+         "key": "PwIcon22",
+         "title": "Tangerine",
+         "path": "9e4b4256-ccbb-4ec2-bc19-dbc39e81797c.png",
+         "sha256": "577941b9f096c23af24787d1a3f787aafb72e592d8e655bd90970fcfe9e74e52",
+         "size": 81248
+      },
+      {
+         "key": "PwIcon23",
+         "title": "Ink White",
+         "path": "b0bae895-2843-4f50-9df4-3d69fa10df3b.png",
+         "sha256": "39ede7c5967354e50a66a66856c96778ff46fc0b8bcb4f6f0316cda0d1da82ae",
+         "size": 43847
+      },
+      {
+         "key": "PwIcon24",
+         "title": "Silver",
+         "path": "cc71f38d-0357-4559-b32d-6a1f7c80c458.png",
+         "sha256": "48b17522ac8562eb3daf6ed9437642cd19f1d333190bf9895fdb3f90d11e7263",
+         "size": 83019
+      },
+      {
+         "key": "PwIcon25",
+         "title": "Blush",
+         "path": "cf979c6e-faac-48ad-b95e-f5293cf2feb0.png",
+         "sha256": "4e8a7d196de112a900644e9621965ee562837fb70dbda2b231ac904613454ad0",
+         "size": 79704
+      },
+      {
+         "key": "PwIcon26",
+         "title": "Aurora",
+         "path": "e77b4a8a-28ec-4a8b-8979-3608852c1b6e.png",
+         "sha256": "c8829189eb4c5343fd17a1c5cdb977fb4d7cc67678b917cf3e2b481cde7f3056",
+         "size": 79927
+      },
+      {
+         "key": "PwIcon27",
+         "title": "Mint White",
+         "path": "e88a543b-6ae7-4441-b151-42f498ddfea3.png",
+         "sha256": "d8c386297b9a557642176d2d3fb2538bccea1f7f22ea108cd400f421e46f7a60",
+         "size": 83500
+      },
+      {
+         "key": "PwIcon28",
+         "title": "Emerald Glow",
+         "path": "f05b2471-6f06-473f-99cd-5eded6dc9c6a.png",
+         "sha256": "ef6eaee87aeeb3f4ae90b5c0ba8febb4bac6d0b1eb87d63674b5cca4f2680fcf",
+         "size": 122628
+      },
+      {
+         "key": "PwIcon29",
+         "title": "Cobalt",
+         "path": "fc6a448e-f59d-4296-accd-74c19b116964.png",
+         "sha256": "b0ea7a20de8544be545bef3163253443267df181d41292786dbb55512fb167fa",
+         "size": 76828
+      },
+      {
+         "key": "PwIcon30",
+         "title": "Orbit",
+         "path": "ff5875f5-d511-4cfb-b3a0-0199a63a30ab.png",
+         "sha256": "a751cf82fc3e013d338c2d0f0f0d3fbc8ee5fb27569a75ea80e2e868d586463c",
+         "size": 137188
       }
    ],
-   "license" : "PwEevee project artwork; not derived from Spotify or any upstream project",
-   "name" : "pweevee-brand-icon",
-   "origin" : "generated_by PwEvevee/build-system/release/make-app-icon.pl (original PwEevee artwork, no upstream derivation)",
-   "staged_as" : "staged as Payload/Spotify.app/pweevee-icon.png and registered under CFBundleIcons.CFBundleAlternateIcons by package/patch-alternate-icon.pl"
+   "files": [
+      {
+         "path": "pweevee-icon.png",
+         "sha256": "2fb04e22502c4c81ab1f2518e6695f907663819593f22b848749a4d9688a0ca3",
+         "size": 24978
+      },
+      {
+         "path": "5e87bef6-68c5-42f2-a457-cadc429e747a.png",
+         "sha256": "d8356b472f925b8c090c4a4e3065f0c83e43ee1a778063e70f06a70f87a0afbe",
+         "size": 110038
+      },
+      {
+         "path": "0bebdb40-7184-4ac1-8412-2e316d6b87ee.png",
+         "sha256": "ef598433db4ca814543f6a05f075534f866d7d19c2da9a2948c6f1575bbbcfba",
+         "size": 81195
+      },
+      {
+         "path": "155f8ae5-505d-42d1-b255-4bf94aba7d9a.png",
+         "sha256": "3392805ef2fbdecfaa0d8d089f42b3b793af9d51ff899cfa6303c2c16b2dc647",
+         "size": 76690
+      },
+      {
+         "path": "16892c3d-a50a-411b-a8a8-d5ebd69a70b5.png",
+         "sha256": "5d0f640b6e568ac3c39bb446357f96f0791cfbba43dbbbb636cee6a96039f6fb",
+         "size": 89495
+      },
+      {
+         "path": "26678f9e-5039-4d03-928a-80a55954861c.png",
+         "sha256": "61e543155b5251375af0171e47dca2c25e8fa5208028465b8e7f3ba75d78e1a2",
+         "size": 48668
+      },
+      {
+         "path": "281764fe-9037-4b53-a809-38bf0f685920.png",
+         "sha256": "8bd4f26df489e79e6631605702b84a2c621c9a5fbadddf819a6c6f890cabb7b5",
+         "size": 94440
+      },
+      {
+         "path": "32566cf2-1b17-4ccd-8b32-82ec6ce67936.png",
+         "sha256": "b8a3365af6d2965714bff1f28a43fcb3115edef120a93e2b22d08b42d048fcab",
+         "size": 87415
+      },
+      {
+         "path": "32fa09d2-7292-4aea-aa6b-c3ffdbd61f39.png",
+         "sha256": "f28f61e921cc90434d26d15caef53f74b12fec928f6c688d7a5b1e0bf2ebd439",
+         "size": 75124
+      },
+      {
+         "path": "334b53aa-e369-41fa-a7e5-68cee92f8bc7.png",
+         "sha256": "e24ae5e3733827aa3eb01d66bfba3045bdcf7bbd5c723129570e254c284703b2",
+         "size": 85608
+      },
+      {
+         "path": "3caab7ac-2d04-4fb0-970b-8a845878aae0.png",
+         "sha256": "baed8f5f9857cdfba268a13faa20502e8bc28447b0de5037c27cee09bdb1fcb7",
+         "size": 88075
+      },
+      {
+         "path": "4a08f624-368f-4df2-972e-fe0ee7d6e823.png",
+         "sha256": "b32852eaefb3430806f00108a9b9ace1482501f1218670abe2985580ba4fe5ae",
+         "size": 95768
+      },
+      {
+         "path": "4fdaf98f-38aa-48d4-86a9-38e9cc1f0fae.png",
+         "sha256": "a27de9d80891d80bc48f73c32e19abce774b0106f94aa2723ed690a888368d2c",
+         "size": 117754
+      },
+      {
+         "path": "58c0253b-95ca-433c-bc12-954c3aba7bd1.png",
+         "sha256": "67e9ff79ab0c3dbb51d99540ad3c83287cc01f6c3217c6de157dc18e388e74b4",
+         "size": 36901
+      },
+      {
+         "path": "5e30d6fe-adda-4427-a67b-4f2667c4abfa.png",
+         "sha256": "50b747875fc712b0d9824715ec07ea01b886300c83f6f58828847ca5483860b8",
+         "size": 109862
+      },
+      {
+         "path": "6843ad8f-afbd-4e92-b10b-f78f3a2a5dba.png",
+         "sha256": "67b88c753e730a406921809cde63573b78c7d279ef20a17a8dc1f76510844e8b",
+         "size": 140919
+      },
+      {
+         "path": "79ba8aab-7ea0-427e-9c33-a624d88d3037.png",
+         "sha256": "1d8fe5b84c66e22a0a8f4ae43c23f56adc3f474a49aac2a4203b8f27a2dcb6bc",
+         "size": 127008
+      },
+      {
+         "path": "81871d35-0853-49e7-aa45-be020fc2d6b1.png",
+         "sha256": "e64f664eeeb72726247591e84d0e5c9ed2dc42374067acbc139c7b0a42c79739",
+         "size": 79215
+      },
+      {
+         "path": "917f8315-8c66-41da-98ca-68bdbfbafa18.png",
+         "sha256": "74f8cff4e9168344d8099d74307b43cec0c041fd769c25bb7762579cbf473e8f",
+         "size": 80158
+      },
+      {
+         "path": "9422114c-5e1a-496f-b1ed-fe7fb05abc3c.png",
+         "sha256": "0247601bf17faa4ef958c4f64adf9154c08a83f850fe704d836fc56d34e71ba1",
+         "size": 77477
+      },
+      {
+         "path": "98ca94a4-1420-4bca-95d3-82d3f9e5d97a.png",
+         "sha256": "e18170b4fa72b755e6b5a5468a8d9ad16e1afbc3d01e456b7fc12d04e0022df9",
+         "size": 88044
+      },
+      {
+         "path": "9a14c0fb-6697-4486-b3d3-29d4a7986556.png",
+         "sha256": "9d3afe307d71eb85bc6110242b21facd94b5431c8e783afaf769301d528ea11c",
+         "size": 87647
+      },
+      {
+         "path": "9b8741d9-46f0-4589-b938-2e7367393441.png",
+         "sha256": "8fe003f040065a7293f2e63d383a75b72ced3bb1d187117bed6fc1ae18453324",
+         "size": 87979
+      },
+      {
+         "path": "9e4b4256-ccbb-4ec2-bc19-dbc39e81797c.png",
+         "sha256": "577941b9f096c23af24787d1a3f787aafb72e592d8e655bd90970fcfe9e74e52",
+         "size": 81248
+      },
+      {
+         "path": "b0bae895-2843-4f50-9df4-3d69fa10df3b.png",
+         "sha256": "39ede7c5967354e50a66a66856c96778ff46fc0b8bcb4f6f0316cda0d1da82ae",
+         "size": 43847
+      },
+      {
+         "path": "cc71f38d-0357-4559-b32d-6a1f7c80c458.png",
+         "sha256": "48b17522ac8562eb3daf6ed9437642cd19f1d333190bf9895fdb3f90d11e7263",
+         "size": 83019
+      },
+      {
+         "path": "cf979c6e-faac-48ad-b95e-f5293cf2feb0.png",
+         "sha256": "4e8a7d196de112a900644e9621965ee562837fb70dbda2b231ac904613454ad0",
+         "size": 79704
+      },
+      {
+         "path": "e77b4a8a-28ec-4a8b-8979-3608852c1b6e.png",
+         "sha256": "c8829189eb4c5343fd17a1c5cdb977fb4d7cc67678b917cf3e2b481cde7f3056",
+         "size": 79927
+      },
+      {
+         "path": "e88a543b-6ae7-4441-b151-42f498ddfea3.png",
+         "sha256": "d8c386297b9a557642176d2d3fb2538bccea1f7f22ea108cd400f421e46f7a60",
+         "size": 83500
+      },
+      {
+         "path": "f05b2471-6f06-473f-99cd-5eded6dc9c6a.png",
+         "sha256": "ef6eaee87aeeb3f4ae90b5c0ba8febb4bac6d0b1eb87d63674b5cca4f2680fcf",
+         "size": 122628
+      },
+      {
+         "path": "fc6a448e-f59d-4296-accd-74c19b116964.png",
+         "sha256": "b0ea7a20de8544be545bef3163253443267df181d41292786dbb55512fb167fa",
+         "size": 76828
+      },
+      {
+         "path": "ff5875f5-d511-4cfb-b3a0-0199a63a30ab.png",
+         "sha256": "a751cf82fc3e013d338c2d0f0f0d3fbc8ee5fb27569a75ea80e2e868d586463c",
+         "size": 137188
+      }
+   ]
 }
-

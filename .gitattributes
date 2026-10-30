@@ -3,3 +3,7 @@
 # build-system's component-manifest integrity pins on POSIX clones.
 # Keep the pinned bytes verbatim in the object store and on every checkout.
 "Evevee Spotify/component/frameworks/Orion.framework/Info.plist" -text
+# The deb control file is byte-pinned in components/spotipw/manifest.json. Without
+# this, core.autocrlf rewrites it to CRLF on Windows and the pin only matches the
+# machine that recorded it. LF everywhere, as dpkg expects.
+"PwEvevee/components/spotipw/package/control" text eol=lf

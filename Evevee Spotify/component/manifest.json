@@ -1,5 +1,6 @@
 {
    "extracted_with" : "Evevee Spotify/component/extract-components.pl",
+   "eveespotify_refresh" : "package/dynamic-libraries/EeveeSpotify.dylib is rebuilt from the EeveeSpotify Reincarnated source snapshot this component was extracted from (7.0.0), with one behavioural change: the cold-cache customize gate (CustomizeReplayPolicy + shouldHandleCustomize/hasReplayableCustomize and the SessionProtection cancel). Before it, a cold cache still answered customize from an empty buffer, which is the zero-byte response the spotifyglass gate cannot prevent because EeveeSpotify's hook is outermost. Built with Theos + Xcode 27.1 (arm64, iOS, ad-hoc signed). The pinned upstream binary was 4108944 B / 8997e5c9; the string inventory is unchanged (531 human-readable strings before and after), so this is the same feature set. A second pass closes the same hole in every replay path: CustomizeReplayPolicy.replayData returns only a non-empty body, and SpotifyResponsePatcher.replayableCustomizeData is what the blocked reply and both 304 handlers deliver, so a persisted-but-empty copy can no longer be answered as a successful zero-byte 200. Third pass: a customize 304 that has no replayable body is marked per task (markCustomizePassedThrough/consumeCustomizePassThrough in both delegate hooks) and its completion is forwarded untouched instead of being answered with Data(); the policy decision is CustomizeReplayPolicy.forwardsUntouched, and both hooks log the replay or pass-through so a device capture can tell a real response from a fabricated one.",
    "file_count" : 190,
    "files" : [
       {
@@ -229,8 +230,8 @@
       },
       {
          "path" : "package/dynamic-libraries/EeveeSpotify.dylib",
-         "sha256" : "8997e5c946d702b062b4b2482e37e9675ef013e8fae951b8b0871f55a856cdb4",
-         "size" : 4108944
+         "sha256" : "ef7251958fd9afbf7d692d9fad3954643a5557047c187728940842a37fd17168",
+         "size" : 4005360
       },
       {
          "path" : "package/dynamic-libraries/EeveeSpotify.plist",

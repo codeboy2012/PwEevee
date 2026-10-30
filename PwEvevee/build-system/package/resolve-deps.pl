@@ -80,7 +80,7 @@ for my $dylib ('spotifyglass.dylib', 'EeveeSpotify.dylib') {
   push @notes, "component dylib: $dylib (" . sprintf('%d', -s $p) . " bytes)";
 }
 
-# 3. Eevee resources (BundleHelper search order, docs/UNIFICATION-AUDIT.md §3)
+# 3. Eevee resources (BundleHelper search order, see the build-system dependency notes)
 -f "$app/EeveeSpotify.bundle/Info.plist" or push @problems, "MISSING RESOURCE: EeveeSpotify.bundle/Info.plist";
 my $en = "$app/EeveeSpotify.bundle/en.lproj/Localizable.strings";
 -f $en or push @problems, "MISSING RESOURCE: EeveeSpotify.bundle/en.lproj/Localizable.strings";

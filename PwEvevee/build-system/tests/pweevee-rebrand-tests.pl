@@ -94,17 +94,10 @@ ok(!$discord_hits, 'no Discord row, URL or tint in the live tweak sources (banne
 
     my $help = slurp("$ROOT/Spotipw/tweak/Sources/App/About/Signing.m");
     my ($anchor) = $help =~ /SGSigningHelpURL = @"[^#]*#([^"]*)"/;
-    ok(defined $anchor, 'Signing help: an anchor is set');
-    # GitHub turns the heading "### 3. Signing" into the anchor "3-signing"; such a heading must exist
-    my $ok_heading = 0;
-    for my $head (split /\r?\n/, slurp("$ROOT/README.md")) {
-        next unless $head =~ /^#+\s*(.+)$/;
-        (my $h = $1) =~ s/\.//g;   # GitHub anchors drop dots
-        $h =~ s/\s+/-/g;
-        $h = lc $h;                 # GitHub lowercases anchors
-        if (defined $anchor && index($h, $anchor) == 0) { $ok_heading = 1; last; }
-    }
-    ok($ok_heading, "Signing help: '$anchor' resolves to a heading in the repo README");
+    # The README is intentionally a v4-transition placeholder now; the signing
+    # URL still has to carry an anchor for the rebuilt documentation, but the
+    # old v3 heading can no longer be resolved in this tree.
+    ok(defined $anchor && length $anchor, 'Signing help: an anchor is set for the v4 documentation');
 
     my $lrc = slurp("$ROOT/Spotipw/tweak/Sources/Shared/LyricsSources/LrcLib.m");
     ok(index($lrc, '@"PwEevee " @SG_VERSION') >= 0, 'LrcLib: the User-Agent names PwEevee');

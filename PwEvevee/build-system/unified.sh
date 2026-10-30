@@ -209,6 +209,25 @@ if [ -n "$DOWNLOADS_DYLIB" ]; then
 fi
 # shared dependency
 merge_dir "$BS/../shared-dependencies/cydiasubstrate/CydiaSubstrate.framework" "$STAGED/Frameworks/CydiaSubstrate.framework"
+# Safari "Open in Spotify" link extension (PwEevee component, built from our own
+# source — a pristine Spotify base does not carry it, while every base built by
+# this project inherited one from the 3.1.x package). The appex is ad-hoc signed
+# here and re-signed with the host at install; PWEEVEE_NO_SAFARI=1 omits it (the
+# development-signing App ID cap is the usual reason).
+SAFARI_APPEX="$STAGED/PlugIns/PwEeveeOpenSpotify.appex"
+if [ -d "$SAFARI_APPEX" ]; then
+  echo "    safari: base provides PlugIns/PwEeveeOpenSpotify.appex — kept"
+elif [ "${PWEEVEE_NO_SAFARI:-0}" = 1 ]; then
+  echo "    safari: PWEEVEE_NO_SAFARI=1 — the Safari link extension is omitted"
+elif xcrun --sdk iphoneos --find clang >/dev/null 2>&1; then
+  SAFARI_OUT="$WORK/safari-extension"
+  bash "$REPO/source/scripts/build-safari-extension.sh" "$STAGED/Info.plist" "$SAFARI_OUT" || fail "Safari extension build failed"
+  mkdir -p "$STAGED/PlugIns"
+  cp -a "$SAFARI_OUT/PwEeveeOpenSpotify.appex" "$STAGED/PlugIns/"
+  echo "    safari: PlugIns/PwEeveeOpenSpotify.appex built from source (ad-hoc; the IPA signer re-signs it)"
+else
+  echo "    safari: no iPhoneOS SDK via xcrun — the Safari link extension is omitted" >&2
+fi
 echo "    merged: spotifyglass.dylib, EeveeSpotify.dylib, karaoke shader, 3 frameworks$([ -n "$DOWNLOADS_DYLIB" ] && echo ', Downloads companion'), bundle + $(find "Evevee Spotify/component/resources" -type f | wc -l) resources"
 
 step "3. resolve dependencies"

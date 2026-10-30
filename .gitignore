@@ -38,3 +38,10 @@ source/.agents/
 source/.claude/
 source/vendor/*.deb
 release-candidate/*.deb
+
+# Local logs, environment files and OS metadata
+*.log
+.env
+.env.local
+.DS_Store
+Thumbs.db

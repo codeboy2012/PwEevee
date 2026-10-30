@@ -1,8 +1,0 @@
-# PwEevee — https://pweevee.skytweak.dpdns.org/
-User-agent: *
-Allow: /
-
-# the generated data files are for this site's own pages, not for search results
-Disallow: /data/
-
-Sitemap: https://pweevee.skytweak.dpdns.org/sitemap.xml

@@ -1,0 +1,268 @@
+diff --git a/Sources/EeveeSpotify/Premium/Helpers/CustomizeReplayPolicy.swift b/Sources/EeveeSpotify/Premium/Helpers/CustomizeReplayPolicy.swift
+new file mode 100644
+--- /dev/null
++++ b/Sources/EeveeSpotify/Premium/Helpers/CustomizeReplayPolicy.swift
+@@ -0,0 +1,39 @@
++import Foundation
++
++// Single decision for "may this customize be answered from what we already have?".
++//
++// Both the response patcher (shouldBlock / blockedResponseData) and the
++// session-protection hook (cancel customize re-fetches) used to answer that
++// question with "is premium patching on?", which is true even when nothing has
++// been rewritten yet. On a cold cache that produced a zero-byte 200 (or a
++// cancelled task) and Spotify was left with no usable configuration at all.
++//
++// A body only counts when it is non-empty: an empty Data is a failed rewrite,
++// not a configuration to replay. Every replay path — the block, the 304
++// synthesis, and the bodiless-completion fallback — asks this type, so the
++// emptiness rule cannot drift between them again.
++enum CustomizeReplayPolicy {
++    /// The body that may be replayed, or nil when there is nothing usable.
++    /// In-memory wins over the persisted copy, and an empty body on either
++    /// layer falls through to the other before giving up.
++    static func replayData(inMemory: Data?, persisted: Data?) -> Data? {
++        if let inMemory, !inMemory.isEmpty { return inMemory }
++        if let persisted, !persisted.isEmpty { return persisted }
++        return nil
++    }
++
++    static func canReplay(inMemory: Data?, persisted: Data?) -> Bool {
++        replayData(inMemory: inMemory, persisted: persisted) != nil
++    }
++
++    /// Whether a customize response has to reach Spotify untouched. A 304 is
++    /// Spotify's own revalidation answer; replacing it with `Data()` on the
++    /// completion path is the same fabricated success as blocking a cold cache,
++    /// only one layer down. A real 200 with no bytes is left to the ordinary
++    /// fallback — there is no cached config to stand in for it either way, but
++    /// the 304 is the case where the server has explicitly said "use what you
++    /// have", so nothing may be invented.
++    static func forwardsUntouched(statusCode: Int, replay: Data?) -> Bool {
++        statusCode == 304 && (replay?.isEmpty ?? true)
++    }
++}
+diff --git a/Sources/EeveeSpotify/Premium/Helpers/SpotifyResponsePatcher.swift b/Sources/EeveeSpotify/Premium/Helpers/SpotifyResponsePatcher.swift
+--- a/Sources/EeveeSpotify/Premium/Helpers/SpotifyResponsePatcher.swift
++++ b/Sources/EeveeSpotify/Premium/Helpers/SpotifyResponsePatcher.swift
+@@ -10,6 +10,7 @@
+     private static let lock = NSLock()
+     private static var _cachedCustomizeData: Data?
+     private static var _handledCustomizeTasks = Set<Int>()
++    private static var _customizePassThroughTasks = Set<Int>()
+ 
+     static var cachedCustomizeData: Data? {
+         get { lock.lock(); defer { lock.unlock() }; return _cachedCustomizeData }
+@@ -38,6 +39,25 @@
+         return _handledCustomizeTasks.remove(id) != nil
+     }
+ 
++    // A customize whose 304 carried no body and had no replay to stand in for it.
++    // Its completion belongs to Spotify exactly as the server sent it: the hook
++    // must not synthesize a body, empty or otherwise. Tracked per task so the
++    // response and completion callbacks (which may run on different queues) agree.
++    static func markCustomizePassedThrough(_ id: Int) {
++        lock.lock(); defer { lock.unlock() }
++        _customizePassThroughTasks.insert(id)
++    }
++
++    static func isCustomizePassedThrough(_ id: Int) -> Bool {
++        lock.lock(); defer { lock.unlock() }
++        return _customizePassThroughTasks.contains(id)
++    }
++
++    static func consumeCustomizePassThrough(_ id: Int) -> Bool {
++        lock.lock(); defer { lock.unlock() }
++        return _customizePassThroughTasks.remove(id) != nil
++    }
++
+     static func shouldBlock(_ url: URL) -> Bool {
+         let elapsed = Date().timeIntervalSince(tweakInitTime)
+         let path = url.path.lowercased()
+@@ -70,8 +90,19 @@
+     // empty body re-enables free-tier flags (crash/ad recurrence). Instead we let
+     // the request through to a real 200 (patched on arrival), or synthesize a 200
+     // from cache for 304s — see the URLSession hooks.
++    // The body a replay may deliver. Nil when neither copy holds bytes: an empty
++    // body is a failed rewrite, and answering one is the zero-byte 200 this gate
++    // exists to stop. Returning the data (not just a Bool) keeps every caller on
++    // the same copy that was validated.
++    static var replayableCustomizeData: Data? {
++        CustomizeReplayPolicy.replayData(inMemory: cachedCustomizeData,
++                                         persisted: UserDefaults.cachedCustomizeData)
++    }
++
++    static var hasReplayableCustomize: Bool { replayableCustomizeData != nil }
++
+     static func shouldHandleCustomize(_ url: URL) -> Bool {
+-        url.isCustomize && UserDefaults.patchType.isPatching
++        url.isCustomize && UserDefaults.patchType.isPatching && hasReplayableCustomize
+     }
+ 
+     static func shouldModify(_ url: URL) -> Bool {
+@@ -110,7 +141,10 @@
+         if url.path.contains("pses/screenconfig") {
+             return #"{}"#.data(using: .utf8)!
+         }
+-        if shouldHandleCustomize(url), let cached = cachedCustomizeData {
++        // The gate accepts a persisted-only warm cache, so the reply has to read
++        // the same two layers. Falling through to Data() here would answer an
++        // empty 200 while believing a valid body existed.
++        if shouldHandleCustomize(url), let cached = replayableCustomizeData {
+             return cached
+         }
+         return Data()
+diff --git a/Sources/EeveeSpotify/SessionProtection.x.swift b/Sources/EeveeSpotify/SessionProtection.x.swift
+--- a/Sources/EeveeSpotify/SessionProtection.x.swift
++++ b/Sources/EeveeSpotify/SessionProtection.x.swift
+@@ -373,8 +373,11 @@
+                 }
+                 // customize re-fetches (AuthFetcher, every few hours) can use a
+                 // background URLSession that bypasses the DataLoaderService hook and
+-                // re-enable ads; cancel them past the 30s startup window.
+-                if elapsed > 30 && path.contains("v1/customize") {
++                // re-enable ads; cancel them past the 30s startup window — but only
++                // when there is a patched body to replay. Cancelling a cold cache
++                // leaves Spotify with an empty config and nothing to recover from.
++                if elapsed > 30 && path.contains("v1/customize")
++                    && SpotifyResponsePatcher.hasReplayableCustomize {
+                     writeDebugLog("[NET] Cancelled customize re-fetch at \(elapsedInt)s")
+                     task.cancel()
+                     return
+diff --git a/Sources/EeveeSpotify/DataLoaderServiceHooks.x.swift b/Sources/EeveeSpotify/DataLoaderServiceHooks.x.swift
+--- a/Sources/EeveeSpotify/DataLoaderServiceHooks.x.swift
++++ b/Sources/EeveeSpotify/DataLoaderServiceHooks.x.swift
+@@ -43,7 +43,19 @@
+             CasitaResponseProbe.flush(task, url: url)
+         }
+ 
++        // A customize 304 with nothing to replay completes the way Spotify sent it:
++        // no synthesized body, and no second completion of our own.
++        if SpotifyResponsePatcher.consumeCustomizePassThrough(task.taskIdentifier) {
++            writeDebugLog("[DL] Customize 304 passed through untouched")
++            orig.URLSession(session, task: task, didCompleteWithError: error)
++            return
++        }
++
+         if SpotifyResponsePatcher.shouldBlock(url) {
++            if url.isCustomize {
++                let bytes = SpotifyResponsePatcher.replayableCustomizeData?.count ?? 0
++                writeDebugLog("[DL] Customize answered from replay cache (\(bytes) bytes)")
++            }
+             orig.URLSession(session, dataTask: task, didReceiveData: SpotifyResponsePatcher.blockedResponseData(for: url))
+             orig.URLSession(session, task: task, didCompleteWithError: nil)
+             return
+@@ -62,8 +74,7 @@
+ 
+         guard let buffer = URLSessionHelper.shared.obtainData(for: task) else {
+             // Customize 304 has no body; a fresh process falls back to the persisted patched copy.
+-            if url.isCustomize, let cached = SpotifyResponsePatcher.cachedCustomizeData
+-                ?? UserDefaults.cachedCustomizeData {
++            if url.isCustomize, let cached = SpotifyResponsePatcher.replayableCustomizeData {
+                 orig.URLSession(session, dataTask: task, didReceiveData: cached)
+                 orig.URLSession(session, task: task, didCompleteWithError: nil)
+             } else {
+@@ -119,14 +130,20 @@
+     ) {
+         if let url = task.currentRequest?.url, url.isCustomize, response.statusCode == 304 {
+             // A 304 would make Spotify use its unpatched disk-cached config, so replay ours as a 200.
+-            if let cached = SpotifyResponsePatcher.cachedCustomizeData
+-                ?? UserDefaults.cachedCustomizeData,
++            // Replay only a body that exists: synthesising a 200 around an empty
++            // persisted copy is the same fabricated success as blocking a cold cache.
++            if let cached = SpotifyResponsePatcher.replayableCustomizeData,
+                let synthetic = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "2.0", headerFields: [:]) {
++                writeDebugLog("[DL] Replayed customize over 304 (\(cached.count) bytes)")
+                 orig.URLSession(session, dataTask: task, didReceiveResponse: synthetic, completionHandler: handler)
+                 orig.URLSession(session, dataTask: task, didReceiveData: cached)
+                 SpotifyResponsePatcher.markCustomizeTaskHandled(task.taskIdentifier)
+                 return
+             }
++            // Nothing to replay: the 304 is Spotify's own answer. Recorded so the
++            // completion hook does not replace it with an empty body.
++            SpotifyResponsePatcher.markCustomizePassedThrough(task.taskIdentifier)
++            writeDebugLog("[DL] Customize 304 with no replay body (\(task.taskIdentifier))")
+             orig.URLSession(session, dataTask: task, didReceiveResponse: response, completionHandler: handler)
+             return
+         }
+@@ -162,6 +179,12 @@
+     ) {
+         guard let url = task.currentRequest?.url else { return }
+ 
++        // A passed-through 304 keeps whatever bytes the server attached.
++        if SpotifyResponsePatcher.isCustomizePassedThrough(task.taskIdentifier) {
++            orig.URLSession(session, dataTask: task, didReceiveData: data)
++            return
++        }
++
+         // Replaced in didCompleteWithError; passing it through would deliver both.
+         if SpotifyResponsePatcher.shouldBlock(url) { return }
+         if CasitaResponseProbe.shouldProbe(url) {
+diff --git a/Sources/EeveeSpotify/HttpClientURLSessionHooks.x.swift b/Sources/EeveeSpotify/HttpClientURLSessionHooks.x.swift
+--- a/Sources/EeveeSpotify/HttpClientURLSessionHooks.x.swift
++++ b/Sources/EeveeSpotify/HttpClientURLSessionHooks.x.swift
+@@ -24,7 +24,19 @@
+             CasitaResponseProbe.flush(task, url: url)
+         }
+ 
++        // A customize 304 with nothing to replay completes the way Spotify sent it:
++        // no synthesized body, and no second completion of our own.
++        if SpotifyResponsePatcher.consumeCustomizePassThrough(task.taskIdentifier) {
++            writeDebugLog("[HCUS] Customize 304 passed through untouched")
++            orig.URLSession(session, task: task, didCompleteWithError: error)
++            return
++        }
++
+         if SpotifyResponsePatcher.shouldBlock(url) {
++            if url.isCustomize {
++                let bytes = SpotifyResponsePatcher.replayableCustomizeData?.count ?? 0
++                writeDebugLog("[HCUS] Customize answered from replay cache (\(bytes) bytes)")
++            }
+             orig.URLSession(session, dataTask: task, didReceiveData: SpotifyResponsePatcher.blockedResponseData(for: url))
+             orig.URLSession(session, task: task, didCompleteWithError: nil)
+             return
+@@ -45,8 +57,7 @@
+             // Always forward completion or Spotify hangs and gets watchdog-killed.
+             // Customize: fall back to the persisted copy — the in-memory cache is
+             // empty on the first completion of a fresh process (warm relaunch 304).
+-            if url.isCustomize, let cached = SpotifyResponsePatcher.cachedCustomizeData
+-                ?? UserDefaults.cachedCustomizeData {
++            if url.isCustomize, let cached = SpotifyResponsePatcher.replayableCustomizeData {
+                 orig.URLSession(session, dataTask: task, didReceiveData: cached)
+                 orig.URLSession(session, task: task, didCompleteWithError: nil)
+             } else {
+@@ -105,14 +116,20 @@
+             // being consumed — the fingerprint behind relaunch crash/ads reports.
+             // With no persisted copy yet (first-ever launch edge case) the 304 passes
+             // through untouched; the next real 200 gets patched and persists.
+-            if let cached = SpotifyResponsePatcher.cachedCustomizeData
+-                ?? UserDefaults.cachedCustomizeData,
++            // Replay only a body that exists: synthesising a 200 around an empty
++            // persisted copy is the same fabricated success as blocking a cold cache.
++            if let cached = SpotifyResponsePatcher.replayableCustomizeData,
+                let synthetic = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "2.0", headerFields: [:]) {
++                writeDebugLog("[HCUS] Replayed customize over 304 (\(cached.count) bytes)")
+                 orig.URLSession(session, dataTask: task, didReceiveResponse: synthetic, completionHandler: handler)
+                 orig.URLSession(session, dataTask: task, didReceiveData: cached)
+                 SpotifyResponsePatcher.markCustomizeTaskHandled(task.taskIdentifier)
+                 return
+             }
++            // Nothing to replay: the 304 is Spotify's own answer. Recorded so the
++            // completion hook does not replace it with an empty body.
++            SpotifyResponsePatcher.markCustomizePassedThrough(task.taskIdentifier)
++            writeDebugLog("[HCUS] Customize 304 with no replay body (\(task.taskIdentifier))")
+             orig.URLSession(session, dataTask: task, didReceiveResponse: response, completionHandler: handler)
+             return
+         }
+@@ -147,6 +164,11 @@
+         didReceiveData data: Data
+     ) {
+         guard let url = task.currentRequest?.url else { return }
++        // A passed-through 304 keeps whatever bytes the server attached.
++        if SpotifyResponsePatcher.isCustomizePassedThrough(task.taskIdentifier) {
++            orig.URLSession(session, dataTask: task, didReceiveData: data)
++            return
++        }
+         if SpotifyResponsePatcher.shouldBlock(url) { return }
+         if CasitaResponseProbe.shouldProbe(url) {
+             CasitaResponseProbe.append(data, for: task)
