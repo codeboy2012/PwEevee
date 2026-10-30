@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PwEevee — The next chapter is coming</title>
+  <meta name="description" content="The PwEevee website is being redesigned and rebuilt for v4. The current release is available on GitHub Releases.">
+  <meta name="theme-color" content="#06080d">
+  <meta property="og:title" content="PwEevee — The next chapter is coming">
+  <meta property="og:description" content="The website is being redesigned and rebuilt for v4. Current downloads are on GitHub Releases.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&amp;family=Instrument+Sans:ital,wght@0,400..600;1,400&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ground: #06080d;
+      --ground-deep: #04060a;
+      --ink: #f1f4fa;
+      --muted: #9fadc1;
+      --blue: #7f9dff;
+      --blue-bright: #a8bcff;
+      --crimson: #ff5c74;
+      --line: rgba(159, 173, 193, 0.18);
+      --line-bright: rgba(168, 188, 255, 0.48);
+      --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+      --body: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --page-gutter: clamp(1.25rem, 5vw, 4.5rem);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--ground);
+    }
+
+    body {
+      min-height: 100svh;
+      margin: 0;
+      padding: 0 var(--page-gutter);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      color: var(--ink);
+      background: var(--ground);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(55rem 40rem at 4% -14%, rgba(83, 116, 255, 0.26), transparent 64%),
+        radial-gradient(44rem 36rem at 102% 108%, rgba(255, 76, 108, 0.14), transparent 68%),
+        linear-gradient(180deg, #080b12 0%, #06080d 56%, #04060a 100%);
+    }
+
+    ::selection {
+      color: #07101f;
+      background: var(--blue-bright);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .skip {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      z-index: 10;
+      padding: 0.65rem 0.9rem;
+      color: #07101f;
+      background: var(--blue-bright);
+      border-radius: 0.4rem;
+      font-weight: 600;
+      text-decoration: none;
+      transform: translateY(-180%);
+    }
+
+    .skip:focus {
+      transform: translateY(0);
+    }
+
+    .site-header,
+    .site-footer,
+    .stage {
+      width: 100%;
+      max-width: 90rem;
+      margin-inline: auto;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      min-height: 5.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-family: var(--display);
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .brand img {
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 0.44rem;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0.4rem 1.2rem rgba(0, 0, 0, 0.35);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 0.42rem;
+      height: 0.42rem;
+      border-radius: 50%;
+      background: var(--blue-bright);
+      box-shadow: 0 0 0 0.26rem rgba(127, 157, 255, 0.12), 0 0 0.8rem rgba(127, 157, 255, 0.55);
+    }
+
+    .stage {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(17rem, 0.94fr);
+      align-items: center;
+      gap: clamp(2rem, 6vw, 6rem);
+      padding-block: clamp(3.5rem, 8vh, 7rem);
+    }
+
+    .copy {
+      width: 100%;
+      max-width: 46rem;
+    }
+
+    h1 {
+      margin: 0 0 clamp(1.5rem, 3vh, 2.25rem);
+      font-family: var(--display);
+      font-size: clamp(3.4rem, 7.3vw, 7.15rem);
+      font-weight: 800;
+      font-variation-settings: "opsz" 72;
+      font-optical-sizing: auto;
+      line-height: 0.91;
+      letter-spacing: -0.055em;
+      text-wrap: balance;
+    }
+
+    h1 > span {
+      display: block;
+    }
+
+    h1 .eyes {
+      width: max-content;
+      margin-top: 0.18em;
+      font-size: 0.55em;
+      line-height: 1;
+      letter-spacing: 0;
+      filter: drop-shadow(0 0.3rem 1.1rem rgba(127, 157, 255, 0.22));
+    }
+
+    .lede {
+      max-width: 38ch;
+      margin: 0 0 clamp(1.4rem, 3vh, 2rem);
+      color: var(--ink);
+      font-size: clamp(1.1rem, 1.55vw, 1.36rem);
+      line-height: 1.45;
+      letter-spacing: -0.012em;
+      text-wrap: pretty;
+    }
+
+    .message {
+      max-width: 52ch;
+      color: var(--muted);
+      font-size: clamp(0.97rem, 1.05vw, 1.04rem);
+      line-height: 1.68;
+    }
+
+    .message p {
+      margin: 0 0 0.8rem;
+    }
+
+    .message strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .message .signoff {
+      margin-top: 1.25rem;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.15rem 1.6rem;
+      margin-top: clamp(1.8rem, 4vh, 2.6rem);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.15rem;
+      padding: 0.85rem 1.3rem;
+      color: #07101f;
+      background: var(--blue);
+      border: 1px solid transparent;
+      border-radius: 0.68rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.2;
+      text-decoration: none;
+      transition: background-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .button:hover {
+      background: var(--blue-bright);
+      box-shadow: 0 0 0 1px rgba(168, 188, 255, 0.35), 0 0.8rem 2rem rgba(45, 79, 190, 0.28);
+    }
+
+    .text-link {
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 1px solid var(--line-bright);
+      padding-bottom: 0.18rem;
+      transition: border-color 160ms ease, color 160ms ease;
+    }
+
+    .text-link:hover {
+      color: var(--blue-bright);
+      border-color: var(--blue-bright);
+    }
+
+    .button:focus-visible,
+    .text-link:focus-visible,
+    .site-footer a:focus-visible,
+    .brand:focus-visible {
+      outline: 2px solid var(--blue-bright);
+      outline-offset: 4px;
+    }
+
+    .release-meta {
+      margin: 1.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.015em;
+    }
+
+    .release-meta span {
+      color: #dbe4f5;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chapter {
+      position: relative;
+      isolation: isolate;
+      display: grid;
+      place-items: center;
+      min-height: clamp(23rem, 54vh, 38rem);
+    }
+
+    .chapter-glow {
+      position: absolute;
+      z-index: -1;
+      width: min(76%, 28rem);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(83, 116, 255, 0.22) 0%, rgba(83, 116, 255, 0.08) 42%, transparent 70%);
+      filter: blur(1.2rem);
+    }
+
+    .chapter-number {
+      position: absolute;
+      z-index: -1;
+      color: transparent;
+      font-family: var(--display);
+      font-size: clamp(16rem, 29vw, 30rem);
+      font-weight: 800;
+      font-variation-settings: "opsz" 96;
+      line-height: 0.7;
+      letter-spacing: -0.09em;
+      -webkit-text-stroke: 1px rgba(168, 188, 255, 0.22);
+      transform: translateY(-3%);
+      user-select: none;
+    }
+
+    .chapter-icon {
+      width: clamp(11.5rem, 18vw, 15.5rem);
+      height: auto;
+      border-radius: 23%;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.13),
+        0 2.4rem 5rem rgba(0, 0, 0, 0.52),
+        0 0 4rem rgba(83, 116, 255, 0.13);
+    }
+
+    .chapter-rule {
+      position: absolute;
+      bottom: 11%;
+      width: 3.5rem;
+      height: 1px;
+      background: var(--line-bright);
+    }
+
+    .chapter-label {
+      position: absolute;
+      bottom: 5.5%;
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.045em;
+    }
+
+    .site-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem 1.5rem;
+      padding-block: 1.35rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .site-footer p {
+      margin: 0;
+    }
+
+    .site-footer a {
+      color: #cbd6e8;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+
+    .site-footer a:hover {
+      color: var(--ink);
+      border-color: var(--line-bright);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    @supports not (-webkit-text-stroke: 1px black) {
+      .chapter-number {
+        color: rgba(168, 188, 255, 0.07);
+      }
+    }
+
+    @media (max-width: 60rem) {
+      .stage {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding-block: clamp(2.8rem, 7vh, 4.5rem);
+      }
+
+      .copy {
+        max-width: 40rem;
+      }
+
+      h1 {
+        font-size: clamp(3.35rem, 10.5vw, 6rem);
+      }
+
+      .chapter {
+        min-height: clamp(17rem, 44vw, 24rem);
+        order: 2;
+      }
+
+      .chapter-number {
+        font-size: clamp(13rem, 38vw, 21rem);
+      }
+
+      .chapter-icon {
+        width: clamp(9.5rem, 24vw, 12.5rem);
+      }
+
+      .chapter-rule {
+        bottom: 5%;
+      }
+
+      .chapter-label {
+        bottom: 0;
+      }
+    }
+
+    @media (max-width: 34rem) {
+      body {
+        padding-inline: 1.15rem;
+      }
+
+      .site-header {
+        min-height: 4.5rem;
+      }
+
+      .status {
+        font-size: 0.72rem;
+      }
+
+      h1 {
+        font-size: clamp(3rem, 15vw, 4.3rem);
+        letter-spacing: -0.06em;
+      }
+
+      .actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .text-link {
+        width: max-content;
+      }
+
+      .chapter {
+        min-height: 15rem;
+      }
+
+      .chapter-number {
+        font-size: 12rem;
+      }
+
+      .chapter-icon {
+        width: 8.25rem;
+      }
+
+      .chapter-label {
+        display: none;
+      }
+
+      .site-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-height: 48rem) and (min-width: 60.01rem) {
+      .stage {
+        padding-block: 2.5rem;
+      }
+
+      h1 {
+        font-size: clamp(3.3rem, 6vw, 5.4rem);
+      }
+
+      .chapter {
+        min-height: 21rem;
+      }
+
+      .chapter-icon {
+        width: 10rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .copy {
+        animation: settle 700ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      }
+
+      .chapter {
+        animation: settle 900ms 120ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      }
+
+      @keyframes settle {
+        from {
+          opacity: 0;
+          transform: translateY(1rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <span class="brand">
+      <img src="icon.png" width="30" height="30" alt="">
+      PwEevee
+    </span>
+    <p class="status"><span class="status-dot" aria-hidden="true"></span>v4 in the works</p>
+  </header>
+
+  <main id="main" class="stage">
+    <section class="copy" aria-labelledby="title">
+      <h1 id="title">
+        <span>Oh man…</span>
+        <span>you're a little early!</span>
+        <span class="eyes" aria-hidden="true">👀</span>
+      </h1>
+
+      <p class="lede">The PwEevee website is currently being completely redesigned and rebuilt.</p>
+
+      <div class="message">
+        <p>It won't be available again anytime soon. We're preparing for <strong>v4</strong> — the biggest change in PwEevee's history!</p>
+        <p>Expect a lot more features, original enhancements, and a completely new experience.</p>
+        <p class="signoff">Stay tuned. The next chapter is coming.</p>
+      </div>
+
+      <div class="actions">
+        <a class="button" href="https://github.com/codeboy2012/PwEevee/releases/latest">Download the current release</a>
+        <a class="text-link" href="https://github.com/codeboy2012/PwEevee/releases/tag/v3.1.6.1">v3.1.6.1 release notes</a>
+      </div>
+
+      <p class="release-meta">Current build <span>v3.1.6.1</span> for Spotify <span>9.1.90</span>.</p>
+    </section>
+
+    <aside class="chapter" aria-hidden="true">
+      <span class="chapter-glow"></span>
+      <span class="chapter-number">IV</span>
+      <img class="chapter-icon" src="icon.png" width="248" height="248" alt="">
+      <span class="chapter-rule"></span>
+      <span class="chapter-label">the next chapter</span>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built on <a href="https://chroma.pw/">Chroma</a> (formerly Spoti.pw) and EeveeSpotify.</p>
+    <p class="footer-links">
+      <a href="https://github.com/codeboy2012/PwEevee">GitHub</a>
+      <a href="https://github.com/codeboy2012/PwEevee/releases">Releases</a>
+    </p>
+  </footer>
+</body>
+</html>

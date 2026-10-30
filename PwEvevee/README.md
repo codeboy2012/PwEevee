@@ -1,8 +1,8 @@
 # PwEvevee/ — the unified integration/build system
 
-This folder is PwEevee's own code: everything responsible for combining spoti.pw and
-EeveeSpotify into one IPA — component payloads, dependency resolution, Mach-O
-injection, IPA/DEB packaging, validation, tests and release orchestration.
+This folder is PwEevee's own code: everything responsible for combining the Chroma
+payload (the legacy spoti.pw lineage) and EeveeSpotify into one IPA — component
+payloads, dependency resolution, Mach-O injection, IPA/DEB packaging, validation and tests.
 
 ## What's here
 
@@ -14,9 +14,9 @@ injection, IPA/DEB packaging, validation, tests and release orchestration.
 | `build-system/package/` | `make-ipa.pl`, byte-exact `make-deb.pl`, `resolve-deps.pl` |
 | `build-system/validate/` | Mach-O + filesystem validation |
 | `build-system/tests/` | `deb-format-test.pl`, `build-tests.pl`, `component-manifest-test.pl`, `alternate-icon-tests.pl` and the remaining build/package suites |
-| `build-system/release/` | `make-release.pl` + local-archive retention, `update-releases.pl` (GitHub release data), `update-altsource.pl` (AltSource variant data), `render-site.pl` (static site generator), `make-social-card.pl`, `lib/PwSite.pm`, `lib/PwHttp.pm` |
+| `build-system/release/` | `check-chroma-version.py` for Chroma's official public version metadata |
 | `build-system/_work/` | build scratch space (gitignored) |
-| `components/spotipw/` | the spoti.pw payload: `dylibs/spotifyglass.dylib`, MobileSubstrate filter, `manifest.json` with per-file SHA-256 |
+| `components/spotipw/` | the Chroma payload (legacy spoti.pw layout): `dylibs/spotifyglass.dylib`, MobileSubstrate filter, `manifest.json` with per-file SHA-256 |
 | `shared-dependencies/cydiasubstrate/` | CydiaSubstrate.framework + provenance |
 | `upstream/chroma.json` | Chroma public-version metadata from the official chroma.pw patcher; not bundled and no `.deb` |
 | `dependencies.json` | **single source of truth**: shared dependencies, the five load commands, duplicate policy |
@@ -31,9 +31,9 @@ The upstream *source* stays in `Spotipw/` untouched.
 ## Usage
 
 ```bash
-bash PwEvevee/build-system/unified.sh <decrypted Spotify 9.1.84 .ipa> -o dist/out.ipa
+bash PwEvevee/build-system/unified.sh <decrypted Spotify 9.1.90 .ipa> -o dist/out.ipa
 perl PwEvevee/build-system/tests/deb-format-test.pl
 perl PwEvevee/build-system/tests/build-tests.pl
 ```
 
-Documentation and the public website are being rebuilt for v4; the root README carries the current release and download links.
+For the current release, website transition notice, and download links, see the [root README](../README.md).
