@@ -94,7 +94,7 @@ The work is organized in phases, not dates. See [ROADMAP.md](ROADMAP.md) for the
 
 > **Oh man... You're a little early!**
 >
-> The PwEevee website is being completely redone right now, and it won't be back for a while.
+> The PwEevee website is being completely redone right now, and it won't be back for a couple months.
 >
 > We're preparing for v4, which is going to be our biggest change yet, with tons of new features, improvements, and original additions.
 >
