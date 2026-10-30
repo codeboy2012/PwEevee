@@ -48,15 +48,6 @@ body:
       description: e.g. 3.1.6.1
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
-  - type: textarea
-    id: error-message
-    attributes:
-      label: Error messages
-      description: Optional. Paste the exact message shown.
-      render: text
   - type: textarea
     id: expected
     attributes:
@@ -78,6 +69,15 @@ body:
       description: List the shortest reliable reproduction.
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Error messages
+      description: Optional. Paste the exact message shown.
+      render: text
   - type: textarea
     id: diagnostics
     attributes:

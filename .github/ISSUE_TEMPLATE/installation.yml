@@ -79,15 +79,6 @@ body:
         - Not sure
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
-  - type: textarea
-    id: error-message
-    attributes:
-      label: Exact error message
-      description: Optional. Paste the message exactly as shown.
-      render: text
   - type: dropdown
     id: app-on-home-screen
     attributes:
@@ -109,6 +100,15 @@ body:
         - Not sure
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Exact error message
+      description: Optional. Paste the message exactly as shown.
+      render: text
   - type: upload
     id: installation-logs
     attributes:

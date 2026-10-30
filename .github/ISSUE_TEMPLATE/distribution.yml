@@ -57,15 +57,6 @@ body:
       placeholder: e.g. 9.1.90
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
-  - type: textarea
-    id: download-error
-    attributes:
-      label: Reported download error
-      description: Optional. Paste the exact error message.
-      render: text
   - type: dropdown
     id: url-works
     attributes:
@@ -77,6 +68,15 @@ body:
         - Not sure
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: download-error
+    attributes:
+      label: Reported download error
+      description: Optional. Paste the exact error message.
+      render: text
   - type: textarea
     id: metadata
     attributes:

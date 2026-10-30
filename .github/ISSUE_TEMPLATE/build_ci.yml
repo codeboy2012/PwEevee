@@ -64,15 +64,6 @@ body:
         - Not sure
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
-  - type: textarea
-    id: tool-versions
-    attributes:
-      label: Relevant tool versions
-      description: Optional. Include Xcode, Theos, Python, Perl, or package-manager versions.
-      render: text
   - type: input
     id: failed-step
     attributes:
@@ -95,6 +86,15 @@ body:
       description: Paste the short error message.
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: '> **Privacy:** Remove personal information before sharing. Never upload passwords, tokens, cookies, private keys, certificates, provisioning profiles, or account information. Redact device identifiers in screenshots and logs.'
+  - type: textarea
+    id: tool-versions
+    attributes:
+      label: Relevant tool versions
+      description: Optional. Include Xcode, Theos, Python, Perl, or package-manager versions.
+      render: text
   - type: textarea
     id: full-output
     attributes:
