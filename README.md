@@ -13,7 +13,7 @@ PwEevee is an open-source Spotify customization project. It brings
 [Chroma](https://chroma.pw/) (formerly Spoti.pw) and EeveeSpotify together in one
 IPA, then adds PwEevee's own icon picker, settings, diagnostics and packaging work.
 
-**v3.1.6.1 is the current legacy release.** v4 is being rebuilt from the ground up.
+**v3.1.6.1 is the current release.** v4 is being rebuilt from the ground up.
 
 ## Project Statistics
 
