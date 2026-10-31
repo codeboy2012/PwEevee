@@ -113,15 +113,15 @@ something to test, it will be announced on GitHub Releases.
 
 ## Star History
 
-<div align="center">
-  <a href="https://star-history.com/#codeboy2012/PwEevee&amp;Date">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=codeboy2012/PwEevee&amp;type=Date&amp;theme=dark">
-      <img src="https://api.star-history.com/svg?repos=codeboy2012/PwEevee&amp;type=Date" alt="PwEevee star history chart showing GitHub stars over time" width="100%">
-    </picture>
-  </a>
-  <sub>Star growth over time, powered by Star History.</sub>
-</div>
+## Star History
+
+<a href="https://www.star-history.com/?repos=codeboy2012%2FPwEevee&type=timeline&releases=&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=codeboy2012/PwEevee&type=timeline&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=codeboy2012/PwEevee&type=timeline&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=codeboy2012/PwEevee&type=timeline&legend=bottom-right" />
+ </picture>
+</a>
 
 ## Reporting and requests
 
