@@ -21,6 +21,8 @@
                                 that enable its offline-download implementation (see its README)
     extension/AppGroups/        a dylib loaded by Spotify and its home screen widget that moves Spotify's App Groups
                                 into a group the re-signed IPA has; without it the widget stays a placeholder
+    extension/Turkish/          a dylib that shows the mod's own screens in Turkish while Spotify is in Turkish,
+                                from tr.json; untranslated.py lists the strings it does not cover yet
     scripts/                    pipeline.sh (build + inject), build-extension.sh (the widget extension, without an
                                 Xcode project), merge-appintents.py (the widget's intents into Spotify's), insert-dylib.py (a load command into
                                 Spotify's widget), install.sh (sign + install), record-trees.py, record-session.py,

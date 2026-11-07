@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds the spotifyglass tweak and injects it (plus FLEX) into a decrypted Spotify IPA.
 #
-#   scripts/pipeline.sh <decrypted.ipa> [-o out.ipa] [--no-flex] [--no-safari] [--no-downloads] [--install] [--name N] [--icon P.png]   (or: make build / make install)
+#   scripts/pipeline.sh <decrypted.ipa> [-o out.ipa] [--no-flex] [--no-safari] [--no-downloads] [--no-turkish] [--install] [--name N] [--icon P.png]   (or: make build / make install)
 #
 # --install hands the result to install.sh (sign with your certificate, push to the plugged-in iPhone).
 #
@@ -24,7 +24,7 @@ FLEX_DEB="$ROOT/vendor/com.hopeless.autoflex_0.0.1_iphoneos-arm.deb"
 BUNDLE_ID="${BUNDLE_ID:-}"
 mkdir -p "$ROOT/out"
 
-IN="" OUT="" WITH_FLEX=1 WITH_SAFARI=1 WITH_DOWNLOADS=1 INSTALL=0 NAME="" ICON=""
+IN="" OUT="" WITH_FLEX=1 WITH_SAFARI=1 WITH_DOWNLOADS=1 WITH_TURKISH=1 INSTALL=0 NAME="" ICON=""
 while [ $# -gt 0 ]; do
   case "$1" in
     -o) OUT="$2"; shift 2 ;;
@@ -33,6 +33,7 @@ while [ $# -gt 0 ]; do
     --no-flex) WITH_FLEX=0; shift ;;
     --no-safari) WITH_SAFARI=0; shift ;;
     --no-downloads) WITH_DOWNLOADS=0; shift ;;
+    --no-turkish) WITH_TURKISH=0; shift ;;
     --install) INSTALL=1; shift ;;
     -h|--help) sed -n '2,11p' "$0"; exit 0 ;;
     *) IN="$1"; shift ;;
@@ -135,6 +136,17 @@ GROUPS_DYLIB="$ROOT/out/SpotifyGlassAppGroups.dylib"
 xcrun --sdk iphoneos clang -target arm64-apple-ios16.0 -dynamiclib -fobjc-arc -Os -framework Foundation -framework Security \
   -install_name @rpath/SpotifyGlassAppGroups.dylib -o "$GROUPS_DYLIB" "$ROOT/extension/AppGroups/AppGroups.m"
 FILES+=("$GROUPS_DYLIB")
+
+# The mod's screens in Turkish while Spotify is in Turkish (extension/Turkish); inert in any other language.
+if [ "$WITH_TURKISH" = 1 ]; then
+  echo "==> building the Turkish translation"
+  TURKISH_DYLIB="$ROOT/out/PwEeveeTurkish.dylib"
+  xcrun --sdk iphoneos clang -target arm64-apple-ios16.0 -dynamiclib -fobjc-arc -Os \
+    -framework Foundation -framework UIKit -framework QuartzCore \
+    -Wl,-sectcreate,__TEXT,__pwee_tr,"$ROOT/extension/Turkish/tr.json" \
+    -install_name @rpath/PwEeveeTurkish.dylib -o "$TURKISH_DYLIB" "$ROOT/extension/Turkish/Turkish.m"
+  FILES+=("$TURKISH_DYLIB")
+fi
 
 echo "==> injecting"
 # -w drops the Watch app: its companion-app key would still name com.spotify.client and block the install.
