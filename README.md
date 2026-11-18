@@ -26,6 +26,14 @@ IPA, then adds PwEevee's own icon picker, settings, diagnostics and packaging wo
 
 </div>
 
+## Freebuff
+
+Want to build with AI? [Freebuff](https://freebuff.com/?ref=ref-4a833bdc-4d33-4512-b5a6-cdb94b9800a6&via=rewards_link) lets you join for free and start building with high-end AI models at no cost.
+
+Run your coding workflow locally while AI does the heavy lifting remotely — **AI remote, work local.**
+
+Join for free: https://freebuff.com/?ref=ref-4a833bdc-4d33-4512-b5a6-cdb94b9800a6&via=rewards_link
+
 ## Current release — v3.1.6.1
 
 v3.1.6.1 is built on Spotify **9.1.90** and is available now from GitHub Releases.
